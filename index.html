@@ -163,6 +163,7 @@
         .bio a { color: var(--neon-cyan); text-decoration: none; transition: 0.3s; }
         .bio a:hover { text-shadow: 0 0 10px var(--neon-cyan); }
 
+        /* Исходные стили кнопок для экрана входа */
         .action-btns {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -396,6 +397,115 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
+        /* === MODAL: СОЗДАНИЕ РЕЛИЗА === */
+        .release-modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+            z-index: 20000; display: none; align-items: center; justify-content: center; 
+            opacity: 0; transition: opacity 0.3s ease; padding: 20px;
+        }
+        .release-modal-overlay.active { display: flex; opacity: 1; }
+
+        .release-modal {
+            width: 100%; max-width: 500px; padding: 30px;
+            background: linear-gradient(145deg, rgba(20,20,30,0.98), rgba(15,15,25,0.98));
+            border: 2px solid var(--neon-purple); border-radius: 24px;
+            box-shadow: 
+                0 0 40px rgba(181, 55, 242, 0.4),
+                0 0 80px rgba(181, 55, 242, 0.2),
+                inset 0 0 40px rgba(181, 55, 242, 0.1);
+            position: relative; 
+            transform: scale(0.95) translateY(20px); 
+            transition: transform 0.3s ease;
+            animation: modalPurpleGlow 3s ease infinite;
+        }
+
+        @keyframes modalPurpleGlow {
+            0%, 100% { box-shadow: 0 0 40px rgba(181, 55, 242, 0.4), 0 0 80px rgba(181, 55, 242, 0.2), inset 0 0 40px rgba(181, 55, 242, 0.1); }
+            50% { box-shadow: 0 0 60px rgba(181, 55, 242, 0.6), 0 0 100px rgba(181, 55, 242, 0.3), inset 0 0 60px rgba(181, 55, 242, 0.15); }
+        }
+
+        .release-modal-overlay.active .release-modal { transform: scale(1) translateY(0); }
+
+        .release-close {
+            position: absolute; top: 12px; right: 16px; font-size: 1.6rem; 
+            color: var(--text-secondary); cursor: pointer; transition: 0.3s; 
+            background: none; border: none; width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+        }
+        .release-close:hover { 
+            color: var(--neon-pink); 
+            transform: rotate(90deg) scale(1.1);
+            background: rgba(255, 45, 117, 0.15);
+        }
+
+        .release-icon {
+            font-size: 2.5rem; margin-bottom: 16px; text-align: center;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .release-title { 
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem; margin-bottom: 20px; color: white; text-align: center;
+            text-shadow: 0 0 20px rgba(181, 55, 242, 0.6);
+        }
+
+        .release-content {
+            background: rgba(255,255,255,0.04);
+            border-radius: 16px; padding: 20px; margin-bottom: 20px;
+            border: 1px solid rgba(181, 55, 242, 0.3);
+        }
+
+        .release-content h4 {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--neon-cyan); font-size: 0.9rem; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .release-content h4::before {
+            content: ''; width: 6px; height: 6px; background: var(--neon-cyan);
+            border-radius: 50%; box-shadow: 0 0 8px var(--neon-cyan);
+        }
+
+        .release-desc {
+            color: var(--text-primary); font-size: 1rem; line-height: 1.6; margin-bottom: 16px;
+        }
+
+        /* Стиль как текст, без тегов */
+        .release-style-text {
+            color: var(--text-secondary); 
+            font-size: 0.95rem; 
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        .release-footer {
+            display: flex; gap: 12px; justify-content: center; margin-top: 24px;
+        }
+
+        .release-btn {
+            padding: 12px 28px; border-radius: 12px; border: none;
+            font-family: 'JetBrains Mono', monospace; font-weight: 700;
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+
+        .release-btn.outline {
+            background: transparent; border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-secondary);
+        }
+        .release-btn.outline:hover {
+            border-color: var(--neon-blue); color: white;
+            background: rgba(0, 212, 255, 0.1);
+        }
+
         /* === MAIN SITE === */
         #mainSite { opacity: 0; transition: opacity 0.5s; pointer-events: none; }
         #mainSite.visible { opacity: 1; pointer-events: auto; }
@@ -437,10 +547,86 @@
         .gradient-text { background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 30%, var(--neon-pink) 60%, var(--neon-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 300% 300%; animation: gradientFlow 8s ease infinite; }
         .hero-description { font-size: 1.25rem; color: var(--text-secondary); max-width: 650px; margin: 0 auto 32px; line-height: 1.7; }
         .hero-description strong { color: var(--neon-cyan); font-weight: 600; }
-        .action-zone { display: flex; gap: 16px; margin-top: 48px; flex-wrap: wrap; justify-content: center; }
+        
+        /* НОВЫЕ КНОПКИ В HERO */
+        .action-zone { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 16px; 
+            margin-top: 48px; 
+            width: 100%;
+        }
+        
+        /* Кнопка "Создание релиза" - полная ширина */
+        .cyber-btn.create-release-btn {
+            width: 100%;
+            max-width: 400px;
+            justify-content: center;
+            border-color: var(--neon-purple);
+            background: linear-gradient(135deg, rgba(181, 55, 242, 0.15), rgba(140, 80, 200, 0.1));
+            box-shadow: 
+                0 0 20px rgba(181, 55, 242, 0.4),
+                0 0 40px rgba(181, 55, 242, 0.2),
+                inset 0 0 20px rgba(181, 55, 242, 0.1);
+            animation: createReleasePulse 2.5s ease-in-out infinite;
+            position: relative;
+        }
+
+        .cyber-btn.create-release-btn::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink), var(--neon-blue), var(--neon-purple));
+            background-size: 300% 300%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            filter: blur(8px);
+            animation: gradientGlow 4s ease infinite;
+        }
+
+        .cyber-btn.create-release-btn:hover::after {
+            opacity: 0.6;
+        }
+
+        .cyber-btn.create-release-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 0 30px rgba(181, 55, 242, 0.7),
+                0 0 60px rgba(181, 55, 242, 0.4),
+                inset 0 0 30px rgba(181, 55, 242, 0.2);
+            border-color: #fff;
+            color: #fff;
+        }
+
+        @keyframes createReleasePulse {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 20px rgba(181, 55, 242, 0.4),
+                    0 0 40px rgba(181, 55, 242, 0.2),
+                    inset 0 0 20px rgba(181, 55, 242, 0.1);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 35px rgba(181, 55, 242, 0.6),
+                    0 0 70px rgba(181, 55, 242, 0.3),
+                    inset 0 0 30px rgba(181, 55, 242, 0.15);
+            }
+        }
+
+        /* Ряд кнопок: Новые релизы + Все треки */
+        .action-row {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+            justify-content: center;
+        }
         
         /* News Block */
-        .news-section-wrapper { max-width: 720px; margin: 48px auto 0; display: none; animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .news-section-wrapper { max-width: 720px; margin: 24px auto 0; display: none; animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .news-section-wrapper.visible { display: block; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
         .news-container { background: linear-gradient(145deg, rgba(15,15,25,0.9), rgba(25,25,40,0.9)); border: 1px solid rgba(255, 45, 117, 0.4); border-radius: 20px; padding: 24px; backdrop-filter: blur(20px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), var(--glow-pink); position: relative; overflow: hidden; }
@@ -730,7 +916,7 @@
         }
         .hidden-tracks.visible {
             opacity: 1; 
-            max-height: 1000px; /* Достаточно большое значение */
+            max-height: 1000px;
             transform: translateY(0); 
             pointer-events: all;
         }
@@ -757,7 +943,8 @@
         @media (max-width: 768px) {
             .container { padding: 0 20px; } section { padding: 90px 0; }
             .hero h1 { font-size: clamp(2.2rem, 8vw, 4rem); }
-            .action-zone { gap: 12px; } .cyber-btn { padding: 15px 26px; font-size: 0.8rem; }
+            .action-zone { gap: 12px; } .cyber-btn { padding: 15px 20px; font-size: 0.75rem; }
+            .action-row { flex-wrap: wrap; }
             .grid { grid-template-columns: 1fr; }
             .track-player-row { padding: 18px; gap: 12px; } .play-btn { width: 44px; height: 44px; }
             .nav-links a { padding: 6px 12px; font-size: 0.8rem; }
@@ -766,6 +953,8 @@
             .compact-cover { width: 40px; height: 40px; }
             .subscribe-modal { padding: 30px 20px; }
             .sub-title { font-size: 1.5rem; }
+            .release-modal { padding: 24px 20px; }
+            .release-title { font-size: 1.3rem; }
         }
 
         /* Scrollbar */
@@ -812,7 +1001,7 @@
     </style>
 </head>
 <body>
-    <!-- === WELCOME SCREEN === -->
+    <!-- === WELCOME SCREEN (НЕ ИЗМЕНЕН) === -->
     <div id="welcomeScreen">
         <div class="welcome-bg-orbs">
             <div class="welcome-orb"></div><div class="welcome-orb"></div>
@@ -887,6 +1076,35 @@
         </div>
     </div>
 
+    <!-- === MODAL: СОЗДАНИЕ РЕЛИЗА === -->
+    <div class="release-modal-overlay" id="releaseModal">
+        <div class="release-modal">
+            <button class="release-close" onclick="closeReleaseModal()">×</button>
+            <div class="release-icon">🎬</div>
+            <h3 class="release-title">Новый релиз</h3>
+            
+            <div class="release-content">
+                <h4>Краткое содержание</h4>
+                <p class="release-desc" id="releaseDescription">
+                    Трек о поиске себя в цифровом шуме. 
+                    Голос ИИ передаёт холодную отстранённость, 
+                    а текст — живую человеческую боль.
+                </p>
+                
+                <h4>Стиль</h4>
+                <p class="release-style-text" id="releaseStyle">
+                    Dark Synth • AI Voice • Melancholy • Cyberpunk
+                </p>
+            </div>
+            
+            <div class="release-footer">
+                <button class="release-btn outline" onclick="closeReleaseModal()">
+                    <i class="fas fa-times"></i> Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- === MAIN SITE === -->
     <div id="mainSite">
         <div class="cursor"></div>
@@ -914,27 +1132,47 @@
                     Мои тексты, озвученные <strong>искусственным разумом</strong>.<br>
                     Эксперимент на стыке человеческих эмоций и машинного голоса.
                 </p>
+                
+                <!-- НОВАЯ ЗОНА КНОПОК -->
                 <div class="action-zone">
-                    <div class="cyber-btn outline" onclick="toggleNews()">📡 Лента Обновлений</div>
-                    <div class="cyber-btn primary" onclick="scrollToId('new')">🎵 Новые Релизы</div>
-                    <div class="cyber-btn secondary" onclick="scrollToId('archive')">📦 Все Треки</div>
+                    <!-- 1. Создание релиза (сверху) -->
+                    <button class="cyber-btn create-release-btn" onclick="openReleaseModal()">
+                        <i class="fas fa-plus-circle"></i> Создание релиза
+                    </button>
+                    
+                    <!-- 2. Новые релизы + Все треки (в линию) -->
+                    <div class="action-row">
+                        <button class="cyber-btn primary" onclick="scrollToId('new')">
+                            <i class="fas fa-music"></i> Новые релизы
+                        </button>
+                        <button class="cyber-btn secondary" onclick="scrollToId('archive')">
+                            <i class="fas fa-box"></i> Все треки
+                        </button>
+                    </div>
+                    
+                    <!-- 3. Лента обновлений (снизу) -->
+                    <button class="cyber-btn outline" onclick="toggleNews()">
+                        <i class="fas fa-rss"></i> Лента обновлений
+                    </button>
                 </div>
+
+                <!-- Блок новостей (появляется по клику) -->
                 <div id="newsWrapper" class="news-section-wrapper">
                     <div class="news-container">
                         <div class="news-header">
                             <div class="news-title"><span class="live-indicator"></span>ПОСЛЕДНИЕ ОБНОВЛЕНИЯ</div>
                         </div>
                         <ul class="news-list">
+                            <li class="news-item"><div class="news-date">27 МАЯ</div><div class="news-text"><span class="news-tag NEW">NEW</span>Трек <strong>"Поезд на юг"</strong> уже в релизах! 🎧</div></li>
                             <li class="news-item"><div class="news-date">24 МАЯ</div><div class="news-text"><span class="news-tag">NEW</span>Обновлен <strong>дизайн входа 🎨✨</strong></div></li>
-                            <li class="news-item"><div class="news-date">22 МАЯ</div><div class="news-text"><span class="news-tag">SYS</span>Добавлен <strong>внутренний чат💬</strong></div></li>
-                           <li class="news-item"><div class="news-date">21 МАЯ</div><div class="news-text"><span class="news-tag NEW">NEW</span>Трек <strong>"Братья"</strong> уже в релизах! 🎧</div></li>
+                           <li class="news-item"><div class="news-date">22 МАЯ</div><div class="news-text"><span class="news-tag">SYS</span>Добавлен <strong>внутренний чат💬</strong></div></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 🎵 НОВЫЕ РЕЛИЗЫ - карточки с неоновой рамкой -->
+        <!--  НОВЫЕ РЕЛИЗЫ - карточки с неоновой рамкой -->
         <section id="new">
             <div class="container">
                 <div class="section-header">
@@ -945,7 +1183,7 @@
             </div>
         </section>
 
-        <!-- 📦 ВСЕ ТРЕКИ - список с неоновыми рамками -->
+        <!--  ВСЕ ТРЕКИ - список с неоновыми рамками -->
         <section id="archive">
             <div class="container">
                 <div class="section-header">
@@ -1012,6 +1250,27 @@
     </div>
 
     <script>
+        // === FIREBASE INIT ===
+        const firebaseConfig = { 
+            apiKey: "AIzaSyC8fxnC_WVl7r8mGBsF2SCITvzvlwUF0f0", 
+            authDomain: "evgenii-6a5bb.firebaseapp.com", 
+            databaseURL: "https://evgenii-6a5bb-default-rtdb.firebaseio.com", 
+            projectId: "evgenii-6a5bb", 
+            storageBucket: "evgenii-6a5bb.firebasestorage.app", 
+            messagingSenderId: "623681147476", 
+            appId: "1:623681147476:web:893a12286d88af4eb313c1", 
+            measurementId: "G-H7TYB5E8PW" 
+        };
+
+        let db;
+        try {
+            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            console.log("✅ Firebase подключен");
+        } catch (e) {
+            console.error("❌ Ошибка инициализации Firebase:", e);
+        }
+
         // === WELCOME SCREEN ===
         const welcomeScreen = document.getElementById('welcomeScreen');
         const mainSite = document.getElementById('mainSite');
@@ -1019,20 +1278,14 @@
         const trackCountEl = document.getElementById('trackCount');
         const subscriberCountEl = document.getElementById('subscriberCount');
         
-        // === СПИСОК ТРЕКОВ ===
         const tracks = [
-            // 🎵 Новые релизы
-            { id: 1, title: "пуст", desc: "", file: "tracks/song6.mp3", duration: "4:03", cover: "cover/cover6.jpg", isNew: true },
-            { id: 2, title: "Нейронный Дождь", desc: "О чём думает нейросеть?", file: "tracks/song1.mp3", duration: "4:03", cover: "cover/cover2.jpg", isNew: true },
-            
-            // 📦 Архив (первые 4 будут видны сразу)
+            { id: 1, title: "Поезд на юг", desc: "", file: "tracks/song7.mp3", duration: "3:23", cover: "cover/cover7.jpg", isNew: true },
+            { id: 2, title: "Братья", desc: "", file: "tracks/song6.mp3", duration: "4:03", cover: "cover/cover6.jpg", isNew: true },
             { id: 3, title: "А мне похуй", desc: "Когда похуй", file: "tracks/song.mp3", duration: "3:11", cover: "cover/cover1.jpg", isNew: false },
             { id: 4, title: "Сгоревший экран", desc: "", file: "tracks/song2.mp3", duration: "3:48", cover: "cover/cover0.jpg", isNew: false },
             { id: 5, title: "Тишина", desc: "", file: "tracks/song4.mp3", duration: "04:48", cover: "covers/cover0.jpg", isNew: false },
             { id: 6, title: "Воздух Густеет", desc: "", file: "tracks/song1.mp3", duration: "03:23", cover: "covers/cover0.jpg", isNew: false },
-            
-            // 🔒 Заглушки (скрыты за кнопкой)
-            { id: 7, title: "Placeholder I", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false },
+            { id: 7, title: "Нейронный Дождь", desc: "О чём думает нейросеть?", file: "tracks/song1.mp3", duration: "4:03", cover: "cover/cover2.jpg", isNew: false },
             { id: 8, title: "Placeholder II", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false },
             { id: 9, title: "Placeholder III", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false },
             { id: 10, title: "Placeholder IV", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false },
@@ -1063,11 +1316,10 @@
         function initSite() { 
             createParticles(); 
             renderTracks(); 
-            updateSubscriberCount(); // <-- запускаем подсчет подписчиков
             window.dispatchEvent(new Event('scroll')); 
         }
 
-        // === CURSOR ===
+        // === CURSOR & PARTICLES ===
         const cursor = document.querySelector('.cursor');
         const cursorDot = document.querySelector('.cursor-dot');
         const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
@@ -1113,13 +1365,14 @@
                 container.appendChild(p);
             }
         }
+
+        // === TRACKS RENDERING ===
         function getCoverHTML(track) {
             if (track.cover) return `<div class="track-cover"><img src="${track.cover}" alt="${track.title}" onerror="this.parentElement.innerHTML='🎵'"></div>`;
             return `<div class="track-cover">${track.emoji || '🎵'}</div>`;
         }
         const downloadIcon = `<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`;
         
-        // 🎨 Полная карточка для новых релизов (с неоновой рамкой)
         function createFullCard(track) {
             const card = document.createElement('div'); card.className = 'track-card';
             const downloadName = track.title.toLowerCase().replace(/[^a-zа-яё0-9]+/gi, '-') + '.mp3';
@@ -1141,14 +1394,11 @@
             return card;
         }
         
-        // 📋 Компактный элемент для списка "Все треки" (с неоновой рамкой и мини-обложкой)
         function createCompactItem(track) {
             const item = document.createElement('div'); 
             item.className = 'compact-item'; 
             item.style.setProperty('--i', track.id);
             const downloadName = track.title.toLowerCase().replace(/[^a-zа-яё0-9]+/gi, '-') + '.mp3';
-            
-            // Мини-обложка 48×48 с фолбэком
             const coverHTML = track.cover 
                 ? `<div class="compact-cover"><img src="${track.cover}" alt="${track.title}" onerror="this.parentElement.innerHTML='🎵'"></div>`
                 : `<div class="compact-cover">🎵</div>`;
@@ -1173,8 +1423,6 @@
             return item;
         }
         
-        // === 🎵 РЕНДЕР: Новые релизы - полные карточки ===
-        // === 📦 РЕНДЕР: Все треки - список, 4 видно, остальные за кнопкой ===
         function renderTracks() {
             const newContainer = document.getElementById('releasesList');
             const archiveList = document.getElementById('archiveList');
@@ -1182,32 +1430,14 @@
             const showAllBtn = document.getElementById('showAllBtn');
             
             const archiveTracks = tracks.filter(t => !t.isNew);
+            tracks.filter(t => t.isNew).forEach(track => newContainer.appendChild(createFullCard(track)));
             
-            // 🎵 Новые релизы
-            tracks.filter(t => t.isNew).forEach(track => {
-                newContainer.appendChild(createFullCard(track));
-            });
-            
-            // 📦 Все треки
             if (archiveTracks.length > 0) {
-                // Первые 4 трека видны сразу
-                archiveTracks.slice(0, 4).forEach(track => {
-                    archiveList.appendChild(createCompactItem(track));
-                });
-                
-                // Остальные (начиная с 5-го) скрыты
-                archiveTracks.slice(4).forEach(track => {
-                    hiddenTracks.appendChild(createCompactItem(track));
-                });
-                
-                // Если треков > 4, показываем кнопку
-                if (archiveTracks.length > 4) {
-                    showAllBtn.style.display = 'flex';
-                } else {
-                    showAllBtn.style.display = 'none';
-                }
+                archiveTracks.slice(0, 4).forEach(track => archiveList.appendChild(createCompactItem(track)));
+                archiveTracks.slice(4).forEach(track => hiddenTracks.appendChild(createCompactItem(track)));
+                if (archiveTracks.length > 4) showAllBtn.style.display = 'flex'; else showAllBtn.style.display = 'none';
             } else {
-                archiveList.innerHTML = '<p style="color:var(--text-secondary); text-align:center; padding: 30px;">В архиве пока пусто. Скоро будет 🔥</p>';
+                archiveList.innerHTML = '<p style="color:var(--text-secondary); text-align:center; padding: 30px;">В архиве пока пусто. Скоро будет </p>';
                 showAllBtn.style.display = 'none';
             }
         }
@@ -1226,6 +1456,7 @@
             }
         }
         
+        // === AUDIO PLAYER ===
         function seekTrack(event, trackId) {
             if (!currentAudio || currentAudio.dataset.trackId !== trackId) return;
             const bar = event.currentTarget, rect = bar.getBoundingClientRect();
@@ -1256,7 +1487,6 @@
             const el = document.getElementById(`time-${trackId}`); if (el) el.textContent = '0:00'; 
         }
 
-        // === MEDIA SESSION ===
         function setupMediaSession(track) {
             if ('mediaSession' in navigator) {
                 let artworkSrc = './icon.png'; 
@@ -1310,14 +1540,22 @@
         }
         function scrollToId(id) { const el = document.getElementById(id); if (!el) return; const navH = document.querySelector('nav').offsetHeight; window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - navH - 20, behavior: 'smooth' }); }
         if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-        document.addEventListener('visibilitychange', () => { if (document.hidden) console.log('Tab hidden — audio continues via Media Session'); });
 
-        // === FIREBASE CHAT ===
-        const firebaseConfig = { apiKey: "AIzaSyC8fxnC_WVl7r8mGBsF2SCITvzvlwUF0f0", authDomain: "evgenii-6a5bb.firebaseapp.com", databaseURL: "https://evgenii-6a5bb-default-rtdb.firebaseio.com", projectId: "evgenii-6a5bb", storageBucket: "evgenii-6a5bb.firebasestorage.app", messagingSenderId: "623681147476", appId: "1:623681147476:web:893a12286d88af4eb313c1", measurementId: "G-H7TYB5E8PW" };
-        firebase.initializeApp(firebaseConfig); const db = firebase.database(); const CHAT_REF = db.ref('evgenii_chat');
-        const currentUserId = localStorage.getItem('evgenii_user_id') || 'user_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('evgenii_user_id', currentUserId);
+        // === CHAT SYSTEM ===
+        const CHAT_REF = db ? db.ref('evgenii_chat') : null;
+        const currentUserId = localStorage.getItem('evgenii_user_id') || 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('evgenii_user_id', currentUserId);
         let currentUserName = localStorage.getItem('evgenii_user_name');
-        const chatToggle = document.getElementById('chatToggle'), chatWindow = document.getElementById('chatWindow'), chatClose = document.getElementById('chatClose'), chatInput = document.getElementById('chatInput'), chatSend = document.getElementById('chatSend'), chatMessages = document.getElementById('chatMessages'), chatClear = document.getElementById('chatClear'), chatStatus = document.getElementById('chatStatus');
+        
+        const chatToggle = document.getElementById('chatToggle'), 
+              chatWindow = document.getElementById('chatWindow'), 
+              chatClose = document.getElementById('chatClose'), 
+              chatInput = document.getElementById('chatInput'), 
+              chatSend = document.getElementById('chatSend'), 
+              chatMessages = document.getElementById('chatMessages'), 
+              chatClear = document.getElementById('chatClear'), 
+              chatStatus = document.getElementById('chatStatus');
+
         function formatTime(date) { return new Date(date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }); }
         function renderMessages(messages) {
             if (!messages || Object.keys(messages).length === 0) { chatMessages.innerHTML = '<div class="empty-chat">Сообщений пока нет.<br>Напиши первое!</div>'; return; }
@@ -1330,36 +1568,58 @@
             });
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-        function addMessage(text) { if (!text.trim()) return; CHAT_REF.push({ text: text.trim(), userId: currentUserId, userName: currentUserName || 'Гость', timestamp: Date.now() }); chatInput.value = ''; }
-        function clearChat() { const password = prompt('🔐 Введите пароль администратора:'); if (password === '0770') { if (confirm('⚠️ Очистить чат для ВСЕХ пользователей?')) CHAT_REF.remove(); } else if (password !== null) alert('❌ Неверный пароль!'); }
+        function addMessage(text) { if (!text.trim() || !CHAT_REF) return; CHAT_REF.push({ text: text.trim(), userId: currentUserId, userName: currentUserName || 'Гость', timestamp: Date.now() }); chatInput.value = ''; }
+        function clearChat() { const password = prompt(' Пароль администратора:'); if (password === '0770' && CHAT_REF) { if (confirm('️ Очистить чат?')) CHAT_REF.remove(); } else if (password !== null) alert('❌ Неверный пароль!'); }
         function toggleChat() {
-            if (!currentUserName) { const name = prompt('👋 Привет! Введите ваше имя для чата:', 'Гость'); if (name === null) return; currentUserName = name.trim() || 'Гость'; localStorage.setItem('evgenii_user_name', currentUserName); }
+            if (!currentUserName) { const name = prompt('👋 Ваше имя для чата:', 'Гость'); if (name === null) return; currentUserName = name.trim() || 'Гость'; localStorage.setItem('evgenii_user_name', currentUserName); }
             const isVisible = chatWindow.classList.toggle('visible'); chatToggle.classList.toggle('active', isVisible); chatToggle.textContent = isVisible ? '✕' : '💬'; if (isVisible) setTimeout(() => chatInput.focus(), 100);
         }
-        CHAT_REF.on('value', (snapshot) => { renderMessages(snapshot.val()); chatStatus.textContent = '✅ Онлайн'; chatStatus.style.color = 'var(--neon-cyan)'; }, (error) => { chatStatus.textContent = '❌ Ошибка подключения'; chatStatus.style.color = 'var(--neon-pink)'; console.error('Firebase error:', error); });
-        chatToggle.addEventListener('click', toggleChat); chatClose.addEventListener('click', () => { chatWindow.classList.remove('visible'); chatToggle.classList.remove('active'); chatToggle.textContent = '💬'; });
-        chatSend.addEventListener('click', () => addMessage(chatInput.value)); chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addMessage(chatInput.value); }); chatClear.addEventListener('click', clearChat);
+        if(CHAT_REF) {
+            CHAT_REF.on('value', (snapshot) => { renderMessages(snapshot.val()); chatStatus.textContent = '✅ Онлайн'; chatStatus.style.color = 'var(--neon-cyan)'; }, 
+            (error) => { chatStatus.textContent = ' Ошибка'; chatStatus.style.color = 'var(--neon-pink)'; console.error('Chat DB Error:', error); });
+        }
+        chatToggle.addEventListener('click', toggleChat); 
+        chatClose.addEventListener('click', () => { chatWindow.classList.remove('visible'); chatToggle.classList.remove('active'); chatToggle.textContent = '💬'; });
+        chatSend.addEventListener('click', () => addMessage(chatInput.value)); 
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addMessage(chatInput.value); }); 
+        chatClear.addEventListener('click', clearChat);
         document.addEventListener('click', (e) => { if (chatWindow.classList.contains('visible') && !chatWindow.contains(e.target) && !chatToggle.contains(e.target)) { chatWindow.classList.remove('visible'); chatToggle.classList.remove('active'); chatToggle.textContent = '💬'; } });
 
-        // === SUBSCRIBE FUNCTIONALITY ===
+        // === SUBSCRIBE SYSTEM ===
         const subscribeModal = document.getElementById('subscribeModal');
         const subEmailInput = document.getElementById('subEmail');
         const subStatus = document.getElementById('subStatus');
         const subActionBtn = document.getElementById('subActionBtn');
         const subscribeBtn = document.getElementById('subscribeBtn');
 
-        // Проверяем при загрузке, подписан ли пользователь
+        function updateSubscriberCount() {
+            if (!db) { subscriberCountEl.textContent = "—"; return; }
+            const subRef = db.ref('subscribers');
+            subRef.on('value', (snapshot) => {
+                const count = snapshot.exists() ? snapshot.numChildren() : 0;
+                subscriberCountEl.textContent = count;
+                subscriberCountEl.style.transform = 'scale(1.4)';
+                subscriberCountEl.style.color = 'var(--neon-cyan)';
+                setTimeout(() => {
+                    subscriberCountEl.style.transform = 'scale(1)';
+                    subscriberCountEl.style.color = 'var(--neon-purple)';
+                }, 300);
+            }, (error) => {
+                console.error("Ошибка чтения подписчиков:", error);
+                subscriberCountEl.textContent = "—";
+            });
+        }
+        updateSubscriberCount();
+
         window.addEventListener('load', () => {
-            const subscribedEmail = localStorage.getItem('evgenii_subscribed');
-            if (subscribedEmail) {
+            if (localStorage.getItem('evgenii_subscribed')) {
                 markAsSubscribed();
             }
         });
 
         function openSubscribeModal() {
-            // Проверяем, не подписан ли уже
             if (localStorage.getItem('evgenii_subscribed')) {
-                alert('🔥 Вы уже подписаны на обновления!');
+                alert(' Вы уже подписаны! Чтобы протестировать заново, очистите localStorage в консоли: localStorage.removeItem("evgenii_subscribed"); location.reload();');
                 return;
             }
             subscribeModal.classList.add('active');
@@ -1370,15 +1630,10 @@
             subscribeModal.classList.remove('active');
             subStatus.textContent = '';
             subEmailInput.value = '';
-            subActionBtn.disabled = false;
-            subActionBtn.textContent = 'Подписаться';
         }
 
-        // Закрытие по клику вне модального окна
         subscribeModal.addEventListener('click', (e) => {
-            if (e.target === subscribeModal) {
-                closeSubscribeModal();
-            }
+            if (e.target === subscribeModal) closeSubscribeModal();
         });
 
         function markAsSubscribed() {
@@ -1388,21 +1643,24 @@
         }
 
         async function handleSubscribe() {
+            if (!db) {
+                showSubStatus('❌ База данных не загружена. Проверьте интернет.', 'error');
+                return;
+            }
+
             const email = subEmailInput.value.trim();
-            
-            // Валидация email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
             if (!email || !emailRegex.test(email)) {
-                showSubStatus('❌ Введите корректный email', 'error');
+                showSubStatus('❌ Введите корректный email (пример: name@mail.ru)', 'error');
                 return;
             }
 
             subActionBtn.disabled = true;
-            subActionBtn.textContent = 'Обработка...';
+            subActionBtn.textContent = 'Сохранение...';
             showSubStatus('', '');
 
             try {
-                // Сохраняем в Firebase
                 await db.ref('subscribers').push({
                     email: email,
                     timestamp: Date.now(),
@@ -1410,22 +1668,20 @@
                     source: 'welcome_screen'
                 });
 
-                // Сохраняем в localStorage
                 localStorage.setItem('evgenii_subscribed', email);
+                showSubStatus('✅ Готово! Вы в списке подписчиков 🎉', 'success');
+                subActionBtn.textContent = 'Успешно!';
                 
-                // Показываем успех
-                showSubStatus('✅ Успешно! Теперь вы в списке подписчиков 🎉', 'success');
-                subActionBtn.textContent = 'Готово!';
-                
-                // Закрываем через 2 секунды
                 setTimeout(() => {
                     closeSubscribeModal();
                     markAsSubscribed();
-                }, 2000);
+                }, 1500);
 
             } catch (error) {
-                console.error('Firebase error:', error);
-                showSubStatus('⚠️ Ошибка подключения. Попробуйте позже.', 'error');
+                console.error("🔥 Firebase Error:", error);
+                let errMsg = '️ Ошибка сохранения';
+                if (error.code === 'PERMISSION_DENIED') errMsg = ' Доступ запрещён. Проверьте Rules в Firebase Console!';
+                showSubStatus(errMsg, 'error');
                 subActionBtn.disabled = false;
                 subActionBtn.textContent = 'Подписаться';
             }
@@ -1436,28 +1692,40 @@
             subStatus.className = 'sub-status ' + type;
         }
 
-        // Закрытие модального окна по Escape
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && subscribeModal.classList.contains('active')) {
-                closeSubscribeModal();
-            }
+            if (e.key === 'Escape' && subscribeModal.classList.contains('active')) closeSubscribeModal();
         });
 
-        // === ПОДСЧЕТ ПОДПИСЧИКОВ ===
-        function updateSubscriberCount() {
-            db.ref('subscribers').on('value', (snapshot) => {
-                const count = snapshot.numChildren();
-                subscriberCountEl.textContent = count;
-                
-                // Анимация при изменении числа
-                subscriberCountEl.style.transform = 'scale(1.3)';
-                subscriberCountEl.style.color = 'var(--neon-cyan)';
-                setTimeout(() => {
-                    subscriberCountEl.style.transform = 'scale(1)';
-                    subscriberCountEl.style.color = 'var(--neon-purple)';
-                }, 300);
-            });
+        // === MODAL: СОЗДАНИЕ РЕЛИЗА ===
+        const releaseModal = document.getElementById('releaseModal');
+
+        function openReleaseModal() {
+            const newTrack = tracks.find(t => t.isNew && t.title === "Поезд на юг");
+            if (newTrack) {
+                document.getElementById('releaseDescription').textContent = 
+                    newTrack.desc || "Экспериментальный трек на стыке эмоций и алгоритмов. " +
+                    "Голос ИИ передаёт атмосферу цифрового одиночества в мегаполисе.";
+                document.getElementById('releaseStyle').textContent = "Dark Synth • AI Voice • Melancholy • Cyberpunk";
+            }
+            releaseModal.classList.add('active');
+            setTimeout(() => {
+                document.querySelector('.release-modal').style.animation = 'none';
+            }, 300);
         }
+
+        function closeReleaseModal() {
+            releaseModal.classList.remove('active');
+        }
+
+        releaseModal?.addEventListener('click', (e) => {
+            if (e.target === releaseModal) closeReleaseModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && releaseModal?.classList.contains('active')) {
+                closeReleaseModal();
+            }
+        });
     </script>
 </body>
 </html>
