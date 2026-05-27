@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVGENII — Music</title>
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="./icon.png">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --neon-pink: #ff2d75; --neon-blue: #00d4ff; --neon-purple: #b537f2; --neon-cyan: #00f5d4;
+            --dark-bg: #0a0a0f; --card-bg: rgba(20, 20, 30, 0.6);
+            --text-primary: #e8e8f0; --text-secondary: #8888aa;
+            --glow-pink: 0 0 20px rgba(255, 45, 117, 0.6), 0 0 40px rgba(255, 45, 117, 0.3);
+            --glow-blue: 0 0 20px rgba(0, 212, 255, 0.6), 0 0 40px rgba(0, 212, 255, 0.3);
+            --glow-purple: 0 0 20px rgba(181, 55, 242, 0.6), 0 0 40px rgba(181, 55, 242, 0.3);
+            --glow-cyan: 0 0 20px rgba(0, 245, 212, 0.6), 0 0 40px rgba(0, 245, 212, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background: var(--dark-bg); 
+            color: var(--text-primary); 
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* === WELCOME SCREEN === */
+        #welcomeScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 70%, #000 100%);
+            z-index: 10000; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        #welcomeScreen.hidden { display: none !important; }
+        
+        .welcome-bg-orbs { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+        .welcome-orb {
+            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3;
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+        .welcome-orb:nth-child(1) { width: 50vw; height: 50vw; background: var(--neon-purple); top: -10%; left: -10%; }
+        .welcome-orb:nth-child(2) { width: 40vw; height: 40vw; background: var(--neon-blue); bottom: -10%; right: -10%; animation-delay: -5s; }
+        
+        .welcome-grid {
+            position: absolute; inset: 0; z-index: 1; pointer-events: none;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 45, 117, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: perspective(500px) rotateX(60deg) translateY(-100px);
+            opacity: 0.5;
+        }
+
+        .profile-card {
+            position: relative; z-index: 10;
+            width: 90%; max-width: 800px;
+            padding: 40px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), var(--glow-purple);
+            display: flex; flex-wrap: wrap; gap: 40px;
+            animation: slideUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .profile-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue), var(--neon-purple), var(--neon-cyan));
+            animation: gradientFlow 4s linear infinite; background-size: 400% 100%;
+            border-top-left-radius: 24px; border-top-right-radius: 24px;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes gradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes floatOrb { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(20px, -20px); } }
+
+        .avatar-wrapper {
+            position: relative; width: 150px; height: 150px; flex-shrink: 0;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .avatar-ring {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            border: 3px solid transparent; border-top-color: var(--neon-blue); border-bottom-color: var(--neon-pink);
+            animation: spin 4s linear infinite; box-shadow: var(--glow-purple); z-index: 1;
+        }
+        .avatar-ring::before {
+            content: ''; position: absolute; inset: -4px; border-radius: 50%;
+            border: 2px solid transparent; border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-purple);
+            animation: spin 6s linear infinite reverse;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .avatar-img {
+            width: 138px; height: 138px; border-radius: 50%;
+            background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+            object-fit: cover; border: 3px solid rgba(255,255,255,0.15);
+            box-shadow: 0 0 25px rgba(181, 55, 242, 0.4);
+            z-index: 2;
+        }
+        .avatar-fallback {
+            position: absolute; width: 138px; height: 138px; border-radius: 50%;
+            background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 48px; border: 3px solid rgba(255,255,255,0.15);
+            box-shadow: 0 0 25px rgba(181, 55, 242, 0.4);
+            z-index: 2; display: none;
+        }
+
+        .info-wrapper { flex: 1; min-width: 280px; display: flex; flex-direction: column; justify-content: center; }
+        .username-row { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .username {
+            font-family: 'JetBrains Mono', monospace; font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        .status-dot {
+            width: 12px; height: 12px; background: var(--neon-cyan); border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-cyan); animation: pulse-live 1.5s infinite;
+        }
+        @keyframes pulse-live { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.8); } }
+
+        .stats {
+            display: flex; list-style: none; gap: 30px; margin-bottom: 24px;
+            padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .stats li { display: flex; flex-direction: column; align-items: center; font-family: 'JetBrains Mono', monospace; }
+        .stats strong { 
+            color: var(--neon-purple); 
+            font-size: 1.3rem; 
+            font-weight: 700; 
+            text-shadow: var(--glow-purple);
+            transition: all 0.3s ease;
+        }
+        .stats span { color: var(--text-secondary); font-size: 0.8rem; margin-top: 4px; }
+
+        .bio { line-height: 1.6; color: var(--text-secondary); font-size: 1rem; margin-bottom: 32px; }
+        .bio strong { color: var(--text-primary); font-weight: 600; }
+        .bio a { color: var(--neon-cyan); text-decoration: none; transition: 0.3s; }
+        .bio a:hover { text-shadow: 0 0 10px var(--neon-cyan); }
+
+        .action-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 16px;
+            width: 100%;
+        }
+        .cyber-btn {
+            position: relative; padding: 14px 32px; 
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.2px; color: white; 
+            text-decoration: none; background: rgba(255, 255, 255, 0.04); 
+            border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px);
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%); 
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            cursor: pointer; user-select: none; overflow: hidden;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .cyber-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s;
+        }
+        .cyber-btn:hover::before { left: 100%; }
+        .cyber-btn.primary { border-color: var(--neon-blue); box-shadow: var(--glow-blue); }
+        .cyber-btn.secondary { border-color: var(--neon-pink); box-shadow: var(--glow-pink); }
+        .cyber-btn.outline { border-color: var(--neon-purple); color: var(--neon-purple); }
+        
+        /* === КНОПКА ПОДПИСАТЬСЯ С НЕОНОВОЙ ПОДСВЕТКОЙ === */
+        .cyber-btn.subscribe-btn {
+            grid-column: 1 / -1;
+            order: -1;
+            border-color: var(--neon-cyan);
+            background: linear-gradient(135deg, rgba(0, 245, 212, 0.15), rgba(0, 212, 255, 0.1));
+            box-shadow: 
+                0 0 20px rgba(0, 245, 212, 0.4),
+                0 0 40px rgba(0, 245, 212, 0.2),
+                inset 0 0 20px rgba(0, 245, 212, 0.1);
+            animation: subscribePulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .cyber-btn.subscribe-btn::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple), var(--neon-cyan));
+            background-size: 300% 300%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            filter: blur(8px);
+            animation: gradientGlow 4s ease infinite;
+        }
+
+        .cyber-btn.subscribe-btn:hover::after {
+            opacity: 0.6;
+        }
+
+        .cyber-btn.subscribe-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 0 30px rgba(0, 245, 212, 0.7),
+                0 0 60px rgba(0, 245, 212, 0.4),
+                inset 0 0 30px rgba(0, 245, 212, 0.2);
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .cyber-btn.subscribe-btn.subscribed {
+            opacity: 0.6;
+            cursor: default;
+            animation: none;
+            background: linear-gradient(135deg, rgba(0, 245, 212, 0.3), rgba(0, 212, 255, 0.2));
+        }
+
+        .cyber-btn.subscribe-btn.subscribed:hover {
+            transform: none;
+            box-shadow: 
+                0 0 20px rgba(0, 245, 212, 0.4),
+                0 0 40px rgba(0, 245, 212, 0.2);
+        }
+
+        @keyframes subscribePulse {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 20px rgba(0, 245, 212, 0.4),
+                    0 0 40px rgba(0, 245, 212, 0.2),
+                    inset 0 0 20px rgba(0, 245, 212, 0.1);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 35px rgba(0, 245, 212, 0.6),
+                    0 0 70px rgba(0, 245, 212, 0.3),
+                    inset 0 0 30px rgba(0, 245, 212, 0.15);
+            }
+        }
+
+        @keyframes gradientGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .cyber-btn:hover { transform: translateY(-3px) scale(1.02); background: rgba(255, 255, 255, 0.1); z-index: 2; }
+        .cyber-btn.primary:hover { box-shadow: 0 0 35px rgba(0, 212, 255, 0.7); border-color: #4de4ff; }
+        .cyber-btn.secondary:hover { box-shadow: 0 0 35px rgba(255, 45, 117, 0.7); border-color: #ff5a96; }
+        .cyber-btn.outline:hover { box-shadow: 0 0 35px rgba(181, 55, 242, 0.7); border-color: #d474ff; color: white; }
+        .cyber-btn.full-width { grid-column: 1 / -1; }
+
+        /* === SUBSCRIBE MODAL === */
+        .subscribe-modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            z-index: 20000; display: none; align-items: center; justify-content: center; 
+            opacity: 0; transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+        .subscribe-modal-overlay.active { display: flex; opacity: 1; }
+
+        .subscribe-modal {
+            width: 100%; max-width: 450px; padding: 40px 30px;
+            background: linear-gradient(145deg, rgba(20,20,30,0.95), rgba(15,15,25,0.95));
+            border: 2px solid var(--neon-cyan); border-radius: 24px;
+            box-shadow: 
+                0 0 40px rgba(0, 245, 212, 0.3),
+                0 0 80px rgba(0, 245, 212, 0.1),
+                inset 0 0 40px rgba(0, 245, 212, 0.05);
+            text-align: center; position: relative; 
+            transform: scale(0.9) translateY(20px); 
+            transition: transform 0.3s ease;
+            animation: modalGlow 3s ease infinite;
+        }
+
+        @keyframes modalGlow {
+            0%, 100% { box-shadow: 0 0 40px rgba(0, 245, 212, 0.3), 0 0 80px rgba(0, 245, 212, 0.1), inset 0 0 40px rgba(0, 245, 212, 0.05); }
+            50% { box-shadow: 0 0 60px rgba(0, 245, 212, 0.5), 0 0 100px rgba(0, 245, 212, 0.2), inset 0 0 60px rgba(0, 245, 212, 0.1); }
+        }
+
+        .subscribe-modal-overlay.active .subscribe-modal { transform: scale(1) translateY(0); }
+
+        .sub-close {
+            position: absolute; top: 15px; right: 20px; font-size: 1.8rem; 
+            color: var(--text-secondary); cursor: pointer; transition: 0.3s; 
+            background: none; border: none; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+        }
+        .sub-close:hover { 
+            color: var(--neon-pink); 
+            transform: rotate(90deg) scale(1.1);
+            background: rgba(255, 45, 117, 0.1);
+        }
+
+        .sub-icon {
+            font-size: 3rem; margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: bellShake 2s ease-in-out infinite;
+        }
+
+        @keyframes bellShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .sub-title { 
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem; margin-bottom: 12px; color: white;
+            text-shadow: 0 0 20px rgba(0, 245, 212, 0.5);
+        }
+        .sub-desc { 
+            color: var(--text-secondary); margin-bottom: 30px; 
+            font-size: 1rem; line-height: 1.6; 
+        }
+
+        .sub-input-group { position: relative; margin-bottom: 24px; }
+        .sub-input {
+            width: 100%; padding: 16px 20px; 
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(0, 245, 212, 0.3); 
+            border-radius: 12px;
+            color: white; font-family: 'Montserrat', sans-serif; 
+            font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        .sub-input:focus { 
+            border-color: var(--neon-cyan); 
+            box-shadow: 0 0 20px rgba(0, 245, 212, 0.3);
+            background: rgba(255,255,255,0.08);
+        }
+        .sub-input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+
+        .sub-btn-action {
+            width: 100%; padding: 16px; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+            color: var(--dark-bg); font-weight: 800; font-family: 'JetBrains Mono', monospace; 
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; 
+            transition: 0.3s; font-size: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 245, 212, 0.4);
+        }
+        .sub-btn-action:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 30px rgba(0, 245, 212, 0.6);
+            filter: brightness(1.1);
+        }
+        .sub-btn-action:active { transform: translateY(0); }
+        .sub-btn-action:disabled { 
+            opacity: 0.6; cursor: not-allowed; 
+            background: linear-gradient(135deg, #666, #888);
+            box-shadow: none;
+        }
+
+        .sub-status { 
+            margin-top: 20px; font-size: 0.9rem; min-height: 24px; 
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .sub-status.success { 
+            color: var(--neon-cyan); 
+            text-shadow: 0 0 15px rgba(0, 245, 212, 0.6);
+            animation: successPulse 0.5s ease;
+        }
+        .sub-status.error { 
+            color: var(--neon-pink);
+            text-shadow: 0 0 15px rgba(255, 45, 117, 0.6);
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* === MAIN SITE === */
+        #mainSite { opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+        #mainSite.visible { opacity: 1; pointer-events: auto; }
+
+        .cursor { position: fixed; width: 20px; height: 20px; border: 2px solid var(--neon-blue); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: 0.1s; mix-blend-mode: difference; }
+        .cursor.hover { transform: translate(-50%, -50%) scale(1.5); background: rgba(0, 212, 255, 0.2); border-color: var(--neon-pink); }
+        .cursor-dot { position: fixed; width: 4px; height: 4px; background: var(--neon-pink); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
+
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        .bg-animation::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 80%, rgba(255, 45, 117, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(0, 212, 255, 0.15) 0%, transparent 50%); animation: gradientShift 15s ease-in-out infinite; }
+        @keyframes gradientShift { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.05); } }
+        .bg-animation .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: floatOrb 30s ease-in-out infinite; mix-blend-mode: screen; }
+        .orb:nth-child(1) { width: 60vw; height: 60vw; background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple)); top: -20%; left: -10%; }
+        .orb:nth-child(2) { width: 50vw; height: 50vw; background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); bottom: -20%; right: -10%; animation-delay: -10s; }
+        
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .particle { position: absolute; width: 3px; height: 3px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: twinkle linear infinite; }
+        @keyframes twinkle { 0% { opacity: 0; transform: translateY(100vh) scale(0); } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; transform: translateY(-20px) scale(1); } }
+
+        .grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 45, 117, 0.03) 1px, transparent 1px); background-size: 50px 50px; z-index: 1; pointer-events: none; animation: gridMove 20s linear infinite; }
+        @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0); } 100% { transform: perspective(500px) rotateX(60deg) translateY(50px); } }
+
+        .container { position: relative; z-index: 10; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        section { padding: 120px 0; scroll-margin-top: 90px; position: relative; }
+
+        /* Nav */
+        nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 100; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(20px); background: rgba(10, 10, 15, 0.9); border-bottom: 1px solid rgba(255,255,255,0.08); height: 76px; transition: 0.3s; }
+        nav.scrolled { padding: 12px 24px; background: rgba(10, 10, 15, 0.95); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); }
+        .logo { font-family: 'JetBrains Mono', monospace; font-weight: 800; letter-spacing: 3px; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .logo span { color: var(--neon-pink); text-shadow: var(--glow-pink); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; padding: 8px 16px; font-size: 0.85rem; font-weight: 500; transition: 0.3s; cursor: pointer; border-radius: 6px; }
+        .nav-links a:hover { color: white; transform: translateY(-2px); background: rgba(255,255,255,0.05); }
+
+        /* Hero */
+        .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-top: 80px; position: relative; }
+        .hero h1 { font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 800; line-height: 1.05; margin-bottom: 24px; text-shadow: 0 0 30px rgba(0, 212, 255, 0.3); }
+        .gradient-text { background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 30%, var(--neon-pink) 60%, var(--neon-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 300% 300%; animation: gradientFlow 8s ease infinite; }
+        .hero-description { font-size: 1.25rem; color: var(--text-secondary); max-width: 650px; margin: 0 auto 32px; line-height: 1.7; }
+        .hero-description strong { color: var(--neon-cyan); font-weight: 600; }
+        .action-zone { display: flex; gap: 16px; margin-top: 48px; flex-wrap: wrap; justify-content: center; }
+        
+        /* News Block */
+        .news-section-wrapper { max-width: 720px; margin: 48px auto 0; display: none; animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .news-section-wrapper.visible { display: block; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .news-container { background: linear-gradient(145deg, rgba(15,15,25,0.9), rgba(25,25,40,0.9)); border: 1px solid rgba(255, 45, 117, 0.4); border-radius: 20px; padding: 24px; backdrop-filter: blur(20px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), var(--glow-pink); position: relative; overflow: hidden; }
+        .news-container::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue), var(--neon-purple), var(--neon-cyan)); animation: gradientFlow 4s linear infinite; background-size: 400% 100%; }
+        .news-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+        .news-title { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 12px; letter-spacing: 1px; }
+        .live-indicator { width: 10px; height: 10px; background: linear-gradient(135deg, #ff2d75, #ff6b9d); border-radius: 50%; box-shadow: 0 0 15px #ff2d75; animation: pulse-live 1.2s infinite; position: relative; }
+        .live-indicator::after { content: ''; position: absolute; inset: -4px; border: 2px solid rgba(255, 45, 117, 0.4); border-radius: 50%; animation: pulse-ring 1.2s infinite; }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+        .news-list { list-style: none; padding: 0; margin: 0; text-align: left; }
+        .news-item { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); transition: 0.3s; }
+        .news-item:hover { padding-left: 8px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+        .news-date { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--neon-cyan); min-width: 68px; flex-shrink: 0; font-weight: 600; }
+        .news-text { font-size: 0.95rem; color: var(--text-primary); line-height: 1.4; }
+        .news-tag { display: inline-flex; align-items: center; font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(181, 55, 242, 0.2)); color: var(--neon-cyan); margin-right: 8px; font-weight: 700; border: 1px solid rgba(0, 212, 255, 0.3); }
+        .news-tag.NEW { background: linear-gradient(135deg, rgba(255, 45, 117, 0.25), rgba(255, 100, 150, 0.25)); color: var(--neon-pink); border-color: rgba(255, 45, 117, 0.4); }
+        .news-tag.SYS { background: linear-gradient(135deg, rgba(181, 55, 242, 0.25), rgba(140, 80, 200, 0.25)); color: var(--neon-purple); border-color: rgba(181, 55, 242, 0.4); }
+
+        /* === TRACKS SECTIONS === */
+        .section-header { margin-bottom: 48px; padding-left: 24px; position: relative; }
+        .section-header::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 4px; background: linear-gradient(180deg, var(--neon-pink), var(--neon-blue)); border-radius: 2px; box-shadow: 0 0 15px rgba(255, 45, 117, 0.5); }
+        .section-tag { font-family: 'JetBrains Mono', monospace; color: var(--neon-pink); font-size: 0.8rem; margin-bottom: 8px; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 45, 117, 0.5); }
+        .section-title { font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, var(--text-primary), var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        
+        /* === 🎨 НЕОНОВЫЕ КАРТОЧКИ НОВЫХ РЕЛИЗОВ === */
+        .track-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            box-shadow: 
+                0 0 0 2px rgba(0, 212, 255, 0.3),
+                0 0 20px rgba(0, 212, 255, 0.2),
+                inset 0 0 30px rgba(181, 55, 242, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .track-card::before {
+            content: ''; position: absolute; inset: -2px; border-radius: 22px;
+            padding: 2px;
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue), var(--neon-purple), var(--neon-cyan), var(--neon-pink));
+            background-size: 400% 400%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            animation: neonFlow 3s linear infinite;
+            opacity: 0.8; pointer-events: none;
+            z-index: -1;
+        }
+        @keyframes neonFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .track-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 
+                0 0 0 2px var(--neon-blue),
+                0 20px 50px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(0, 212, 255, 0.4),
+                inset 0 0 40px rgba(181, 55, 242, 0.2);
+            z-index: 5;
+        }
+        .track-card:hover::before {
+            opacity: 1;
+            filter: drop-shadow(0 0 10px var(--neon-blue));
+        }
+        
+        .track-cover {
+            width: 100%; aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #1a1a2e, #0f0f1a, #1a1a2e);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem; overflow: hidden; position: relative;
+        }
+        .track-cover::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.7));
+            opacity: 0; transition: opacity 0.3s; z-index: 1; pointer-events: none;
+        }
+        .track-card:hover .track-cover::before { opacity: 1; }
+        .track-cover img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s;
+        }
+        .track-card:hover .track-cover img {
+            transform: scale(1.08) rotate(0.5deg);
+            filter: brightness(1.1) saturate(1.2);
+        }
+        
+        .track-player-row {
+            padding: 22px; display: flex; align-items: center; gap: 16px;
+            position: relative; z-index: 2;
+        }
+        
+        /* === КНОПКА PLAY (ОБЩАЯ) === */
+        .play-btn {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            color: var(--text-primary); border: 1px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; flex-shrink: 0; transition: 0.25s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative; overflow: visible;
+        }
+        .play-btn::before {
+            content: ''; position: absolute; inset: -2px; border-radius: 50%;
+            background: conic-gradient(from 0deg, var(--neon-blue), var(--neon-pink), var(--neon-purple), var(--neon-blue));
+            animation: spin 3s linear infinite; opacity: 0; transition: opacity 0.3s; z-index: -1;
+        }
+        .play-btn:hover::before { opacity: 1; }
+        .play-btn:hover { transform: scale(1.1); box-shadow: 0 6px 25px rgba(0, 212, 255, 0.4); }
+        .play-btn svg { width: 20px; fill: currentColor; margin-left: 2px; transition: margin 0.2s; }
+        .play-btn.active {
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: white; box-shadow: var(--glow-pink), 0 0 60px rgba(255,45,117,0.4);
+            animation: pulse 1.5s infinite;
+        }
+        .play-btn.active svg { margin-left: 0; }
+        
+        .track-info { flex: 1; min-width: 0; }
+        .track-info h3 { font-size: 1.1rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+        .track-info p { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.85; }
+        
+        .progress-container {
+            width: 100%; height: 5px; background: rgba(255,255,255,0.08);
+            margin-top: 12px; border-radius: 3px; overflow: hidden;
+            cursor: pointer; position: relative;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .progress-bar {
+            height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan));
+            width: 0%; transition: width 0.1s linear; position: relative;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        .progress-bar::after {
+            content: ''; position: absolute; right: 0; top: 50%;
+            transform: translateY(-50%); width: 8px; height: 8px;
+            background: white; border-radius: 50%;
+            box-shadow: 0 0 12px white; opacity: 0; transition: opacity 0.2s;
+        }
+        .progress-container:hover .progress-bar::after { opacity: 1; }
+        
+        .track-duration { font-family: 'JetBrains Mono'; font-size: 0.85rem; color: var(--text-secondary); flex-shrink: 0; opacity: 0.8; }
+        .track-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--neon-blue); margin-left: 10px; flex-shrink: 0; font-weight: 600; }
+        
+        .sound-wave { display: none; align-items: center; gap: 3px; height: 24px; margin-left: 8px; }
+        .play-btn.active + .sound-wave { display: flex; }
+        .wave-bar {
+            width: 3px; background: linear-gradient(180deg, var(--neon-pink), var(--neon-purple));
+            border-radius: 2px; animation: wave 0.5s ease-in-out infinite alternate;
+            box-shadow: 0 0 8px rgba(255,45,117,0.6);
+        }
+        .wave-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 16px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 12px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 20px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 10px; animation-delay: 0.4s; }
+        @keyframes wave { from { transform: scaleY(0.4); opacity: 0.5; } to { transform: scaleY(1); opacity: 1; } }
+        
+        .download-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-secondary); text-decoration: none; transition: 0.25s;
+            margin-left: 6px; flex-shrink: 0; position: relative; overflow: hidden;
+        }
+        .download-btn:hover {
+            border-color: var(--neon-blue); color: white; transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+        .download-btn svg { width: 16px; height: 16px; fill: currentColor; position: relative; z-index: 2; }
+        
+        /* === 📋 КОМПАКТНЫЙ СПИСОК "ВСЕ ТРЕКИ" === */
+        .compact-list {
+            display: grid; grid-template-columns: 1fr; gap: 12px;
+            margin-top: 24px;
+        }
+        .compact-item {
+            background: linear-gradient(145deg, rgba(20,20,30,0.7), rgba(15,15,25,0.9));
+            border-radius: 16px; padding: 14px 18px;
+            display: flex; align-items: center; gap: 14px;
+            transition: all 0.3s ease; position: relative;
+            backdrop-filter: blur(12px);
+            
+            /* Неоновая рамка для списка */
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.05);
+        }
+        .compact-item::before {
+            content: ''; position: absolute; inset: -1px; border-radius: 17px;
+            padding: 1px;
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue), var(--neon-purple), transparent);
+            background-size: 200% 200%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            opacity: 0.5; pointer-events: none; transition: opacity 0.3s;
+        }
+        .compact-item:hover {
+            border-color: var(--neon-cyan);
+            transform: translateX(6px);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .compact-item:hover::before { opacity: 1; }
+        
+        /* 🖼️ Мини-обложка 48×48 */
+        .compact-cover {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+            overflow: hidden; flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; position: relative;
+        }
+        .compact-cover img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .compact-item:hover .compact-cover img { transform: scale(1.1); }
+        .compact-cover::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 70%, rgba(0,0,0,0.5));
+            pointer-events: none;
+        }
+        
+        .compact-info { flex: 1; min-width: 0; }
+        .compact-info h4 { font-size: 1rem; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+        .compact-info p { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.8; }
+        
+        .compact-progress-bg {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 3px;
+            background: rgba(255,255,255,0.08);
+            border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;
+            cursor: pointer; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .compact-progress-fill {
+            height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan));
+            width: 0%; transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        .compact-progress-fill::after {
+            content: ''; position: absolute; right: 0; top: 50%;
+            transform: translateY(-50%); width: 6px; height: 6px;
+            background: white; border-radius: 50%;
+            box-shadow: 0 0 10px white; opacity: 0; transition: opacity 0.2s;
+        }
+        .compact-item:hover .compact-progress-fill::after { opacity: 1; }
+        .compact-item:hover .compact-progress-fill {
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+            box-shadow: 0 0 10px rgba(255, 45, 117, 0.4);
+        }
+        
+        .compact-duration { font-family: 'JetBrains Mono'; font-size: 0.8rem; color: var(--text-secondary); flex-shrink: 0; opacity: 0.8; }
+        .compact-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--neon-blue); margin-left: 10px; font-weight: 600; }
+        .compact-item:hover .compact-time { color: var(--neon-pink); text-shadow: 0 0 8px rgba(255, 45, 117, 0.6); }
+        .compact-item .download-btn { width: 32px; height: 32px; margin-left: 4px; }
+        .compact-item .download-btn svg { width: 14px; height: 14px; }
+        
+        /* === КНОПКА ПОКАЗАТЬ ВСЕ (ВНУТРИ СПИСКА) === */
+        .show-all-btn {
+            width: 100%; padding: 18px 24px; margin-top: 12px;
+            background: rgba(255,255,255,0.04); border: 1px dashed rgba(255,255,255,0.18);
+            border-radius: 14px; color: var(--text-secondary);
+            font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; transition: 0.35s; display: flex; align-items: center;
+            justify-content: center; gap: 8px;
+        }
+        .show-all-btn:hover {
+            background: rgba(255,255,255,0.1); border-color: var(--neon-blue);
+            color: var(--text-primary); transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.2);
+        }
+        
+        /* Скрытые треки */
+        .hidden-tracks {
+            display: grid; grid-template-columns: 1fr; gap: 12px;
+            margin-top: 12px;
+            opacity: 0; 
+            max-height: 0;
+            overflow: hidden;
+            transform: translateY(-10px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+        .hidden-tracks.visible {
+            opacity: 1; 
+            max-height: 1000px; /* Достаточно большое значение */
+            transform: translateY(0); 
+            pointer-events: all;
+        }
+
+        /* Social */
+        .social-section { text-align: center; padding: 100px 0; position: relative; }
+        .social-section::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 60%; height: 1px; background: linear-gradient(90deg, transparent, rgba(36, 161, 222, 0.5), transparent); }
+        .social-btns { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 40px; }
+        .s-btn { padding: 16px 32px; border-radius: 14px; text-decoration: none; color: white; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 12px; transition: 0.35s; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+        .tg { background: linear-gradient(135deg, #24A1DE, #1a8bc9); box-shadow: 0 4px 20px rgba(36, 161, 222, 0.4); }
+        .insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); box-shadow: 0 4px 20px rgba(188, 24, 136, 0.4); }
+        .s-btn:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 12px 35px rgba(0,0,0,0.4); z-index: 3; }
+        
+        footer { text-align: center; padding: 48px 24px 60px; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.08); position: relative; }
+        footer::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 80%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .profile-card { flex-direction: column; align-items: center; text-align: center; padding: 30px 20px; }
+            .avatar-wrapper { margin-bottom: 20px; }
+            .username-row { justify-content: center; }
+            .stats { justify-content: center; width: 100%; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 20px; } section { padding: 90px 0; }
+            .hero h1 { font-size: clamp(2.2rem, 8vw, 4rem); }
+            .action-zone { gap: 12px; } .cyber-btn { padding: 15px 26px; font-size: 0.8rem; }
+            .grid { grid-template-columns: 1fr; }
+            .track-player-row { padding: 18px; gap: 12px; } .play-btn { width: 44px; height: 44px; }
+            .nav-links a { padding: 6px 12px; font-size: 0.8rem; }
+            .cursor, .cursor-dot { display: none !important; }
+            .compact-item { flex-wrap: wrap; }
+            .compact-cover { width: 40px; height: 40px; }
+            .subscribe-modal { padding: 30px 20px; }
+            .sub-title { font-size: 1.5rem; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-pink), var(--neon-blue)); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--neon-blue), var(--neon-purple)); }
+
+        /* Chat Styles */
+        .chat-toggle { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink)); border: 2px solid rgba(255,255,255,0.2); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; box-shadow: var(--glow-purple); transition: 0.3s; font-size: 1.5rem; }
+        .chat-toggle:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 30px rgba(181, 55, 242, 0.8), 0 0 60px rgba(255, 45, 117, 0.5); }
+        .chat-toggle.active { background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); box-shadow: var(--glow-blue); }
+        .chat-window { position: fixed; bottom: 90px; right: 24px; width: 360px; max-height: 500px; background: linear-gradient(145deg, rgba(15,15,25,0.95), rgba(25,25,40,0.95)); border: 1px solid rgba(181, 55, 242, 0.5); border-radius: 20px; backdrop-filter: blur(20px); box-shadow: 0 10px 40px rgba(0,0,0,0.5), var(--glow-purple); z-index: 999; display: none; flex-direction: column; overflow: hidden; animation: slideUp 0.3s ease; }
+        .chat-window.visible { display: flex; }
+        .chat-header { padding: 16px 20px; background: linear-gradient(90deg, rgba(181,55,242,0.2), rgba(255,45,117,0.2)); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; cursor: move; }
+        .chat-title { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 8px; }
+        .chat-title::before { content: ''; width: 8px; height: 8px; background: var(--neon-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--neon-cyan); animation: pulse-live 1.2s infinite; }
+        .chat-close { background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; padding: 4px; }
+        .chat-close:hover { color: var(--neon-pink); }
+        .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; max-height: 340px; }
+        .chat-messages::-webkit-scrollbar { width: 6px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-purple), var(--neon-blue)); border-radius: 3px; }
+        .message { max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 0.9rem; line-height: 1.4; position: relative; animation: messageIn 0.2s ease; word-wrap: break-word; }
+        @keyframes messageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.incoming { align-self: flex-start; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-bottom-left-radius: 4px; }
+        .message.outgoing { align-self: flex-end; background: linear-gradient(135deg, rgba(181,55,242,0.3), rgba(255,45,117,0.3)); border: 1px solid rgba(181,55,242,0.4); border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(181,55,242,0.2); }
+        .message-time { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-secondary); margin-top: 4px; opacity: 0.7; }
+        .message-avatar { position: absolute; bottom: -8px; width: 20px; height: 20px; border-radius: 50%; background: var(--neon-cyan); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--dark-bg); }
+        .message.incoming .message-avatar { left: -8px; background: var(--neon-blue); }
+        .message.outgoing .message-avatar { right: -8px; background: var(--neon-pink); }
+        .chat-input { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; background: rgba(10,10,15,0.5); }
+        .chat-input input { flex: 1; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: var(--text-primary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; outline: none; transition: 0.2s; }
+        .chat-input input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 212, 255, 0.3); }
+        .chat-input input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+        .chat-send { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink)); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; }
+        .chat-send:hover { transform: scale(1.05); box-shadow: var(--glow-purple); }
+        .chat-send:active { transform: scale(0.95); }
+        .chat-send svg { width: 18px; height: 18px; fill: currentColor; }
+        .chat-clear { padding: 8px 16px; background: rgba(255,45,117,0.15); border: 1px solid rgba(255,45,117,0.3); border-radius: 8px; color: var(--neon-pink); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: 0.2s; margin: 8px 16px 0; align-self: flex-end; }
+        .chat-clear:hover { background: rgba(255,45,117,0.25); box-shadow: 0 0 15px rgba(255,45,117,0.3); }
+        .empty-chat { text-align: center; color: var(--text-secondary); font-size: 0.85rem; padding: 30px 20px; opacity: 0.7; }
+        .empty-chat::before { content: '💬'; display: block; font-size: 2rem; margin-bottom: 10px; opacity: 0.5; }
+        .chat-status { font-size: 0.7rem; color: var(--neon-cyan); text-align: center; padding: 4px 0; background: rgba(0,212,255,0.1); border-radius: 4px; margin: 8px 16px 0; }
+    </style>
+</head>
+<body>
+    <!-- === WELCOME SCREEN === -->
+    <div id="welcomeScreen">
+        <div class="welcome-bg-orbs">
+            <div class="welcome-orb"></div><div class="welcome-orb"></div>
+        </div>
+        <div class="welcome-grid"></div>
+        
+        <div class="profile-card">
+            <div class="avatar-wrapper">
+                <div class="avatar-ring"></div>
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4&top=shortHair&clothing=blazerAndShirt" 
+                     alt="Avatar" 
+                     class="avatar-img"
+                     loading="eager"
+                     onerror="this.style.display='none'; document.getElementById('avatarFallback').style.display='flex';">
+                <div id="avatarFallback" class="avatar-fallback">🎧</div>
+            </div>
+
+            <div class="info-wrapper">
+                <div class="username-row">
+                    <h1 class="username">EVGENII<span style="color:var(--neon-cyan)">.</span></h1>
+                    <div class="status-dot" title="Online"></div>
+                </div>
+
+                <ul class="stats">
+                    <li><strong id="trackCount">0</strong><span>треков</span></li>
+                    <li><strong>AI</strong><span>voice</span></li>
+                    <li><strong id="subscriberCount">0</strong><span>подписчиков</span></li>
+                </ul>
+
+                <div class="bio">
+                    Где заканчиваюсь я — и начинается ИИ.<br>
+                    Эксперимент на стыке эмоций и кода.
+                </div>
+
+                <div class="action-btns">
+                    <!-- КНОПКА ПОДПИСАТЬСЯ -->
+                    <button class="cyber-btn subscribe-btn" id="subscribeBtn" onclick="openSubscribeModal()">
+                        <i class="fas fa-bell"></i> Подписаться
+                    </button>
+                    
+                    <button class="cyber-btn outline" onclick="window.open('https://www.instagram.com/zhenyaa0?igsh=ZHV4ZHE1MGQwd3N5&utm_source=qr', '_blank')">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </button>
+                    <button class="cyber-btn secondary" onclick="window.open('https://t.me/+zo3YoDDckwoyOGYy', '_blank')">
+                        <i class="fab fa-telegram-plane"></i> Telegram
+                    </button>
+                    <button class="cyber-btn primary full-width" id="enterBtn">
+                        <i class="fas fa-sign-in-alt"></i> Войти
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === SUBSCRIBE MODAL === -->
+    <div class="subscribe-modal-overlay" id="subscribeModal">
+        <div class="subscribe-modal">
+            <button class="sub-close" onclick="closeSubscribeModal()">×</button>
+            <div class="sub-icon">🔔</div>
+            <h2 class="sub-title">Подписаться на релизы</h2>
+            <p class="sub-desc">Получай уведомления о новых треках и закрытых дропах. Никакого спама, только музыка 🔥</p>
+            
+            <div class="sub-input-group">
+                <input type="email" id="subEmail" class="sub-input" placeholder="your@email.com" required>
+            </div>
+            
+            <button class="sub-btn-action" id="subActionBtn" onclick="handleSubscribe()">
+                Подписаться
+            </button>
+            
+            <div class="sub-status" id="subStatus"></div>
+        </div>
+    </div>
+
+    <!-- === MAIN SITE === -->
+    <div id="mainSite">
+        <div class="cursor"></div>
+        <div class="cursor-dot"></div>
+
+        <div class="bg-animation">
+            <div class="orb"></div><div class="orb"></div>
+        </div>
+        <div class="particles" id="particles"></div>
+        <div class="grid-overlay"></div>
+
+        <nav id="navbar">
+            <div class="logo" onclick="window.scrollTo(0,0)">EVGENII<span>.</span></div>
+            <div class="nav-links">
+                <a onclick="scrollToId('new')">Релизы</a>
+                <a onclick="scrollToId('archive')">Архив</a>
+            </div>
+        </nav>
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="container">
+                <h1><span class="gradient-text">Где заканчиваюсь я —<br>и начинается ИИ.</span></h1>
+                <p class="hero-description">
+                    Мои тексты, озвученные <strong>искусственным разумом</strong>.<br>
+                    Эксперимент на стыке человеческих эмоций и машинного голоса.
+                </p>
+                <div class="action-zone">
+                    <div class="cyber-btn outline" onclick="toggleNews()">📡 Лента Обновлений</div>
+                    <div class="cyber-btn primary" onclick="scrollToId('new')">🎵 Новые Релизы</div>
+                    <div class="cyber-btn secondary" onclick="scrollToId('archive')">📦 Все Треки</div>
+                </div>
+                <div id="newsWrapper" class="news-section-wrapper">
+                    <div class="news-container">
+                        <div class="news-header">
+                            <div class="news-title"><span class="live-indicator"></span>ПОСЛЕДНИЕ ОБНОВЛЕНИЯ</div>
+                        </div>
+                        <ul class="news-list">
+                            <li class="news-item"><div class="news-date">24 МАЯ</div><div class="news-text"><span class="news-tag">NEW</span>Обновлен <strong>дизайн входа 🎨✨</strong></div></li>
+                            <li class="news-item"><div class="news-date">22 МАЯ</div><div class="news-text"><span class="news-tag">SYS</span>Добавлен <strong>внутренний чат💬</strong></div></li>
+                           <li class="news-item"><div class="news-date">21 МАЯ</div><div class="news-text"><span class="news-tag NEW">NEW</span>Трек <strong>"Братья"</strong> уже в релизах! 🎧</div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🎵 НОВЫЕ РЕЛИЗЫ - карточки с неоновой рамкой -->
+        <section id="new">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-tag">// NEW</div>
+                    <div class="section-title">Новые релизы</div>
+                </div>
+                <div class="grid" id="releasesList"></div>
+            </div>
+        </section>
+
+        <!-- 📦 ВСЕ ТРЕКИ - список с неоновыми рамками -->
+        <section id="archive">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-tag">// ARCHIVE</div>
+                    <div class="section-title">Все треки</div>
+                </div>
+                
+                <!-- Основной список (видны первые 4) -->
+                <div id="archiveList" class="compact-list"></div>
+                
+                <!-- Кнопка "Показать все" (вставляется JS-ом после 4-го трека) -->
+                <button id="showAllBtn" class="show-all-btn" onclick="toggleArchive()" style="display:none;">
+                    Показать все треки <span style="transition: transform 0.3s;" id="arrowIcon">▼</span>
+                </button>
+
+                <!-- Скрытый список (остальные треки) -->
+                <div id="hiddenTracks" class="hidden-tracks"></div>
+            </div>
+        </section>
+
+        <section class="social-section">
+            <div class="container">
+                <div class="section-header" style="border-left-color: #24A1DE;">
+                    <div class="section-tag" style="color: #24A1DE;">// CONNECT</div>
+                    <div class="section-title">Связь</div>
+                </div>
+                <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 30px; line-height: 1.6;">
+                    Подписывайся, чтобы не пропустить новые релизы  🔥
+                </p>
+                <div class="social-btns">
+                    <a href="https://t.me/+zo3YoDDckwoyOGYy" target="_blank" class="s-btn tg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                        Telegram Chat
+                    </a>
+                    <a href="https://www.instagram.com/zhenyaa0?igsh=ZHV4ZHE1MGQwd3N5&utm_source=qr" target="_blank" class="s-btn insta">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        Instagram
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer>© 2026 EVGENII • Создано Human & AI •  🔥</footer>
+
+        <!-- CHAT -->
+        <div class="chat-toggle" id="chatToggle" title="Открыть чат">💬</div>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-title">ЧАТ • ONLINE</div>
+                <button class="chat-close" id="chatClose">×</button>
+            </div>
+            <div class="chat-status" id="chatStatus">🔄 Подключение...</div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="empty-chat">Сообщений пока нет.<br>Напиши первое!</div>
+            </div>
+            <button class="chat-clear" id="chatClear">🗑️ Очистить чат</button>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Введите сообщение..." maxlength="500">
+                <button class="chat-send" id="chatSend">
+                    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === WELCOME SCREEN ===
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const mainSite = document.getElementById('mainSite');
+        const enterBtn = document.getElementById('enterBtn');
+        const trackCountEl = document.getElementById('trackCount');
+        const subscriberCountEl = document.getElementById('subscriberCount');
+        
+        // === СПИСОК ТРЕКОВ ===
+        const tracks = [
+            // 🎵 Новые релизы
+            { id: 1, title: "пуст", desc: "", file: "tracks/song6.mp3", duration: "4:03", cover: "cover/cover6.jpg", isNew: true },
+            { id: 2, title: "Нейронный Дождь", desc: "О чём думает нейросеть?", file: "tracks/song1.mp3", duration: "4:03", cover: "cover/cover2.jpg", isNew: true },
+            
+            // 📦 Архив (первые 4 будут видны сразу)
+            { id: 3, title: "А мне похуй", desc: "Когда похуй", file: "tracks/song.mp3", duration: "3:11", cover: "cover/cover1.jpg", isNew: false },
+            { id: 4, title: "Сгоревший экран", desc: "", file: "tracks/song2.mp3", duration: "3:48", cover: "cover/cover0.jpg", isNew: false },
+            { id: 5, title: "Тишина", desc: "", file: "tracks/song4.mp3", duration: "04:48", cover: "covers/cover0.jpg", isNew: false },
+            { id: 6, title: "Воздух Густеет", desc: "", file: "tracks/song1.mp3", duration: "03:23", cover: "covers/cover0.jpg", isNew: false },
+            
+            // 🔒 Заглушки (скрыты за кнопкой)
+            { id: 7, title: "Placeholder I", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false },
+            { id: 8, title: "Placeholder II", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false },
+            { id: 9, title: "Placeholder III", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false },
+            { id: 10, title: "Placeholder IV", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false },
+            { id: 11, title: "Placeholder V", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false }
+        ];
+        
+        function updateTrackCount() { trackCountEl.textContent = tracks.length; }
+        updateTrackCount();
+        document.body.style.overflow = 'hidden';
+        
+        function enterSite() {
+            welcomeScreen.style.opacity = '0';
+            welcomeScreen.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => {
+                welcomeScreen.classList.add('hidden');
+                document.body.style.overflow = '';
+                mainSite.classList.add('visible');
+                initSite();
+            }, 500);
+        }
+        enterBtn.addEventListener('click', enterSite);
+        document.addEventListener('keydown', (e) => {
+            if (!welcomeScreen.classList.contains('hidden') && (e.key === 'Enter' || e.key === 'Escape')) {
+                e.preventDefault(); enterSite();
+            }
+        });
+        
+        function initSite() { 
+            createParticles(); 
+            renderTracks(); 
+            updateSubscriberCount(); // <-- запускаем подсчет подписчиков
+            window.dispatchEvent(new Event('scroll')); 
+        }
+
+        // === CURSOR ===
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
+        if (!isMobile) {
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+                cursorDot.style.left = e.clientX + 'px'; cursorDot.style.top = e.clientY + 'px';
+            });
+            document.querySelectorAll('a, button, .cyber-btn, .play-btn, .download-btn, .compact-play-btn, .nav-links a, .logo, .chat-toggle, .chat-send, .chat-close, .chat-clear').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
+        } else { if(cursor) cursor.style.display = 'none'; if(cursorDot) cursorDot.style.display = 'none'; }
+
+        document.querySelector('.news-container')?.addEventListener('mousemove', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            e.currentTarget.style.setProperty('--x', `${e.clientX - rect.left}px`);
+            e.currentTarget.style.setProperty('--y', `${e.clientY - rect.top}px`);
+        });
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+        function toggleNews() {
+            const newsWrapper = document.getElementById('newsWrapper');
+            newsWrapper.classList.toggle('visible');
+            if (newsWrapper.classList.contains('visible')) {
+                setTimeout(() => newsWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+            }
+        }
+
+        let currentAudio = null, currentBtn = null, archiveExpanded = false;
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 70; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                p.style.opacity = Math.random() * 0.7 + 0.3;
+                container.appendChild(p);
+            }
+        }
+        function getCoverHTML(track) {
+            if (track.cover) return `<div class="track-cover"><img src="${track.cover}" alt="${track.title}" onerror="this.parentElement.innerHTML='🎵'"></div>`;
+            return `<div class="track-cover">${track.emoji || '🎵'}</div>`;
+        }
+        const downloadIcon = `<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`;
+        
+        // 🎨 Полная карточка для новых релизов (с неоновой рамкой)
+        function createFullCard(track) {
+            const card = document.createElement('div'); card.className = 'track-card';
+            const downloadName = track.title.toLowerCase().replace(/[^a-zа-яё0-9]+/gi, '-') + '.mp3';
+            card.innerHTML = `
+                ${getCoverHTML(track)}
+                <div class="track-player-row">
+                    <button class="play-btn" onclick="togglePlay('${track.file}', this, '${track.id}')">
+                        <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                    </button>
+                    <div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>
+                    <div class="track-info"><h3>${track.title}</h3><p>${track.desc || 'Без описания'}</p>
+                        <div class="progress-container" onclick="seekTrack(event, '${track.id}')"><div class="progress-bar" id="prog-${track.id}"></div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:4px;">
+                        <div class="track-duration">${track.duration}</div><div class="track-time" id="time-${track.id}">0:00</div>
+                        <a href="${track.file}" download="${downloadName}" class="download-btn" title="Скачать трек">${downloadIcon}</a>
+                    </div>
+                </div>`;
+            return card;
+        }
+        
+        // 📋 Компактный элемент для списка "Все треки" (с неоновой рамкой и мини-обложкой)
+        function createCompactItem(track) {
+            const item = document.createElement('div'); 
+            item.className = 'compact-item'; 
+            item.style.setProperty('--i', track.id);
+            const downloadName = track.title.toLowerCase().replace(/[^a-zа-яё0-9]+/gi, '-') + '.mp3';
+            
+            // Мини-обложка 48×48 с фолбэком
+            const coverHTML = track.cover 
+                ? `<div class="compact-cover"><img src="${track.cover}" alt="${track.title}" onerror="this.parentElement.innerHTML='🎵'"></div>`
+                : `<div class="compact-cover">🎵</div>`;
+            
+            item.innerHTML = `
+                ${coverHTML}
+                <button class="play-btn compact-play-btn" onclick="togglePlay('${track.file}', this, '${track.id}')">
+                    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                </button>
+                <div class="compact-info">
+                    <h4>${track.title}</h4>
+                    <p>${track.desc || 'Без описания'}</p>
+                </div>
+                <div style="display:flex;align-items:center;gap:4px;">
+                    <div class="compact-duration">${track.duration}</div>
+                    <div class="compact-time" id="time-${track.id}">0:00</div>
+                    <a href="${track.file}" download="${downloadName}" class="download-btn" title="Скачать трек">${downloadIcon}</a>
+                </div>
+                <div class="compact-progress-bg" onclick="seekTrack(event, '${track.id}')">
+                    <div class="compact-progress-fill" id="prog-${track.id}"></div>
+                </div>`;
+            return item;
+        }
+        
+        // === 🎵 РЕНДЕР: Новые релизы - полные карточки ===
+        // === 📦 РЕНДЕР: Все треки - список, 4 видно, остальные за кнопкой ===
+        function renderTracks() {
+            const newContainer = document.getElementById('releasesList');
+            const archiveList = document.getElementById('archiveList');
+            const hiddenTracks = document.getElementById('hiddenTracks');
+            const showAllBtn = document.getElementById('showAllBtn');
+            
+            const archiveTracks = tracks.filter(t => !t.isNew);
+            
+            // 🎵 Новые релизы
+            tracks.filter(t => t.isNew).forEach(track => {
+                newContainer.appendChild(createFullCard(track));
+            });
+            
+            // 📦 Все треки
+            if (archiveTracks.length > 0) {
+                // Первые 4 трека видны сразу
+                archiveTracks.slice(0, 4).forEach(track => {
+                    archiveList.appendChild(createCompactItem(track));
+                });
+                
+                // Остальные (начиная с 5-го) скрыты
+                archiveTracks.slice(4).forEach(track => {
+                    hiddenTracks.appendChild(createCompactItem(track));
+                });
+                
+                // Если треков > 4, показываем кнопку
+                if (archiveTracks.length > 4) {
+                    showAllBtn.style.display = 'flex';
+                } else {
+                    showAllBtn.style.display = 'none';
+                }
+            } else {
+                archiveList.innerHTML = '<p style="color:var(--text-secondary); text-align:center; padding: 30px;">В архиве пока пусто. Скоро будет 🔥</p>';
+                showAllBtn.style.display = 'none';
+            }
+        }
+        
+        function toggleArchive() {
+            archiveExpanded = !archiveExpanded;
+            const list = document.getElementById('hiddenTracks'), btn = document.getElementById('showAllBtn');
+            if (archiveExpanded) {
+                list.classList.add('visible');
+                btn.innerHTML = 'Свернуть <span id="arrowIcon" style="transition: transform 0.3s; display: inline-block; transform: rotate(180deg);">▼</span>';
+                btn.style.borderColor = 'var(--neon-blue)'; btn.style.color = 'var(--text-primary)'; btn.style.background = 'rgba(0, 212, 255, 0.1)';
+            } else {
+                list.classList.remove('visible');
+                btn.innerHTML = 'Показать все треки <span id="arrowIcon" style="transition: transform 0.3s;">▼</span>';
+                btn.style.borderColor = 'rgba(255,255,255,0.18)'; btn.style.color = 'var(--text-secondary)'; btn.style.background = 'rgba(255,255,255,0.04)';
+            }
+        }
+        
+        function seekTrack(event, trackId) {
+            if (!currentAudio || currentAudio.dataset.trackId !== trackId) return;
+            const bar = event.currentTarget, rect = bar.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+            currentAudio.currentTime = percent * currentAudio.duration;
+        }
+        function fmtTime(sec) { if (!sec || isNaN(sec)) return '0:00'; const m = Math.floor(sec / 60), s = Math.floor(sec % 60); return `${m}:${s.toString().padStart(2, '0')}`; }
+        
+        function stopCurrentTrack() {
+            if (currentAudio) {
+                currentAudio.pause();
+                if (currentBtn) { 
+                    currentBtn.classList.remove('active'); 
+                    currentBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>'; 
+                }
+                const oldProg = document.getElementById(`prog-${currentAudio.dataset.trackId}`);
+                if (oldProg) oldProg.style.width = '0%';
+            }
+        }
+        function setupAudioListeners(trackId) {
+            const updateTime = () => { const el = document.getElementById(`time-${trackId}`); if (el && currentAudio.duration && !isNaN(currentAudio.duration)) el.textContent = fmtTime(currentAudio.currentTime); };
+            const updateProgress = () => { const bar = document.getElementById(`prog-${trackId}`); if (bar && currentAudio.duration && !isNaN(currentAudio.duration)) bar.style.width = `${(currentAudio.currentTime / currentAudio.duration) * 100}%`; };
+            currentAudio.addEventListener('timeupdate', updateTime); 
+            currentAudio.addEventListener('timeupdate', updateProgress);
+        }
+        function resetTrackUI(trackId) { 
+            const bar = document.getElementById(`prog-${trackId}`); if (bar) bar.style.width = '0%'; 
+            const el = document.getElementById(`time-${trackId}`); if (el) el.textContent = '0:00'; 
+        }
+
+        // === MEDIA SESSION ===
+        function setupMediaSession(track) {
+            if ('mediaSession' in navigator) {
+                let artworkSrc = './icon.png'; 
+                if (track.cover) artworkSrc = track.cover;
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: track.title, artist: 'EVGENII', album: 'AI Music Project',
+                    artwork: [{ src: artworkSrc, sizes: '512x512', type: 'image/png' }]
+                });
+                navigator.mediaSession.setActionHandler('play', () => { if(currentAudio && currentAudio.paused) { currentAudio.play(); updatePlayButtonState(true); } });
+                navigator.mediaSession.setActionHandler('pause', () => { if(currentAudio && !currentAudio.paused) { currentAudio.pause(); updatePlayButtonState(false); } });
+                navigator.mediaSession.setActionHandler('nexttrack', () => playNextTrack(track.id));
+                navigator.mediaSession.setActionHandler('previoustrack', () => playPrevTrack(track.id));
+            }
+        }
+        function updatePlayButtonState(isPlaying) {
+            if (!currentBtn) return;
+            const playIcon = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+            const pauseIcon = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+            if (isPlaying) { currentBtn.classList.add('active'); currentBtn.innerHTML = pauseIcon; }
+            else { currentBtn.classList.remove('active'); currentBtn.innerHTML = playIcon; }
+        }
+        function playNextTrack(currentTrackId) {
+            const idx = tracks.findIndex(t => t.id == currentTrackId);
+            if (idx !== -1 && idx < tracks.length - 1) {
+                const next = tracks[idx + 1];
+                const allBtns = document.querySelectorAll('.play-btn, .compact-play-btn');
+                for(let b of allBtns) { if(b.getAttribute('onclick')?.includes(`'${next.id}'`)) { b.click(); break; } }
+            }
+        }
+        function playPrevTrack(currentTrackId) {
+            const idx = tracks.findIndex(t => t.id == currentTrackId);
+            if (idx > 0) {
+                const prev = tracks[idx - 1];
+                const allBtns = document.querySelectorAll('.play-btn, .compact-play-btn');
+                for(let b of allBtns) { if(b.getAttribute('onclick')?.includes(`'${prev.id}'`)) { b.click(); break; } }
+            }
+        }
+        function togglePlay(file, btn, trackId) {
+            const playIcon = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+            const pauseIcon = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+            if (currentBtn === btn) {
+                if (currentAudio && !currentAudio.paused) { currentAudio.pause(); updatePlayButtonState(false); }
+                else { currentAudio.play().catch(e => console.log("Resume error:", e)); updatePlayButtonState(true); const t = tracks.find(x => x.id == trackId); if(t) setupMediaSession(t); }
+                return;
+            }
+            stopCurrentTrack();
+            currentAudio = new Audio(file); currentAudio.dataset.trackId = trackId; currentBtn = btn; currentAudio.volume = 1.0;
+            currentAudio.play().then(() => { updatePlayButtonState(true); const t = tracks.find(x => x.id == trackId); if(t) setupMediaSession(t); setupAudioListeners(trackId); })
+            .catch(e => { console.log('Autoplay prevented:', e); updatePlayButtonState(false); });
+            currentAudio.onended = () => { resetTrackUI(trackId); updatePlayButtonState(false); playNextTrack(trackId); };
+        }
+        function scrollToId(id) { const el = document.getElementById(id); if (!el) return; const navH = document.querySelector('nav').offsetHeight; window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - navH - 20, behavior: 'smooth' }); }
+        if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+        document.addEventListener('visibilitychange', () => { if (document.hidden) console.log('Tab hidden — audio continues via Media Session'); });
+
+        // === FIREBASE CHAT ===
+        const firebaseConfig = { apiKey: "AIzaSyC8fxnC_WVl7r8mGBsF2SCITvzvlwUF0f0", authDomain: "evgenii-6a5bb.firebaseapp.com", databaseURL: "https://evgenii-6a5bb-default-rtdb.firebaseio.com", projectId: "evgenii-6a5bb", storageBucket: "evgenii-6a5bb.firebasestorage.app", messagingSenderId: "623681147476", appId: "1:623681147476:web:893a12286d88af4eb313c1", measurementId: "G-H7TYB5E8PW" };
+        firebase.initializeApp(firebaseConfig); const db = firebase.database(); const CHAT_REF = db.ref('evgenii_chat');
+        const currentUserId = localStorage.getItem('evgenii_user_id') || 'user_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('evgenii_user_id', currentUserId);
+        let currentUserName = localStorage.getItem('evgenii_user_name');
+        const chatToggle = document.getElementById('chatToggle'), chatWindow = document.getElementById('chatWindow'), chatClose = document.getElementById('chatClose'), chatInput = document.getElementById('chatInput'), chatSend = document.getElementById('chatSend'), chatMessages = document.getElementById('chatMessages'), chatClear = document.getElementById('chatClear'), chatStatus = document.getElementById('chatStatus');
+        function formatTime(date) { return new Date(date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }); }
+        function renderMessages(messages) {
+            if (!messages || Object.keys(messages).length === 0) { chatMessages.innerHTML = '<div class="empty-chat">Сообщений пока нет.<br>Напиши первое!</div>'; return; }
+            chatMessages.innerHTML = '';
+            Object.values(messages).forEach(msg => {
+                const div = document.createElement('div'), isMe = msg.userId === currentUserId;
+                div.className = `message ${isMe ? 'outgoing' : 'incoming'}`;
+                div.innerHTML = `${msg.text.replace(/[<>]/g, '')}<div class="message-time">${formatTime(msg.timestamp)}</div><div class="message-avatar">${isMe ? 'Я' : (msg.userName || 'Гость')}</div>`;
+                chatMessages.appendChild(div);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        function addMessage(text) { if (!text.trim()) return; CHAT_REF.push({ text: text.trim(), userId: currentUserId, userName: currentUserName || 'Гость', timestamp: Date.now() }); chatInput.value = ''; }
+        function clearChat() { const password = prompt('🔐 Введите пароль администратора:'); if (password === '0770') { if (confirm('⚠️ Очистить чат для ВСЕХ пользователей?')) CHAT_REF.remove(); } else if (password !== null) alert('❌ Неверный пароль!'); }
+        function toggleChat() {
+            if (!currentUserName) { const name = prompt('👋 Привет! Введите ваше имя для чата:', 'Гость'); if (name === null) return; currentUserName = name.trim() || 'Гость'; localStorage.setItem('evgenii_user_name', currentUserName); }
+            const isVisible = chatWindow.classList.toggle('visible'); chatToggle.classList.toggle('active', isVisible); chatToggle.textContent = isVisible ? '✕' : '💬'; if (isVisible) setTimeout(() => chatInput.focus(), 100);
+        }
+        CHAT_REF.on('value', (snapshot) => { renderMessages(snapshot.val()); chatStatus.textContent = '✅ Онлайн'; chatStatus.style.color = 'var(--neon-cyan)'; }, (error) => { chatStatus.textContent = '❌ Ошибка подключения'; chatStatus.style.color = 'var(--neon-pink)'; console.error('Firebase error:', error); });
+        chatToggle.addEventListener('click', toggleChat); chatClose.addEventListener('click', () => { chatWindow.classList.remove('visible'); chatToggle.classList.remove('active'); chatToggle.textContent = '💬'; });
+        chatSend.addEventListener('click', () => addMessage(chatInput.value)); chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addMessage(chatInput.value); }); chatClear.addEventListener('click', clearChat);
+        document.addEventListener('click', (e) => { if (chatWindow.classList.contains('visible') && !chatWindow.contains(e.target) && !chatToggle.contains(e.target)) { chatWindow.classList.remove('visible'); chatToggle.classList.remove('active'); chatToggle.textContent = '💬'; } });
+
+        // === SUBSCRIBE FUNCTIONALITY ===
+        const subscribeModal = document.getElementById('subscribeModal');
+        const subEmailInput = document.getElementById('subEmail');
+        const subStatus = document.getElementById('subStatus');
+        const subActionBtn = document.getElementById('subActionBtn');
+        const subscribeBtn = document.getElementById('subscribeBtn');
+
+        // Проверяем при загрузке, подписан ли пользователь
+        window.addEventListener('load', () => {
+            const subscribedEmail = localStorage.getItem('evgenii_subscribed');
+            if (subscribedEmail) {
+                markAsSubscribed();
+            }
+        });
+
+        function openSubscribeModal() {
+            // Проверяем, не подписан ли уже
+            if (localStorage.getItem('evgenii_subscribed')) {
+                alert('🔥 Вы уже подписаны на обновления!');
+                return;
+            }
+            subscribeModal.classList.add('active');
+            setTimeout(() => subEmailInput.focus(), 100);
+        }
+
+        function closeSubscribeModal() {
+            subscribeModal.classList.remove('active');
+            subStatus.textContent = '';
+            subEmailInput.value = '';
+            subActionBtn.disabled = false;
+            subActionBtn.textContent = 'Подписаться';
+        }
+
+        // Закрытие по клику вне модального окна
+        subscribeModal.addEventListener('click', (e) => {
+            if (e.target === subscribeModal) {
+                closeSubscribeModal();
+            }
+        });
+
+        function markAsSubscribed() {
+            subscribeBtn.classList.add('subscribed');
+            subscribeBtn.innerHTML = '<i class="fas fa-check"></i> Вы подписаны';
+            subscribeBtn.onclick = null;
+        }
+
+        async function handleSubscribe() {
+            const email = subEmailInput.value.trim();
+            
+            // Валидация email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                showSubStatus('❌ Введите корректный email', 'error');
+                return;
+            }
+
+            subActionBtn.disabled = true;
+            subActionBtn.textContent = 'Обработка...';
+            showSubStatus('', '');
+
+            try {
+                // Сохраняем в Firebase
+                await db.ref('subscribers').push({
+                    email: email,
+                    timestamp: Date.now(),
+                    date: new Date().toISOString(),
+                    source: 'welcome_screen'
+                });
+
+                // Сохраняем в localStorage
+                localStorage.setItem('evgenii_subscribed', email);
+                
+                // Показываем успех
+                showSubStatus('✅ Успешно! Теперь вы в списке подписчиков 🎉', 'success');
+                subActionBtn.textContent = 'Готово!';
+                
+                // Закрываем через 2 секунды
+                setTimeout(() => {
+                    closeSubscribeModal();
+                    markAsSubscribed();
+                }, 2000);
+
+            } catch (error) {
+                console.error('Firebase error:', error);
+                showSubStatus('⚠️ Ошибка подключения. Попробуйте позже.', 'error');
+                subActionBtn.disabled = false;
+                subActionBtn.textContent = 'Подписаться';
+            }
+        }
+
+        function showSubStatus(message, type) {
+            subStatus.textContent = message;
+            subStatus.className = 'sub-status ' + type;
+        }
+
+        // Закрытие модального окна по Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && subscribeModal.classList.contains('active')) {
+                closeSubscribeModal();
+            }
+        });
+
+        // === ПОДСЧЕТ ПОДПИСЧИКОВ ===
+        function updateSubscriberCount() {
+            db.ref('subscribers').on('value', (snapshot) => {
+                const count = snapshot.numChildren();
+                subscriberCountEl.textContent = count;
+                
+                // Анимация при изменении числа
+                subscriberCountEl.style.transform = 'scale(1.3)';
+                subscriberCountEl.style.color = 'var(--neon-cyan)';
+                setTimeout(() => {
+                    subscriberCountEl.style.transform = 'scale(1)';
+                    subscriberCountEl.style.color = 'var(--neon-purple)';
+                }, 300);
+            });
+        }
+    </script>
+</body>
+</html>
