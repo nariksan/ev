@@ -3,344 +3,444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVGENII — AI Experiment</title>
+    <title>EVGENII — Вход</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
             background: #050505;
-            overflow: hidden; /* Чтобы не было скролла на экране входа */
+            overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
-            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 20px;
         }
-
-        /* Канвас для анимации - общий фон */
+        
         canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        /* Прелоадер */
+        .preloader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            background: #050505;
+            transition: opacity 0.8s ease-out, visibility 0.8s;
         }
-
-        /* Общие стили для заголовка */
-        .site-title {
-            font-size: 4rem;
+        
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .preloader-text {
+            color: #40e0d0;
+            font-size: 2rem;
+            letter-spacing: 0.5em;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Заголовок EVGENII */
+        .header {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .title {
+            font-size: 5rem;
             font-weight: 900;
             letter-spacing: 0.3em;
             background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
-            text-align: center;
-            margin-bottom: 20px;
-            animation: glow 3s ease-in-out infinite alternate;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+            position: relative;
+            animation: glow 3s ease-in-out infinite;
         }
-
+        
         @keyframes glow {
-            from { filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.4)); }
-            to { filter: drop-shadow(0 0 25px rgba(64, 224, 208, 0.8)); }
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.6));
+            }
+            50% {
+                filter: drop-shadow(0 0 40px rgba(64, 224, 208, 0.8));
+            }
         }
-
-        /* --- ЭКРАН 1: ВХОД --- */
-        #login-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between; /* Имя сверху, кнопка снизу */
-            align-items: center;
-            padding: 15vh 20px 15vh; /* Отступы сверху и снизу */
+        
+        .subtitle {
+            color: #48d1cc;
+            font-size: 1rem;
+            letter-spacing: 0.5em;
+            margin-top: 15px;
+            opacity: 0.7;
+        }
+        
+        /* Контейнер кнопки */
+        .button-container {
+            position: relative;
             z-index: 10;
-            transition: opacity 0.8s ease, visibility 0.8s;
-        }
-
-        #login-screen.hidden {
             opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out 0.3s, transform 0.8s ease-out 0.3s;
         }
-
-        .enter-btn {
-            padding: 18px 50px;
-            background: linear-gradient(90deg, #00f2ff, #40e0d0);
+        
+        .button-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .btn-enter {
+            padding: 18px 60px;
+            background: linear-gradient(135deg, #00f2ff, #40e0d0);
             border: none;
             border-radius: 50px;
-            color: #000;
+            color: #050505;
             font-size: 1.2rem;
             font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
-            transition: transform 0.2s, box-shadow 0.2s;
-            text-decoration: none;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+            position: relative;
+            overflow: hidden;
         }
-
-        .enter-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(0, 242, 255, 0.8);
-        }
-
-        /* --- ЭКРАН 2: САЙТ (КОНТЕНТ) --- */
-        #main-site {
+        
+        .btn-enter::before {
+            content: '';
             position: absolute;
             top: 0;
-            left: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
-            z-index: 5; /* Ниже чем login-screen изначально, но станет активным */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 10vh;
-            
-            /* Скрываем контент initially */
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(20px);
-            transition: opacity 1s ease 0.5s, transform 1s ease 0.5s, visibility 1s;
-            
-            overflow-y: auto; /* Разрешаем скролл для текста */
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
         }
-
-        #main-site.visible {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-            z-index: 20; /* Становится выше */
+        
+        .btn-enter:hover::before {
+            left: 100%;
         }
-
-        .content-block {
-            max-width: 800px;
-            text-align: center;
-            padding: 20px;
+        
+        .btn-enter:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 40px rgba(0, 242, 255, 0.7);
         }
-
-        .hero-text {
-            font-size: 2rem;
-            color: #00f2ff;
-            margin-bottom: 30px;
-            line-height: 1.4;
-            text-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+        
+        .btn-enter:active {
+            transform: translateY(-1px);
         }
-
-        .sub-text {
-            font-size: 1.2rem;
-            color: #afeeee;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            opacity: 0.9;
-        }
-
-        /* Адаптив под мобилки */
+        
+        /* Адаптивность */
         @media (max-width: 768px) {
-            .site-title { font-size: 2.5rem; }
-            .hero-text { font-size: 1.5rem; }
-            .sub-text { font-size: 1rem; }
-            #login-screen { padding: 10vh 20px 10vh; }
+            .title {
+                font-size: 3rem;
+                letter-spacing: 0.2em;
+            }
+            
+            .subtitle {
+                font-size: 0.8rem;
+                letter-spacing: 0.3em;
+            }
+            
+            .btn-enter {
+                padding: 15px 40px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2.2rem;
+            }
+            
+            .btn-enter {
+                padding: 12px 30px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-
-    <!-- Фон с анимацией -->
+    <!-- Прелоадер -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-text">ЗАГРУЗКА...</div>
+    </div>
+    
+    <!-- Canvas с анимацией -->
     <canvas id="canvas"></canvas>
-
-    <!-- ЭКРАН 1: ВХОД -->
-    <div id="login-screen">
-        <h1 class="site-title">EVGENII</h1>
-        
-        <!-- Кнопка вызывает функцию перехода -->
-        <button class="enter-btn" onclick="enterSite()">Войти на сайт</button>
+    
+    <!-- Заголовок -->
+    <div class="header" id="header">
+        <h1 class="title">EVGENII</h1>
+        <p class="subtitle">WELCOME TO MY WORLD</p>
     </div>
-
-    <!-- ЭКРАН 2: ОСНОВНОЙ САЙТ -->
-    <div id="main-site">
-        <h1 class="site-title">EVGENII</h1>
-        
-        <div class="content-block">
-            <h2 class="hero-text">Где заканчиваюсь я — и начинается ИИ.</h2>
-            
-            <p class="sub-text">
-                Мои тексты, озвученные искусственным разумом.
-            </p>
-            <p class="sub-text">
-                Эксперимент на стыке человеческих эмоций и машинного голоса.
-            </p>
-        </div>
+    
+    <!-- Кнопка входа -->
+    <div class="button-container" id="buttonContainer">
+        <button class="btn-enter" id="btnEnter">Войти на сайт</button>
     </div>
-
+    
     <script>
-        // --- ЛОГИКА ПЕРЕХОДА ---
-        function enterSite() {
-            const loginScreen = document.getElementById('login-screen');
-            const mainSite = document.getElementById('main-site');
-            const body = document.body;
-
-            // 1. Скрываем экран входа
-            loginScreen.classList.add('hidden');
-
-            // 2. Показываем основной сайт
-            mainSite.classList.add('visible');
-
-            // 3. Разрешаем скролл на странице (так как текста может быть много)
-            body.style.overflowY = 'auto';
-        }
-
-        // --- АНИМАЦИЯ ФОНА (Neon Smoke E) ---
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const preloader = document.getElementById('preloader');
+        const header = document.getElementById('header');
+        const buttonContainer = document.getElementById('buttonContainer');
         
-        let width, height;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
         
-        function resize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-            initPath();
+        const colors = [
+            '#00f2ff', '#40e0d0', '#48d1cc', '#00ced1', '#7fffd4', '#afeeee'
+        ];
+        
+        function getEPath(centerX, centerY, scale) {
+            const points = [];
+            const w = 100 * scale;
+            const h = 140 * scale;
+            const x = centerX - w/2;
+            const y = centerY - h/2;
+            const step = 2 * scale;
+            
+            for (let i = 0; i <= h; i += step) {
+                points.push({x: x, y: y + h - i, vx: 0, vy: -1});
+            }
+            
+            for (let i = 0; i <= w; i += step) {
+                points.push({x: x + i, y: y, vx: 1, vy: 0});
+            }
+            
+            for (let i = 0; i <= h/2; i += step) {
+                points.push({x: x + w, y: y + i, vx: 0, vy: 1});
+            }
+            
+            for (let i = 0; i <= w * 0.85; i += step) {
+                points.push({x: x + w - i, y: y + h/2, vx: -1, vy: 0});
+            }
+            
+            for (let i = 0; i <= h/2; i += step) {
+                points.push({x: x + w * 0.15, y: y + h/2 + i, vx: 0, vy: 1});
+            }
+            
+            for (let i = 0; i <= w; i += step) {
+                points.push({x: x + i, y: y + h, vx: 1, vy: 0});
+            }
+            
+            for (let i = 0; i <= h/2; i += step) {
+                points.push({x: x + w, y: y + h - i, vx: 0, vy: -1});
+            }
+            
+            return points;
         }
         
-        window.addEventListener('resize', resize);
-
-        const colors = ['#00f2ff', '#40e0d0', '#48d1cc', '#00ced1', '#7fffd4', '#afeeee'];
-        let pathPoints = [];
-
-        // Генерация точек буквы Е
-        function initPath() {
-            pathPoints = [];
-            // Масштаб зависит от размера экрана, но не слишком огромный
-            const scale = Math.min(width, height) / 600; 
-            const w = 140 * scale;
-            const h = 200 * scale;
-            // Центрируем букву
-            const startX = width / 2 - w / 2;
-            const startY = height / 2 - h / 2;
-            const step = 3 * scale;
-
-            // Вертикальная линия
-            for (let i = 0; i <= h; i += step) pathPoints.push({x: startX, y: startY + i});
-            // Верхняя горизонталь
-            for (let i = 0; i <= w; i += step) pathPoints.push({x: startX + i, y: startY});
-            // Средняя горизонталь
-            for (let i = 0; i <= w * 0.8; i += step) pathPoints.push({x: startX + i, y: startY + h/2});
-            // Нижняя горизонталь
-            for (let i = 0; i <= w; i += step) pathPoints.push({x: startX + i, y: startY + h});
-        }
-
+        const pathPoints = getEPath(canvas.width / 2, canvas.height / 2, 1.0);
+        
         class Particle {
             constructor() {
                 this.reset();
             }
-
+            
             reset() {
-                if (pathPoints.length === 0) return;
-                // Выбираем случайную точку на контуре
-                const point = pathPoints[Math.floor(Math.random() * pathPoints.length)];
+                const idx = Math.floor(Math.random() * pathPoints.length);
+                const point = pathPoints[idx];
                 
-                this.x = point.x + (Math.random() - 0.5) * 20;
-                this.y = point.y + (Math.random() - 0.5) * 20;
+                this.x = point.x + (Math.random() - 0.5) * 25;
+                this.y = point.y + (Math.random() - 0.5) * 25;
                 
-                // Случайное направление разлета
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 1.5;
+                const angle = Math.atan2(point.vy, point.vx) + (Math.random() - 0.5) * 0.5;
+                const speed = 0.4 + Math.random() * 1.2;
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
                 
                 this.life = 1.0;
-                this.decay = 0.005 + Math.random() * 0.01;
-                this.size = Math.random() * 2 + 0.5;
+                this.decay = 0.003 + Math.random() * 0.007;
+                this.size = 0.8 + Math.random() * 2;
+                this.maxSize = this.size;
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 
+                this.driftX = (Math.random() - 0.5) * 0.25;
+                this.driftY = (Math.random() - 0.5) * 0.25;
+                
                 this.history = [];
-                this.maxHistory = 10;
+                this.historyMax = 6 + Math.floor(Math.random() * 10);
             }
-
+            
             update() {
-                this.history.push({x: this.x, y: this.y});
-                if (this.history.length > this.maxHistory) this.history.shift();
-
-                this.x += this.vx;
-                this.y += this.vy;
-                
-                // Легкое дрожание (эффект дыма/энергии)
-                this.x += (Math.random() - 0.5) * 0.5;
-                this.y += (Math.random() - 0.5) * 0.5;
-
-                this.life -= this.decay;
-                if (this.life <= 0) this.reset();
-            }
-
-            draw() {
-                ctx.beginPath();
-                // Рисуем хвост
-                if (this.history.length > 0) {
-                    ctx.moveTo(this.history[0].x, this.history[0].y);
-                    for (let p of this.history) ctx.lineTo(p.x, p.y);
+                this.history.push({x: this.x, y: this.y, life: this.life});
+                if (this.history.length > this.historyMax) {
+                    this.history.shift();
                 }
-                ctx.lineTo(this.x, this.y);
                 
-                ctx.strokeStyle = this.color;
-                ctx.lineWidth = this.size;
-                ctx.globalAlpha = this.life * 0.6;
-                ctx.lineCap = 'round';
-                ctx.stroke();
-
-                // Голова частицы (светящаяся точка)
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI * 2);
-                ctx.fillStyle = '#fff';
-                ctx.globalAlpha = this.life;
-                ctx.shadowBlur = 10;
+                this.x += this.vx + this.driftX + Math.sin(this.life * 10) * 0.4;
+                this.y += this.vy + this.driftY + Math.cos(this.life * 8) * 0.25;
+                
+                this.driftX += (Math.random() - 0.5) * 0.015;
+                this.driftY += (Math.random() - 0.5) * 0.015;
+                
+                this.life -= this.decay;
+                this.size = this.maxSize * this.life;
+                
+                if (this.life <= 0) {
+                    this.reset();
+                }
+            }
+            
+            draw(ctx) {
+                for (let i = 0; i < this.history.length - 1; i++) {
+                    const p1 = this.history[i];
+                    const p2 = this.history[i + 1];
+                    const alpha = (i / this.history.length) * this.life * 0.5;
+                    const width = (i / this.history.length) * this.size * 0.4;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = this.color;
+                    ctx.globalAlpha = alpha;
+                    ctx.lineWidth = width;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                }
+                
+                ctx.globalAlpha = this.life * 0.8;
+                ctx.shadowBlur = 12 * this.life;
                 ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.shadowBlur = 0;
                 
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * 1.8, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life * 0.25;
+                ctx.fill();
+                
+                ctx.shadowBlur = 0;
                 ctx.globalAlpha = 1;
             }
         }
-
+        
         const particles = [];
-        const particleCount = 500; // Количество частиц
-
-        function initParticles() {
-            for(let i=0; i<particleCount; i++) {
-                particles.push(new Particle());
-            }
+        const particleCount = 350;
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
         }
-
-        function animate() {
-            // Очистка с легким шлейфом
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
-            ctx.fillRect(0, 0, width, height);
+        
+        const bgParticles = [];
+        for (let i = 0; i < 40; i++) {
+            bgParticles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 1.2,
+                speed: 0.15 + Math.random() * 0.25,
+                opacity: Math.random() * 0.25
+            });
+        }
+        
+        function drawBackground() {
+            const gradient = ctx.createRadialGradient(
+                canvas.width/2, canvas.height/2, 0,
+                canvas.width/2, canvas.height/2, canvas.width * 0.8
+            );
+            gradient.addColorStop(0, '#0a0f0f');
+            gradient.addColorStop(1, '#000000');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Режим наложения для свечения
-            ctx.globalCompositeOperation = 'lighter';
-
-            for (let p of particles) {
-                p.update();
-                p.draw();
+            for (let p of bgParticles) {
+                p.y -= p.speed;
+                if (p.y < 0) p.y = canvas.height;
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#40e0d0';
+                ctx.globalAlpha = p.opacity * 0.3;
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+        }
+        
+        let startTime = Date.now();
+        let showContent = false;
+        
+        function animate() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawBackground();
+            
+            ctx.globalCompositeOperation = 'screen';
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw(ctx);
             }
             
             ctx.globalCompositeOperation = 'source-over';
+            
+            if (!showContent && Date.now() - startTime > 2500) {
+                showContent = true;
+                preloader.classList.add('hidden');
+                setTimeout(() => {
+                    header.classList.add('visible');
+                    buttonContainer.classList.add('visible');
+                }, 400);
+            }
+            
             requestAnimationFrame(animate);
         }
-
-        // Запуск
-        resize();
-        initParticles();
+        
+        // Обработка кнопки
+        document.getElementById('btnEnter').addEventListener('click', () => {
+            // Здесь можно добавить переход на главную страницу
+            console.log('Вход на сайт');
+            alert('Добро пожаловать на сайт!');
+            // window.location.href = '/main';
+        });
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            pathPoints.length = 0;
+            const newPoints = getEPath(canvas.width / 2, canvas.height / 2, 1.0);
+            newPoints.forEach(p => pathPoints.push(p));
+        });
+        
         animate();
-
     </script>
 </body>
 </html>
