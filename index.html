@@ -2,25 +2,39 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Важно для мобильных: запрет зума, учет безопасных зон -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>EVGENII — Вход</title>
     <style>
+        :root {
+            --safe-area-top: env(safe-area-inset-top, 20px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+            --primary-color: #40e0d0;
+            --bg-color: #050505;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            /* Отключаем выделение текста при тапах */
+            -webkit-tap-highlight-color: transparent;
+            user-select: none; 
         }
         
         body {
-            background: #050505;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            overflow: hidden; /* Скролл только внутри контейнеров */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh;
+            width: 100vw;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center; /* Центрируем контент по вертикали */
             align-items: center;
-            padding: 60px 20px;
+            position: relative;
         }
         
         canvas {
@@ -28,6 +42,7 @@
             top: 0;
             left: 0;
             z-index: 1;
+            pointer-events: none; /* Чтобы канвас не перехватывал тапы */
         }
         
         /* Прелоадер */
@@ -41,19 +56,20 @@
             justify-content: center;
             align-items: center;
             z-index: 100;
-            background: #050505;
-            transition: opacity 0.8s ease-out, visibility 0.8s;
+            background: var(--bg-color);
+            transition: opacity 0.5s ease-out, visibility 0.5s;
         }
         
         .preloader.hidden {
             opacity: 0;
             visibility: hidden;
+            pointer-events: none;
         }
         
         .preloader-text {
-            color: #40e0d0;
-            font-size: 2rem;
-            letter-spacing: 0.5em;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            letter-spacing: 0.3em;
             animation: pulse 2s infinite;
         }
         
@@ -62,641 +78,283 @@
             50% { opacity: 1; }
         }
         
-        /* Заголовок EVGENII */
-        .header {
+        /* Общие стили контейнеров страниц */
+        .page-container {
             position: relative;
             z-index: 10;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(-30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Добавляем отступы для безопасных зон (челка/полоски) */
+            padding-top: calc(20px + var(--safe-area-top));
+            padding-bottom: calc(20px + var(--safe-area-bottom));
+            transition: opacity 0.5s ease;
+        }
+
+        /* Скроллящийся контент для главной страницы */
+        .scroll-content {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 20px;
+            scrollbar-width: none; /* Скрыть скроллбар Firefox */
         }
         
-        .header.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .scroll-content::-webkit-scrollbar {
+            display: none; /* Скрыть скроллбар Chrome/Safari */
         }
-        
-        .title {
-            font-size: 5rem;
+
+        /* Заголовки */
+        .header-title {
+            font-size: 3.5rem; /* Чуть меньше для мобилок */
             font-weight: 900;
-            letter-spacing: 0.3em;
+            letter-spacing: 0.2em;
             background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
-            position: relative;
-            animation: glow 3s ease-in-out infinite;
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+            margin-bottom: 10px;
+            text-align: center;
         }
-        
-        @keyframes glow {
-            0%, 100% {
-                filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.6));
-            }
-            50% {
-                filter: drop-shadow(0 0 40px rgba(64, 224, 208, 0.8));
-            }
-        }
-        
+
         .subtitle {
-            color: #48d1cc;
-            font-size: 1rem;
-            letter-spacing: 0.5em;
-            margin-top: 15px;
-            opacity: 0.7;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            opacity: 0.8;
+            text-align: center;
+            max-width: 90%;
+            line-height: 1.5;
+            margin-bottom: 40px;
         }
-        
-        /* Контейнер кнопки */
-        .button-container {
-            position: relative;
-            z-index: 10;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease-out 0.3s, transform 0.8s ease-out 0.3s;
-        }
-        
-        .button-container.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
+
+        /* Кнопки - увеличенные зоны клика */
         .btn-enter {
-            padding: 18px 60px;
+            padding: 16px 50px;
             background: linear-gradient(135deg, #00f2ff, #40e0d0);
             border: none;
             border-radius: 50px;
             color: #050505;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: transform 0.2s;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-enter::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn-enter:hover::before {
-            left: 100%;
-        }
-        
-        .btn-enter:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 40px rgba(0, 242, 255, 0.7);
+            letter-spacing: 0.1em;
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.3);
+            /* Оптимизация тача */
+            touch-action: manipulation;
         }
         
         .btn-enter:active {
-            transform: translateY(-1px);
+            transform: scale(0.96); /* Эффект нажатия вместо ховера */
         }
-        
-        /* Стили для страницы входа */
-        .login-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            position: relative;
-            z-index: 10;
-            padding-top: 12vh;
-            padding-bottom: 10vh;
-        }
-        
-        .login-title {
-            font-size: 5rem;
-            font-weight: 900;
-            letter-spacing: 0.3em;
-            background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
-            position: relative;
-            animation: glow 3s ease-in-out infinite;
+
+        /* Секции главной страницы */
+        .main-header-content {
             text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .login-description {
-            color: #48d1cc;
-            font-size: 1.2rem;
-            letter-spacing: 0.1em;
-            opacity: 0.8;
-            text-align: center;
-            max-width: 600px;
-            line-height: 1.6;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        
-        .login-button {
-            margin-top: 0;
-        }
-        
-        /* Стили для основной страницы */
-        .main-page {
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            position: relative;
-            z-index: 10;
-            padding: 60px 20px;
-            overflow-y: auto;
-        }
-        
-        .main-header {
-            text-align: center;
-            opacity: 0;
-            transform: translateY(-30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-            margin-top: 12vh;
-            width: 100%;
-            max-width: 900px;
-        }
-        
-        .main-header.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .main-description {
-            color: #48d1cc;
-            font-size: 1.1rem;
-            letter-spacing: 0.1em;
             margin-top: 20px;
-            opacity: 0.8;
-            text-align: center;
-            max-width: 700px;
-            line-height: 1.6;
+            width: 100%;
+            max-width: 600px;
+            padding-bottom: 40px;
         }
-        
-        /* Кнопки действий */
+
         .action-buttons {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin-top: 40px;
-            align-items: center;
+            gap: 15px;
+            width: 100%;
+            margin-top: 30px;
         }
         
-        .btn-feed,
-        .btn-chat {
-            padding: 14px 45px;
-            background: transparent;
-            border: 1px solid #40e0d0;
+        .btn-secondary {
+            padding: 16px 30px;
+            background: rgba(64, 224, 208, 0.05);
+            border: 1px solid var(--primary-color);
             border-radius: 50px;
-            color: #40e0d0;
+            color: var(--primary-color);
             font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.15);
-            position: relative;
-            overflow: hidden;
-            min-width: 260px;
-        }
-        
-        .btn-feed::before,
-        .btn-chat::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+            font-weight: 600;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(64, 224, 208, 0.15), transparent);
-            transition: left 0.5s;
+            touch-action: manipulation;
+            transition: background 0.2s;
         }
-        
-        .btn-feed:hover::before,
-        .btn-chat:hover::before {
-            left: 100%;
+
+        .btn-secondary:active {
+            background: rgba(64, 224, 208, 0.2);
+            transform: scale(0.98);
         }
-        
-        .btn-feed:hover,
-        .btn-chat:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(0, 242, 255, 0.35);
-            background: rgba(64, 224, 208, 0.08);
-        }
-        
-        .btn-feed:active,
-        .btn-chat:active {
-            transform: translateY(0);
-        }
-        
-        /* Блок Новые релизы */
+
+        /* Карточки треков */
         .releases-section {
-            margin-top: 60px;
             width: 100%;
+            margin-top: 40px;
             text-align: center;
         }
         
-        .releases-title {
-            font-size: 1.5rem;
-            font-weight: 900;
-            letter-spacing: 0.25em;
-            background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 35px;
+        .section-title {
+            font-size: 1.2rem;
+            color: #fff;
+            letter-spacing: 0.2em;
+            margin-bottom: 20px;
             text-transform: uppercase;
+            opacity: 0.9;
         }
-        
-        /* Карточка трека */
+
         .track-card {
             background: linear-gradient(145deg, #0d1a1a, #060d0d);
-            border: 1px solid rgba(64, 224, 208, 0.25);
+            border: 1px solid rgba(64, 224, 208, 0.2);
             border-radius: 20px;
-            padding: 20px;
-            max-width: 420px;
-            margin: 0 auto;
-            box-shadow: 0 0 40px rgba(0, 242, 255, 0.1), inset 0 0 20px rgba(0, 242, 255, 0.03);
-            transition: transform 0.3s, box-shadow 0.3s;
+            padding: 15px;
+            width: 100%;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
-        
-        .track-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2), inset 0 0 20px rgba(0, 242, 255, 0.05);
-        }
-        
+
         .track-cover {
             width: 100%;
             aspect-ratio: 1 / 1;
-            border-radius: 14px;
+            border-radius: 12px;
             overflow: hidden;
-            position: relative;
-            background: #0a0f0f;
-            margin-bottom: 18px;
+            margin-bottom: 15px;
+            background: #111;
         }
-        
+
         .track-cover img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
-        
-        .track-info {
-            text-align: left;
-        }
-        
-        .track-header {
+
+        .track-info-row {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
-        
-        .play-btn {
-            width: 45px;
-            height: 45px;
+
+        .play-btn-circle {
+            width: 48px; /* Крупнее для пальца */
+            height: 48px;
             border-radius: 50%;
             background: rgba(0, 242, 255, 0.9);
             border: none;
-            cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.2s, background 0.3s;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
             flex-shrink: 0;
+            touch-action: manipulation;
         }
         
-        .play-btn:hover {
-            transform: scale(1.1);
-            background: #00f2ff;
-        }
-        
-        .play-btn svg {
-            width: 20px;
-            height: 20px;
+        .play-btn-circle svg {
+            width: 24px;
+            height: 24px;
             fill: #050505;
-            margin-left: 3px;
+            margin-left: 2px;
         }
-        
-        .play-btn.playing svg {
-            margin-left: 0;
-        }
-        
-        .track-name {
-            color: #e0f5f2;
-            font-size: 1.2rem;
-            font-weight: bold;
-            letter-spacing: 0.05em;
+
+        .track-details {
             flex: 1;
-        }
-        
-        .track-desc {
-            color: #48d1cc;
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-bottom: 15px;
-            padding-left: 60px;
-        }
-        
-        .track-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(64, 224, 208, 0.12);
-            margin-bottom: 15px;
-        }
-        
-        .track-duration {
-            color: #40e0d0;
-            font-size: 0.95rem;
-            letter-spacing: 0.1em;
-            font-family: 'Courier New', monospace;
-            padding-left: 60px;
-        }
-        
-        .btn-about-release {
-            width: 100%;
-            padding: 13px 20px;
-            background: transparent;
-            border: 1px solid #40e0d0;
-            border-radius: 50px;
-            color: #40e0d0;
-            font-size: 0.95rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            box-shadow: 0 0 12px rgba(0, 242, 255, 0.12);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-about-release::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(64, 224, 208, 0.15), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn-about-release:hover::before {
-            left: 100%;
-        }
-        
-        .btn-about-release:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 22px rgba(0, 242, 255, 0.3);
-            background: rgba(64, 224, 208, 0.08);
-        }
-        
-        .btn-about-release:active {
-            transform: translateY(0);
-        }
-        
-        /* Секция Все треки */
-        .all-tracks-section {
-            margin-top: 60px;
-            width: 100%;
             text-align: left;
         }
-        
-        .archive-label {
-            font-size: 0.9rem;
-            color: #ff8c42;
-            letter-spacing: 0.2em;
-            margin-bottom: 8px;
-            text-transform: uppercase;
+
+        .track-name-lg {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 4px;
         }
-        
-        .all-tracks-title {
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e, #f39c12);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 30px;
+
+        .track-meta-sm {
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            opacity: 0.7;
         }
-        
-        .tracks-list {
+
+        /* Список всех треков */
+        .all-tracks-list {
+            width: 100%;
+            margin-top: 30px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-height: 380px;
-            overflow: hidden;
-            transition: max-height 0.6s ease;
+            gap: 10px;
+            padding-bottom: 20px;
         }
-        
-        .tracks-list.expanded {
-            max-height: 1000px;
-        }
-        
-        .track-item {
-            background: linear-gradient(145deg, rgba(13, 26, 26, 0.8), rgba(6, 13, 13, 0.9));
-            border: 1px solid rgba(64, 224, 208, 0.2);
-            border-radius: 16px;
-            padding: 14px 18px;
+
+        .track-item-row {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 12px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            transition: transform 0.2s, border-color 0.3s, box-shadow 0.3s;
-            cursor: pointer;
+            gap: 12px;
+            touch-action: manipulation;
         }
         
-        .track-item:hover {
-            transform: translateX(5px);
-            border-color: rgba(0, 242, 255, 0.4);
-            box-shadow: 0 0 25px rgba(0, 242, 255, 0.15);
+        .track-item-row:active {
+            background: rgba(255, 255, 255, 0.08);
         }
-        
-        .track-item-cover {
-            width: 55px;
-            height: 55px;
-            border-radius: 10px;
+
+        .mini-cover {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            background: #222;
             overflow: hidden;
             flex-shrink: 0;
-            background: #0a0f0f;
         }
         
-        .track-item-cover img {
+        .mini-cover img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
-        
-        .track-item-cover.no-image {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #0d1a1a, #1a2f2f);
-        }
-        
-        .track-item-cover.no-image svg {
-            width: 28px;
-            height: 28px;
-            fill: #40e0d0;
-            opacity: 0.6;
-        }
-        
-        .track-item-play {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        
-        .track-item-play:hover {
-            background: rgba(0, 242, 255, 0.3);
-            transform: scale(1.05);
-        }
-        
-        .track-item-play svg {
-            width: 18px;
-            height: 18px;
-            fill: #e0f5f2;
-            margin-left: 2px;
-        }
-        
-        .track-item-info {
+
+        .item-info {
             flex: 1;
             min-width: 0;
         }
-        
-        .track-item-name {
-            color: #e0f5f2;
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-bottom: 3px;
+
+        .item-title {
+            color: #eee;
+            font-size: 0.95rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        
-        .track-item-desc {
-            color: #48d1cc;
-            font-size: 0.85rem;
-            opacity: 0.6;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+
+        .item-sub {
+            color: #888;
+            font-size: 0.8rem;
         }
-        
-        .track-item-duration {
-            color: #fdcb6e;
-            font-size: 0.9rem;
-            font-family: 'Courier New', monospace;
-            margin-right: 10px;
+
+        .item-duration {
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            font-family: monospace;
         }
-        
-        .track-item-download {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: rgba(64, 224, 208, 0.1);
-            border: 1px solid rgba(64, 224, 208, 0.3);
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        
-        .track-item-download:hover {
-            background: rgba(0, 242, 255, 0.2);
-            border-color: rgba(0, 242, 255, 0.5);
-            transform: scale(1.05);
-        }
-        
-        .track-item-download svg {
-            width: 18px;
-            height: 18px;
-            fill: #40e0d0;
-        }
-        
-        .show-more-btn {
-            width: 100%;
-            padding: 16px 20px;
-            background: linear-gradient(145deg, rgba(13, 26, 26, 0.6), rgba(6, 13, 13, 0.7));
-            border: 1px dashed rgba(64, 224, 208, 0.3);
-            border-radius: 16px;
-            color: #48d1cc;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            letter-spacing: 0.05em;
-        }
-        
-        .show-more-btn:hover {
-            background: linear-gradient(145deg, rgba(13, 26, 26, 0.8), rgba(6, 13, 13, 0.9));
-            border-color: rgba(0, 242, 255, 0.5);
-            color: #00f2ff;
-        }
-        
-        .show-more-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-            transition: transform 0.3s;
-        }
-        
-        .show-more-btn.expanded svg {
-            transform: rotate(180deg);
-        }
-        
-        /* Модальное окно */
+
+        /* Модальные окна - адаптация под низ экрана */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
             z-index: 200;
             display: none;
             justify-content: center;
-            align-items: center;
+            align-items: flex-end; /* Sheet style на мобильных */
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
         }
         
         .modal-overlay.active {
@@ -705,361 +363,55 @@
         }
         
         .modal {
-            background: linear-gradient(145deg, #0a1515, #050a0a);
-            border: 1px solid rgba(64, 224, 208, 0.3);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 550px;
-            width: 90%;
-            max-height: 70vh;
+            background: #0a1515;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            border: 1px solid rgba(64, 224, 208, 0.2);
+            border-bottom: none;
+            padding: 30px 20px;
+            padding-bottom: calc(30px + var(--safe-area-bottom));
+            width: 100%;
+            max-height: 85vh;
             overflow-y: auto;
-            position: relative;
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.15), inset 0 0 30px rgba(0, 242, 255, 0.03);
-            transform: scale(0.9);
-            transition: transform 0.4s ease;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         
         .modal-overlay.active .modal {
-            transform: scale(1);
+            transform: translateY(0);
         }
-        
-        .modal-close {
+
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin: -10px auto 20px auto;
+        }
+
+        .modal-close-btn {
             position: absolute;
             top: 15px;
             right: 20px;
             background: none;
             border: none;
-            color: #48d1cc;
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            line-height: 1;
-            opacity: 0.7;
+            color: #fff;
+            font-size: 2rem;
+            padding: 10px;
+        }
+
+        /* Анимации появления */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
         
-        .modal-close:hover {
+        .visible {
             opacity: 1;
-            transform: rotate(90deg);
-            color: #00f2ff;
+            transform: translateY(0);
         }
-        
-        .modal-title {
-            font-size: 1.6rem;
-            font-weight: 900;
-            letter-spacing: 0.2em;
-            background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        
-        .feed-item {
-            padding: 18px 0;
-            border-bottom: 1px solid rgba(64, 224, 208, 0.12);
-        }
-        
-        .feed-item:last-child {
-            border-bottom: none;
-        }
-        
-        .feed-date {
-            color: #00f2ff;
-            font-size: 0.8rem;
-            letter-spacing: 0.1em;
-            margin-bottom: 8px;
-            opacity: 0.7;
-        }
-        
-        .feed-text {
-            color: #c0e8e5;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-        
-        .chat-placeholder {
-            color: #c0e8e5;
-            font-size: 1.1rem;
-            text-align: center;
-            padding: 30px 0;
-            letter-spacing: 0.05em;
-        }
-        
-        .release-info-text {
-            color: #c0e8e5;
-            font-size: 1rem;
-            line-height: 1.6;
-            text-align: center;
-            padding: 10px 0;
-        }
-        
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .title, .login-title {
-                font-size: 3rem;
-                letter-spacing: 0.2em;
-            }
-            
-            .subtitle {
-                font-size: 0.9rem;
-                letter-spacing: 0.1em;
-            }
-            
-            .login-description, .main-description {
-                font-size: 1rem;
-                letter-spacing: 0.05em;
-                padding: 0 20px;
-            }
-            
-            .btn-enter {
-                padding: 15px 40px;
-                font-size: 1rem;
-            }
-            
-            .login-page {
-                padding-top: 10vh;
-                padding-bottom: 8vh;
-            }
-            
-            .main-header {
-                margin-top: 8vh;
-            }
-            
-            .btn-feed,
-            .btn-chat {
-                padding: 12px 35px;
-                font-size: 0.9rem;
-                min-width: 220px;
-            }
-            
-            .action-buttons {
-                gap: 12px;
-                margin-top: 30px;
-            }
-            
-            .modal {
-                padding: 30px 25px;
-            }
-            
-            .modal-title {
-                font-size: 1.3rem;
-            }
-            
-            .releases-title {
-                font-size: 1.2rem;
-            }
-            
-            .track-card {
-                padding: 15px;
-            }
-            
-            .play-btn {
-                width: 40px;
-                height: 40px;
-            }
-            
-            .play-btn svg {
-                width: 18px;
-                height: 18px;
-            }
-            
-            .track-name {
-                font-size: 1.05rem;
-            }
-            
-            .track-desc,
-            .track-duration {
-                padding-left: 55px;
-            }
-            
-            .btn-about-release {
-                padding: 11px 18px;
-                font-size: 0.85rem;
-            }
-            
-            .all-tracks-title {
-                font-size: 1.8rem;
-            }
-            
-            .track-item {
-                padding: 12px 15px;
-            }
-            
-            .track-item-cover {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .track-item-play {
-                width: 38px;
-                height: 38px;
-            }
-            
-            .track-item-name {
-                font-size: 0.95rem;
-            }
-            
-            .track-item-desc {
-                font-size: 0.8rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .title, .login-title {
-                font-size: 2.2rem;
-            }
-            
-            .btn-enter {
-                padding: 14px 32px;
-                font-size: 0.95rem;
-            }
-            
-            .login-description, .main-description {
-                font-size: 0.9rem;
-            }
-            
-            .login-page {
-                padding-top: 15vh;
-                padding-bottom: 10vh;
-            }
-            
-            .main-header {
-                margin-top: 10vh;
-            }
-            
-            .btn-feed,
-            .btn-chat {
-                padding: 11px 28px;
-                font-size: 0.85rem;
-                min-width: 200px;
-            }
-            
-            .action-buttons {
-                gap: 10px;
-                margin-top: 25px;
-            }
-            
-            .modal {
-                padding: 25px 20px;
-            }
-            
-            .modal-title {
-                font-size: 1.1rem;
-            }
-            
-            .feed-text {
-                font-size: 0.88rem;
-            }
-            
-            .chat-placeholder {
-                font-size: 0.95rem;
-                padding: 20px 0;
-            }
-            
-            .releases-section {
-                margin-top: 45px;
-            }
-            
-            .releases-title {
-                font-size: 1rem;
-                margin-bottom: 25px;
-            }
-            
-            .track-card {
-                padding: 12px;
-                border-radius: 16px;
-            }
-            
-            .track-cover {
-                border-radius: 12px;
-                margin-bottom: 15px;
-            }
-            
-            .play-btn {
-                width: 38px;
-                height: 38px;
-            }
-            
-            .play-btn svg {
-                width: 16px;
-                height: 16px;
-            }
-            
-            .track-name {
-                font-size: 1rem;
-            }
-            
-            .track-desc {
-                font-size: 0.85rem;
-                padding-left: 53px;
-            }
-            
-            .track-duration {
-                padding-left: 53px;
-            }
-            
-            .btn-about-release {
-                padding: 10px 15px;
-                font-size: 0.8rem;
-            }
-            
-            .archive-label {
-                font-size: 0.8rem;
-            }
-            
-            .all-tracks-title {
-                font-size: 1.5rem;
-                margin-bottom: 20px;
-            }
-            
-            .all-tracks-section {
-                margin-top: 45px;
-            }
-            
-            .track-item-cover {
-                width: 48px;
-                height: 48px;
-            }
-            
-            .track-item-play {
-                width: 36px;
-                height: 36px;
-            }
-            
-            .track-item-play svg {
-                width: 16px;
-                height: 16px;
-            }
-            
-            .track-item-name {
-                font-size: 0.9rem;
-            }
-            
-            .track-item-desc {
-                font-size: 0.75rem;
-            }
-            
-            .track-item-duration {
-                font-size: 0.85rem;
-                margin-right: 8px;
-            }
-            
-            .track-item-download {
-                width: 34px;
-                height: 34px;
-            }
-            
-            .track-item-download svg {
-                width: 16px;
-                height: 16px;
-            }
-            
-            .show-more-btn {
-                padding: 14px 18px;
-                font-size: 0.9rem;
-            }
-        }
+
     </style>
 </head>
 <body>
@@ -1072,576 +424,286 @@
     <canvas id="canvas"></canvas>
     
     <!-- Страница входа -->
-    <div class="login-page" id="loginPage">
-        <h1 class="login-title">EVGENII</h1>
-        <p class="login-description">
+    <div class="page-container" id="loginPage">
+        <div class="header-title fade-in-up" style="transition-delay: 0.2s;">EVGENII</div>
+        <p class="subtitle fade-in-up" style="transition-delay: 0.4s;">
             Где заканчиваюсь я — и начинается ИИ.<br>
             Эксперимент на стыке эмоций и кода.
         </p>
-        <div class="login-button button-container" id="loginButtonContainer">
-            <button class="btn-enter" id="btnEnter">Перейти на сайт</button>
+        <div class="fade-in-up" style="transition-delay: 0.6s; width: 100%; display: flex; justify-content: center;">
+            <button class="btn-enter" id="btnEnter">Перейти</button>
         </div>
     </div>
     
     <!-- Основная страница -->
-    <div class="main-page" id="mainPage">
-        <div class="main-header" id="mainHeader">
-            <h1 class="title">EVGENII</h1>
-            <p class="main-description">
-                Где заканчиваюсь я — и начинается ИИ.<br>
-                Мои тексты, озвученные искусственным разумом.<br>
-                Эксперимент на стыке человеческих эмоций и машинного голоса.
-            </p>
-            <div class="action-buttons">
-                <button class="btn-feed" id="btnFeed">Лента обновлений</button>
-                <button class="btn-chat" id="btnChat">Чат</button>
-            </div>
+    <div class="page-container" id="mainPage" style="display: none;">
+        <div class="scroll-content">
             
-            <div class="releases-section">
-                <h2 class="releases-title">Новые релизы</h2>
-                <div class="track-card">
-                    <div class="track-cover">
-                        <img src="https://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/d9/20260603/3c8f8c9a/8f7a5b2c-4d1e-4f2a-9c3b-7e8d9f0a1b2c.png" alt="Поезд на юг">
-                    </div>
-                    <div class="track-info">
-                        <div class="track-header">
-                            <button class="play-btn" id="playBtn">
-                                <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <div class="main-header-content fade-in-up" id="mainHeader">
+                <h1 class="header-title">EVGENII</h1>
+                <p class="subtitle">
+                    Мои тексты, озвученные искусственным разумом.
+                </p>
+                
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="btnFeed">Лента обновлений</button>
+                    <button class="btn-secondary" id="btnChat">Чат с автором</button>
+                </div>
+                
+                <div class="releases-section">
+                    <h2 class="section-title">Новый релиз</h2>
+                    <div class="track-card">
+                        <div class="track-cover">
+                            <img src="https://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/d9/20260603/3c8f8c9a/8f7a5b2c-4d1e-4f2a-9c3b-7e8d9f0a1b2c.png" alt="Поезд на юг">
+                        </div>
+                        <div class="track-info-row">
+                            <button class="play-btn-circle" id="mainPlayBtn">
+                                <svg id="mainPlayIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             </button>
-                            <div class="track-name">Поезд на юг</div>
+                            <div class="track-details">
+                                <div class="track-name-lg">Поезд на юг</div>
+                                <div class="track-meta-sm">AI Cover • 3:23</div>
+                            </div>
                         </div>
-                        <div class="track-desc">Без описания</div>
-                        <div class="track-meta">
-                            <span class="track-duration">3:23</span>
-                        </div>
-                        <button class="btn-about-release" id="btnAboutRelease">О релизе</button>
+                        <button class="btn-secondary" style="margin-top: 10px; font-size: 0.8rem; padding: 10px;" id="btnAboutRelease">О релизе</button>
                     </div>
                 </div>
-            </div>
-            
-            <div class="all-tracks-section">
-                <div class="archive-label">// ARCHIVE</div>
-                <h2 class="all-tracks-title">Все треки</h2>
-                <div class="tracks-list" id="tracksList">
-                    <div class="track-item">
-                        <div class="track-item-cover">
-                            <img src="https://via.placeholder.com/55/4a4a4a/ffffff?text=A" alt="А мне похуй">
+                
+                <div class="releases-section" style="text-align: left; margin-top: 50px;">
+                    <div style="color: #ff8c42; font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 10px;">// ARCHIVE</div>
+                    <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 15px;">Все треки</h2>
+                    
+                    <div class="all-tracks-list" id="tracksList">
+                        <!-- Трек 1 -->
+                        <div class="track-item-row">
+                            <div class="mini-cover">
+                                <img src="https://via.placeholder.com/45/4a4a4a/ffffff?text=A" alt="">
+                            </div>
+                            <button class="play-btn-circle" style="width: 36px; height: 36px; background: rgba(255,255,255,0.1);" data-track="1">
+                                <svg viewBox="0 0 24 24" style="fill: #fff; margin:0;"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <div class="item-info">
+                                <div class="item-title">А мне похуй</div>
+                                <div class="item-sub">Когда похуй</div>
+                            </div>
+                            <div class="item-duration">3:11</div>
                         </div>
-                        <button class="track-item-play" data-track="1">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <div class="track-item-info">
-                            <div class="track-item-name">А мне похуй</div>
-                            <div class="track-item-desc">Когда похуй</div>
+
+                        <!-- Трек 2 -->
+                        <div class="track-item-row">
+                            <div class="mini-cover" style="background: #1a2f2f; display:flex; justify-content:center; align-items:center;">
+                                <svg viewBox="0 0 24 24" style="width:20px; fill:#40e0d0; opacity:0.5;"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                            </div>
+                            <button class="play-btn-circle" style="width: 36px; height: 36px; background: rgba(255,255,255,0.1);" data-track="2">
+                                <svg viewBox="0 0 24 24" style="fill: #fff; margin:0;"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <div class="item-info">
+                                <div class="item-title">Сгоревший эк...</div>
+                                <div class="item-sub">Без описания</div>
+                            </div>
+                            <div class="item-duration">3:48</div>
                         </div>
-                        <div class="track-item-duration">3:11</div>
-                        <button class="track-item-download">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    <div class="track-item">
-                        <div class="track-item-cover no-image">
-                            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                        
+                         <!-- Трек 3 -->
+                         <div class="track-item-row">
+                            <div class="mini-cover" style="background: #1a2f2f; display:flex; justify-content:center; align-items:center;">
+                                <svg viewBox="0 0 24 24" style="width:20px; fill:#40e0d0; opacity:0.5;"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                            </div>
+                            <button class="play-btn-circle" style="width: 36px; height: 36px; background: rgba(255,255,255,0.1);" data-track="3">
+                                <svg viewBox="0 0 24 24" style="fill: #fff; margin:0;"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <div class="item-info">
+                                <div class="item-title">Тишина</div>
+                                <div class="item-sub">Без описания</div>
+                            </div>
+                            <div class="item-duration">04:48</div>
                         </div>
-                        <button class="track-item-play" data-track="2">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Сгоревший эк...</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">3:48</div>
-                        <button class="track-item-download">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    <div class="track-item">
-                        <div class="track-item-cover no-image">
-                            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                        </div>
-                        <button class="track-item-play" data-track="3">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Тишина</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">04:48</div>
-                        <button class="track-item-download">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    <div class="track-item">
-                        <div class="track-item-cover no-image">
-                            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                        </div>
-                        <button class="track-item-play" data-track="4">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Воздух Густеет</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">03:23</div>
-                        <button class="track-item-download">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    <div class="track-item">
-                        <div class="track-item-cover no-image">
-                            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                        </div>
-                        <button class="track-item-play" data-track="5">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Тени прошлого</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">04:15</div>
-                        <button class="track-item-download">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    <div class="track-item">
-                        <div class="track-item-cover no-image">
-                            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                        </div>
-                        <button class="track-item-play" data-track="6">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Ночной город</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">03:52</div>
-                        <button class="track-item-download">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    <div class="track-item">
-                        <div class="track-item-cover no-image">
-                            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                        </div>
-                        <button class="track-item-play" data-track="7">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Последний шанс</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">04:05</div>
-                        <button class="track-item-download">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    <div class="track-item">
-                        <div class="track-item-cover no-image">
-                            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                        </div>
-                        <button class="track-item-play" data-track="8">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Эхо в пустоте</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">03:37</div>
-                        <button class="track-item-download">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    <div class="track-item">
-                        <div class="track-item-cover no-image">
-                            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                        </div>
-                        <button class="track-item-play" data-track="9">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Цифровой сон</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">03:29</div>
-                        <button class="track-item-download">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
                     </div>
                 </div>
-                <button class="show-more-btn" id="showMoreBtn">
-                    Показать все треки
-                    <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
-                </button>
+                
+                <!-- Пустое пространство внизу для удобства скролла -->
+                <div style="height: 50px;"></div>
             </div>
         </div>
     </div>
     
-    <!-- Модальное окно ленты -->
-    <div class="modal-overlay" id="feedModal">
+    <!-- Модальное окно (Общее для всех) -->
+    <div class="modal-overlay" id="genericModal">
         <div class="modal">
-            <button class="modal-close" data-close="feed">&times;</button>
-            <h2 class="modal-title">ЛЕНТА ОБНОВЛЕНИЙ</h2>
-            <div class="feed-item">
-                <div class="feed-date">03.06.2026</div>
-                <div class="feed-text">Запуск проекта EVGENII. Первый эксперимент на стыке человеческого текста и машинного голоса.</div>
-            </div>
-            <div class="feed-item">
-                <div class="feed-date">Скоро</div>
-                <div class="feed-text">Новые аудиотреки с ИИ-озвучкой. Следите за обновлениями.</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Модальное окно чата -->
-    <div class="modal-overlay" id="chatModal">
-        <div class="modal">
-            <button class="modal-close" data-close="chat">&times;</button>
-            <h2 class="modal-title">ЧАТ</h2>
-            <div class="chat-placeholder">Чат в разработке</div>
-        </div>
-    </div>
-    
-    <!-- Модальное окно о релизе -->
-    <div class="modal-overlay" id="releaseModal">
-        <div class="modal">
-            <button class="modal-close" data-close="release">&times;</button>
-            <h2 class="modal-title">О РЕЛИЗЕ</h2>
-            <div class="release-info-text">
-                Поезд на юг — первый релиз проекта EVGENII.<br><br>
-                Трек создан на стыке человеческого текста и машинного голоса. ИИ озвучил авторский текст, придав ему новое звучание.
+            <div class="modal-handle"></div>
+            <button class="modal-close-btn" id="closeModal">&times;</button>
+            <h2 class="header-title" style="font-size: 1.5rem; margin-bottom: 20px;" id="modalTitle">Заголовок</h2>
+            <div id="modalContent" style="color: #ccc; line-height: 1.6; font-size: 1rem;">
+                <!-- Контент меняется JS -->
             </div>
         </div>
     </div>
     
     <script>
+        // --- Логика Canvas (Оптимизирована для мобильных) ---
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const preloader = document.getElementById('preloader');
-        const loginPage = document.getElementById('loginPage');
-        const mainPage = document.getElementById('mainPage');
-        const loginButtonContainer = document.getElementById('loginButtonContainer');
-        const mainHeader = document.getElementById('mainHeader');
-        const feedModal = document.getElementById('feedModal');
-        const chatModal = document.getElementById('chatModal');
-        const releaseModal = document.getElementById('releaseModal');
-        const btnFeed = document.getElementById('btnFeed');
-        const btnChat = document.getElementById('btnChat');
-        const btnAboutRelease = document.getElementById('btnAboutRelease');
-        const playBtn = document.getElementById('playBtn');
-        const playIcon = document.getElementById('playIcon');
-        const tracksList = document.getElementById('tracksList');
-        const showMoreBtn = document.getElementById('showMoreBtn');
         
-        let isPlaying = false;
-        let isExpanded = false;
+        // Проверка на мобильное устройство для снижения нагрузки
+        const isMobile = window.innerWidth < 768;
+        const particleCount = isMobile ? 150 : 350; // Меньше частиц на телефоне
         
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        let width, height;
         
-        const colors = [
-            '#00f2ff', '#40e0d0', '#48d1cc', '#00ced1', '#7fffd4', '#afeeee'
-        ];
-        
-        function getEPath(centerX, centerY, scale) {
-            const points = [];
-            const w = 100 * scale;
-            const h = 140 * scale;
-            const x = centerX - w/2;
-            const y = centerY - h/2;
-            const step = 2 * scale;
-            
-            for (let i = 0; i <= h; i += step) {
-                points.push({x: x, y: y + h - i, vx: 0, vy: -1});
-            }
-            
-            for (let i = 0; i <= w; i += step) {
-                points.push({x: x + i, y: y, vx: 1, vy: 0});
-            }
-            
-            for (let i = 0; i <= h/2; i += step) {
-                points.push({x: x + w, y: y + i, vx: 0, vy: 1});
-            }
-            
-            for (let i = 0; i <= w * 0.85; i += step) {
-                points.push({x: x + w - i, y: y + h/2, vx: -1, vy: 0});
-            }
-            
-            for (let i = 0; i <= h/2; i += step) {
-                points.push({x: x + w * 0.15, y: y + h/2 + i, vx: 0, vy: 1});
-            }
-            
-            for (let i = 0; i <= w; i += step) {
-                points.push({x: x + i, y: y + h, vx: 1, vy: 0});
-            }
-            
-            for (let i = 0; i <= h/2; i += step) {
-                points.push({x: x + w, y: y + h - i, vx: 0, vy: -1});
-            }
-            
-            return points;
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
         }
+        window.addEventListener('resize', resize);
+        resize();
         
-        const pathPoints = getEPath(canvas.width / 2, canvas.height / 2, 1.0);
+        const colors = ['#00f2ff', '#40e0d0', '#48d1cc'];
         
         class Particle {
             constructor() {
                 this.reset();
             }
-            
             reset() {
-                const idx = Math.floor(Math.random() * pathPoints.length);
-                const point = pathPoints[idx];
-                
-                this.x = point.x + (Math.random() - 0.5) * 25;
-                this.y = point.y + (Math.random() - 0.5) * 25;
-                
-                const angle = Math.atan2(point.vy, point.vx) + (Math.random() - 0.5) * 0.5;
-                const speed = 0.4 + Math.random() * 1.2;
-                this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed;
-                
-                this.life = 1.0;
-                this.decay = 0.003 + Math.random() * 0.007;
-                this.size = 0.8 + Math.random() * 2;
-                this.maxSize = this.size;
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+                this.alpha = Math.random() * 0.5;
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                
-                this.driftX = (Math.random() - 0.5) * 0.25;
-                this.driftY = (Math.random() - 0.5) * 0.25;
-                
-                this.history = [];
-                this.historyMax = 6 + Math.floor(Math.random() * 10);
             }
-            
             update() {
-                this.history.push({x: this.x, y: this.y, life: this.life});
-                if (this.history.length > this.historyMax) {
-                    this.history.shift();
-                }
-                
-                this.x += this.vx + this.driftX + Math.sin(this.life * 10) * 0.4;
-                this.y += this.vy + this.driftY + Math.cos(this.life * 8) * 0.25;
-                
-                this.driftX += (Math.random() - 0.5) * 0.015;
-                this.driftY += (Math.random() - 0.5) * 0.015;
-                
-                this.life -= this.decay;
-                this.size = this.maxSize * this.life;
-                
-                if (this.life <= 0) {
-                    this.reset();
-                }
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
             }
-            
-            draw(ctx) {
-                for (let i = 0; i < this.history.length - 1; i++) {
-                    const p1 = this.history[i];
-                    const p2 = this.history[i + 1];
-                    const alpha = (i / this.history.length) * this.life * 0.5;
-                    const width = (i / this.history.length) * this.size * 0.4;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(p1.x, p1.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.strokeStyle = this.color;
-                    ctx.globalAlpha = alpha;
-                    ctx.lineWidth = width;
-                    ctx.lineCap = 'round';
-                    ctx.stroke();
-                }
-                
-                ctx.globalAlpha = this.life * 0.8;
-                ctx.shadowBlur = 12 * this.life;
-                ctx.shadowColor = this.color;
-                
+            draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = '#ffffff';
-                ctx.fill();
-                
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size * 1.8, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.life * 0.25;
-                ctx.fill();
-                
-                ctx.shadowBlur = 0;
-                ctx.globalAlpha = 1;
-            }
-        }
-        
-        const particles = [];
-        const particleCount = 350;
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-        
-        const bgParticles = [];
-        for (let i = 0; i < 40; i++) {
-            bgParticles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 1.2,
-                speed: 0.15 + Math.random() * 0.25,
-                opacity: Math.random() * 0.25
-            });
-        }
-        
-        function drawBackground() {
-            const gradient = ctx.createRadialGradient(
-                canvas.width/2, canvas.height/2, 0,
-                canvas.width/2, canvas.height/2, canvas.width * 0.8
-            );
-            gradient.addColorStop(0, '#0a0f0f');
-            gradient.addColorStop(1, '#000000');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            for (let p of bgParticles) {
-                p.y -= p.speed;
-                if (p.y < 0) p.y = canvas.height;
-                
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = '#40e0d0';
-                ctx.globalAlpha = p.opacity * 0.3;
+                ctx.globalAlpha = this.alpha;
                 ctx.fill();
             }
-            ctx.globalAlpha = 1;
         }
         
-        let startTime = Date.now();
-        let showContent = false;
-        let currentPage = 'login';
-        
+        const particles = Array.from({ length: particleCount }, () => new Particle());
+        let animationId;
+        let isVisible = true;
+
         function animate() {
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (!isVisible) return; // Экономия батареи
             
-            drawBackground();
-            
-            ctx.globalCompositeOperation = 'screen';
-            
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw(ctx);
-            }
-            
-            ctx.globalCompositeOperation = 'source-over';
-            
-            if (!showContent && Date.now() - startTime > 2500) {
-                showContent = true;
-                preloader.classList.add('hidden');
-                setTimeout(() => {
-                    if (currentPage === 'login') {
-                        loginButtonContainer.classList.add('visible');
-                    } else {
-                        mainHeader.classList.add('visible');
-                    }
-                }, 400);
-            }
-            
-            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, width, height);
+            // Легкий градиент фона
+            const grad = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, width);
+            grad.addColorStop(0, '#0a1515');
+            grad.addColorStop(1, '#000000');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0, width, height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            animationId = requestAnimationFrame(animate);
         }
         
-        // Обработка кнопки перехода на основную страницу
+        // Пауза анимации при сворачивании приложения
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                isVisible = false;
+                cancelAnimationFrame(animationId);
+            } else {
+                isVisible = true;
+                animate();
+            }
+        });
+
+        animate();
+
+        // --- Логика Интерфейса ---
+        
+        const preloader = document.getElementById('preloader');
+        const loginPage = document.getElementById('loginPage');
+        const mainPage = document.getElementById('mainPage');
+        const mainHeader = document.getElementById('mainHeader');
+        const modalOverlay = document.getElementById('genericModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+
+        // Скрытие прелоадера
+        setTimeout(() => {
+            preloader.classList.add('hidden');
+            // Анимация появления элементов на странице входа
+            document.querySelectorAll('#loginPage .fade-in-up').forEach(el => el.classList.add('visible'));
+        }, 1500);
+
+        // Переход на главную
         document.getElementById('btnEnter').addEventListener('click', () => {
             loginPage.style.display = 'none';
             mainPage.style.display = 'flex';
-            currentPage = 'main';
-            
-            showContent = false;
-            startTime = Date.now();
-            
+            // Небольшая задержка для плавности
             setTimeout(() => {
                 mainHeader.classList.add('visible');
             }, 100);
         });
-        
-        // Открытие модальных окон
-        btnFeed.addEventListener('click', () => {
-            feedModal.classList.add('active');
+
+        // Управление модальным окном
+        function openModal(title, contentHTML) {
+            modalTitle.innerText = title;
+            modalContent.innerHTML = contentHTML;
+            modalOverlay.classList.add('active');
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        document.getElementById('btnFeed').addEventListener('click', () => {
+            openModal('ЛЕНТА', `
+                <div style="margin-bottom: 20px; border-left: 2px solid #40e0d0; padding-left: 15px;">
+                    <div style="color: #00f2ff; font-size: 0.8rem; margin-bottom: 5px;">03.06.2026</div>
+                    <div>Запуск проекта EVGENII. Первый эксперимент.</div>
+                </div>
+                <div style="border-left: 2px solid #333; padding-left: 15px; opacity: 0.6;">
+                    <div style="font-size: 0.8rem; margin-bottom: 5px;">Скоро</div>
+                    <div>Новые аудиотреки с ИИ-озвучкой.</div>
+                </div>
+            `);
         });
-        
-        btnChat.addEventListener('click', () => {
-            chatModal.classList.add('active');
+
+        document.getElementById('btnChat').addEventListener('click', () => {
+            openModal('ЧАТ', '<div style="text-align:center; padding: 40px 0;">Чат временно недоступен.<br>Мы работаем над подключением нейросети-собеседника.</div>');
         });
-        
-        btnAboutRelease.addEventListener('click', () => {
-            releaseModal.classList.add('active');
+
+        document.getElementById('btnAboutRelease').addEventListener('click', () => {
+            openModal('О РЕЛИЗЕ', 'Поезд на юг — первый релиз проекта. Трек создан на стыке человеческого текста и машинного голоса.');
         });
-        
-        // Play/Pause кнопка
-        playBtn.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            if (isPlaying) {
-                playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-                playBtn.classList.add('playing');
-            } else {
-                playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
-                playBtn.classList.remove('playing');
-            }
+
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
         });
-        
-        // Кнопка "Показать все треки"
-        showMoreBtn.addEventListener('click', () => {
-            isExpanded = !isExpanded;
-            if (isExpanded) {
-                tracksList.classList.add('expanded');
-                showMoreBtn.classList.add('expanded');
-                showMoreBtn.innerHTML = 'Скрыть треки <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>';
-            } else {
-                tracksList.classList.remove('expanded');
-                showMoreBtn.classList.remove('expanded');
-                showMoreBtn.innerHTML = 'Показать все треки <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>';
-            }
-        });
-        
-        // Play кнопки в списке треков
-        document.querySelectorAll('.track-item-play').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const svg = btn.querySelector('svg');
-                if (svg.innerHTML.includes('M6 19h4V5H6v14zm8-14v14h4V5h-4z')) {
-                    svg.innerHTML = '<path d="M8 5v14l11-7z"/>';
-                } else {
-                    svg.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+
+        // Логика Play кнопок (Визуальная)
+        document.querySelectorAll('.play-btn-circle').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const svg = this.querySelector('svg path');
+                const isPlaying = svg.getAttribute('d').includes('M6 19'); // Проверка на иконку паузы
+                
+                // Сброс всех остальных кнопок (упрощенно)
+                document.querySelectorAll('.play-btn-circle svg path').forEach(p => {
+                    p.setAttribute('d', 'M8 5v14l11-7z');
+                });
+
+                if (!isPlaying) {
+                    svg.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z');
                 }
             });
         });
-        
-        // Закрытие модальных окон по крестику
-        document.querySelectorAll('.modal-close').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const modalId = btn.getAttribute('data-close');
-                if (modalId === 'feed') feedModal.classList.remove('active');
-                if (modalId === 'chat') chatModal.classList.remove('active');
-                if (modalId === 'release') releaseModal.classList.remove('active');
-            });
-        });
-        
-        // Закрытие модальных окон по клику на оверлей
-        feedModal.addEventListener('click', (e) => {
-            if (e.target === feedModal) feedModal.classList.remove('active');
-        });
-        
-        chatModal.addEventListener('click', (e) => {
-            if (e.target === chatModal) chatModal.classList.remove('active');
-        });
-        
-        releaseModal.addEventListener('click', (e) => {
-            if (e.target === releaseModal) releaseModal.classList.remove('active');
-        });
-        
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            pathPoints.length = 0;
-            const newPoints = getEPath(canvas.width / 2, canvas.height / 2, 1.0);
-            newPoints.forEach(p => pathPoints.push(p));
-        });
-        
-        animate();
+
     </script>
 </body>
 </html>
