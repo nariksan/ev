@@ -166,12 +166,13 @@
         .login-page {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
             width: 100%;
             height: 100%;
             position: relative;
             z-index: 10;
+            padding-top: 12vh;
+            padding-bottom: 10vh;
         }
         
         .login-title {
@@ -185,23 +186,27 @@
             text-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
             position: relative;
             animation: glow 3s ease-in-out infinite;
-            margin-bottom: 40px;
             text-align: center;
+            margin-bottom: 30px;
         }
         
         .login-description {
             color: #48d1cc;
             font-size: 1.2rem;
             letter-spacing: 0.1em;
-            margin-top: 15px;
             opacity: 0.8;
             text-align: center;
             max-width: 600px;
             line-height: 1.6;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
         }
         
         .login-button {
-            margin-top: 60px;
+            margin-top: 0;
         }
         
         /* Стили для основной страницы */
@@ -247,14 +252,25 @@
                 letter-spacing: 0.2em;
             }
             
-            .subtitle, .login-description, .main-description {
+            .subtitle {
                 font-size: 0.9rem;
                 letter-spacing: 0.1em;
+            }
+            
+            .login-description, .main-description {
+                font-size: 1rem;
+                letter-spacing: 0.05em;
+                padding: 0 20px;
             }
             
             .btn-enter {
                 padding: 15px 40px;
                 font-size: 1rem;
+            }
+            
+            .login-page {
+                padding-top: 10vh;
+                padding-bottom: 8vh;
             }
         }
         
@@ -264,12 +280,17 @@
             }
             
             .btn-enter {
-                padding: 12px 30px;
-                font-size: 0.9rem;
+                padding: 14px 32px;
+                font-size: 0.95rem;
             }
             
             .login-description, .main-description {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
+            }
+            
+            .login-page {
+                padding-top: 15vh;
+                padding-bottom: 10vh;
             }
         }
     </style>
@@ -493,7 +514,7 @@
         
         let startTime = Date.now();
         let showContent = false;
-        let currentPage = 'login'; // 'login' или 'main'
+        let currentPage = 'login';
         
         function animate() {
             ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
@@ -527,14 +548,13 @@
         
         // Обработка кнопки перехода на основную страницу
         document.getElementById('btnEnter').addEventListener('click', () => {
-            // Скрываем страницу входа
             loginPage.style.display = 'none';
-            
-            // Показываем основную страницу
             mainPage.style.display = 'flex';
             currentPage = 'main';
             
-            // Показываем заголовок основной страницы
+            showContent = false;
+            startTime = Date.now();
+            
             setTimeout(() => {
                 mainHeader.classList.add('visible');
             }, 100);
@@ -552,5 +572,4 @@
     </script>
 </body>
 </html>
-
 
