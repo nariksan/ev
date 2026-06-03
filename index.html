@@ -220,6 +220,7 @@
             position: relative;
             z-index: 10;
             padding: 60px 20px;
+            overflow-y: auto;
         }
         
         .main-header {
@@ -228,6 +229,8 @@
             transform: translateY(-30px);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
             margin-top: 12vh;
+            width: 100%;
+            max-width: 900px;
         }
         
         .main-header.visible {
@@ -252,6 +255,7 @@
             flex-direction: column;
             gap: 16px;
             margin-top: 40px;
+            align-items: center;
         }
         
         .btn-feed,
@@ -299,6 +303,186 @@
         
         .btn-feed:active,
         .btn-chat:active {
+            transform: translateY(0);
+        }
+        
+        /* Блок Новые релизы */
+        .releases-section {
+            margin-top: 60px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .releases-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.25em;
+            background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 35px;
+            text-transform: uppercase;
+        }
+        
+        /* Карточка трека */
+        .track-card {
+            background: linear-gradient(145deg, #0d1a1a, #060d0d);
+            border: 1px solid rgba(64, 224, 208, 0.25);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 420px;
+            margin: 0 auto;
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.1), inset 0 0 20px rgba(0, 242, 255, 0.03);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .track-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2), inset 0 0 20px rgba(0, 242, 255, 0.05);
+        }
+        
+        .track-cover {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            background: #0a0f0f;
+        }
+        
+        .track-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .track-play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+        
+        .track-cover:hover .track-play-overlay {
+            opacity: 1;
+        }
+        
+        .play-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(0, 242, 255, 0.9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s, background 0.3s;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.1);
+            background: #00f2ff;
+        }
+        
+        .play-btn svg {
+            width: 30px;
+            height: 30px;
+            fill: #050505;
+            margin-left: 4px;
+        }
+        
+        .play-btn.playing svg {
+            margin-left: 0;
+        }
+        
+        .track-info {
+            padding: 18px 10px 5px;
+            text-align: left;
+        }
+        
+        .track-name {
+            color: #e0f5f2;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 0.05em;
+        }
+        
+        .track-desc {
+            color: #48d1cc;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 15px;
+        }
+        
+        .track-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(64, 224, 208, 0.12);
+            margin-bottom: 15px;
+        }
+        
+        .track-duration {
+            color: #40e0d0;
+            font-size: 0.95rem;
+            letter-spacing: 0.1em;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .btn-about-release {
+            width: 100%;
+            padding: 13px 20px;
+            background: transparent;
+            border: 1px solid #40e0d0;
+            border-radius: 50px;
+            color: #40e0d0;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            box-shadow: 0 0 12px rgba(0, 242, 255, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-about-release::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(64, 224, 208, 0.15), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-about-release:hover::before {
+            left: 100%;
+        }
+        
+        .btn-about-release:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 22px rgba(0, 242, 255, 0.3);
+            background: rgba(64, 224, 208, 0.08);
+        }
+        
+        .btn-about-release:active {
             transform: translateY(0);
         }
         
@@ -406,6 +590,14 @@
             letter-spacing: 0.05em;
         }
         
+        .release-info-text {
+            color: #c0e8e5;
+            font-size: 1rem;
+            line-height: 1.6;
+            text-align: center;
+            padding: 10px 0;
+        }
+        
         /* Адаптивность */
         @media (max-width: 768px) {
             .title, .login-title {
@@ -456,6 +648,33 @@
             
             .modal-title {
                 font-size: 1.3rem;
+            }
+            
+            .releases-title {
+                font-size: 1.2rem;
+            }
+            
+            .track-card {
+                padding: 15px;
+            }
+            
+            .play-btn {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .play-btn svg {
+                width: 26px;
+                height: 26px;
+            }
+            
+            .track-name {
+                font-size: 1.05rem;
+            }
+            
+            .btn-about-release {
+                padding: 11px 18px;
+                font-size: 0.85rem;
             }
         }
         
@@ -510,6 +729,47 @@
                 font-size: 0.95rem;
                 padding: 20px 0;
             }
+            
+            .releases-section {
+                margin-top: 45px;
+            }
+            
+            .releases-title {
+                font-size: 1rem;
+                margin-bottom: 25px;
+            }
+            
+            .track-card {
+                padding: 12px;
+                border-radius: 16px;
+            }
+            
+            .track-cover {
+                border-radius: 12px;
+            }
+            
+            .play-btn {
+                width: 55px;
+                height: 55px;
+            }
+            
+            .play-btn svg {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .track-name {
+                font-size: 1rem;
+            }
+            
+            .track-desc {
+                font-size: 0.85rem;
+            }
+            
+            .btn-about-release {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -547,6 +807,28 @@
                 <button class="btn-feed" id="btnFeed">Лента обновлений</button>
                 <button class="btn-chat" id="btnChat">Чат</button>
             </div>
+            
+            <div class="releases-section">
+                <h2 class="releases-title">Новые релизы</h2>
+                <div class="track-card">
+                    <div class="track-cover">
+                        <img src="https://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/d9/20260603/3c8f8c9a/8f7a5b2c-4d1e-4f2a-9c3b-7e8d9f0a1b2c.png" alt="Поезд на юг">
+                        <div class="track-play-overlay" id="playOverlay">
+                            <button class="play-btn" id="playBtn">
+                                <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="track-info">
+                        <div class="track-name">Поезд на юг</div>
+                        <div class="track-desc">Без описания</div>
+                        <div class="track-meta">
+                            <span class="track-duration">3:23</span>
+                        </div>
+                        <button class="btn-about-release" id="btnAboutRelease">О релизе</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -575,6 +857,18 @@
         </div>
     </div>
     
+    <!-- Модальное окно о релизе -->
+    <div class="modal-overlay" id="releaseModal">
+        <div class="modal">
+            <button class="modal-close" data-close="release">&times;</button>
+            <h2 class="modal-title">О РЕЛИЗЕ</h2>
+            <div class="release-info-text">
+                Поезд на юг — первый релиз проекта EVGENII.<br><br>
+                Трек создан на стыке человеческого текста и машинного голоса. ИИ озвучил авторский текст, придав ему новое звучание.
+            </div>
+        </div>
+    </div>
+    
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -585,8 +879,14 @@
         const mainHeader = document.getElementById('mainHeader');
         const feedModal = document.getElementById('feedModal');
         const chatModal = document.getElementById('chatModal');
+        const releaseModal = document.getElementById('releaseModal');
         const btnFeed = document.getElementById('btnFeed');
         const btnChat = document.getElementById('btnChat');
+        const btnAboutRelease = document.getElementById('btnAboutRelease');
+        const playBtn = document.getElementById('playBtn');
+        const playIcon = document.getElementById('playIcon');
+        
+        let isPlaying = false;
         
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -820,12 +1120,34 @@
             chatModal.classList.add('active');
         });
         
+        btnAboutRelease.addEventListener('click', () => {
+            releaseModal.classList.add('active');
+        });
+        
+        // Play/Pause кнопка
+        playBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                playBtn.classList.add('playing');
+            } else {
+                playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+                playBtn.classList.remove('playing');
+            }
+        });
+        
+        document.getElementById('playOverlay').addEventListener('click', () => {
+            playBtn.click();
+        });
+        
         // Закрытие модальных окон по крестику
         document.querySelectorAll('.modal-close').forEach(btn => {
             btn.addEventListener('click', () => {
                 const modalId = btn.getAttribute('data-close');
                 if (modalId === 'feed') feedModal.classList.remove('active');
                 if (modalId === 'chat') chatModal.classList.remove('active');
+                if (modalId === 'release') releaseModal.classList.remove('active');
             });
         });
         
@@ -836,6 +1158,10 @@
         
         chatModal.addEventListener('click', (e) => {
             if (e.target === chatModal) chatModal.classList.remove('active');
+        });
+        
+        releaseModal.addEventListener('click', (e) => {
+            if (e.target === releaseModal) releaseModal.classList.remove('active');
         });
         
         window.addEventListener('resize', () => {
