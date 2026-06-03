@@ -162,16 +162,94 @@
             transform: translateY(-1px);
         }
         
+        /* Стили для страницы входа */
+        .login-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .login-title {
+            font-size: 5rem;
+            font-weight: 900;
+            letter-spacing: 0.3em;
+            background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+            position: relative;
+            animation: glow 3s ease-in-out infinite;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .login-description {
+            color: #48d1cc;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            margin-top: 15px;
+            opacity: 0.8;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .login-button {
+            margin-top: 60px;
+        }
+        
+        /* Стили для основной страницы */
+        .main-page {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 10;
+            padding: 60px 20px;
+        }
+        
+        .main-header {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .main-header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .main-description {
+            color: #48d1cc;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            margin-top: 20px;
+            opacity: 0.8;
+            text-align: center;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+        
         /* Адаптивность */
         @media (max-width: 768px) {
-            .title {
+            .title, .login-title {
                 font-size: 3rem;
                 letter-spacing: 0.2em;
             }
             
-            .subtitle {
-                font-size: 0.8rem;
-                letter-spacing: 0.3em;
+            .subtitle, .login-description, .main-description {
+                font-size: 0.9rem;
+                letter-spacing: 0.1em;
             }
             
             .btn-enter {
@@ -181,13 +259,17 @@
         }
         
         @media (max-width: 480px) {
-            .title {
+            .title, .login-title {
                 font-size: 2.2rem;
             }
             
             .btn-enter {
                 padding: 12px 30px;
                 font-size: 0.9rem;
+            }
+            
+            .login-description, .main-description {
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -201,23 +283,38 @@
     <!-- Canvas с анимацией -->
     <canvas id="canvas"></canvas>
     
-    <!-- Заголовок -->
-    <div class="header" id="header">
-        <h1 class="title">EVGENII</h1>
-        <p class="subtitle">WELCOME TO MY WORLD</p>
+    <!-- Страница входа -->
+    <div class="login-page" id="loginPage">
+        <h1 class="login-title">EVGENII</h1>
+        <p class="login-description">
+            Где заканчиваюсь я — и начинается ИИ.<br>
+            Эксперимент на стыке эмоций и кода.
+        </p>
+        <div class="login-button button-container" id="loginButtonContainer">
+            <button class="btn-enter" id="btnEnter">Перейти на сайт</button>
+        </div>
     </div>
     
-    <!-- Кнопка входа -->
-    <div class="button-container" id="buttonContainer">
-        <button class="btn-enter" id="btnEnter">Войти на сайт</button>
+    <!-- Основная страница -->
+    <div class="main-page" id="mainPage">
+        <div class="main-header" id="mainHeader">
+            <h1 class="title">EVGENII</h1>
+            <p class="main-description">
+                Где заканчиваюсь я — и начинается ИИ.<br>
+                Мои тексты, озвученные искусственным разумом.<br>
+                Эксперимент на стыке человеческих эмоций и машинного голоса.
+            </p>
+        </div>
     </div>
     
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const preloader = document.getElementById('preloader');
-        const header = document.getElementById('header');
-        const buttonContainer = document.getElementById('buttonContainer');
+        const loginPage = document.getElementById('loginPage');
+        const mainPage = document.getElementById('mainPage');
+        const loginButtonContainer = document.getElementById('loginButtonContainer');
+        const mainHeader = document.getElementById('mainHeader');
         
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -396,6 +493,7 @@
         
         let startTime = Date.now();
         let showContent = false;
+        let currentPage = 'login'; // 'login' или 'main'
         
         function animate() {
             ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
@@ -416,20 +514,30 @@
                 showContent = true;
                 preloader.classList.add('hidden');
                 setTimeout(() => {
-                    header.classList.add('visible');
-                    buttonContainer.classList.add('visible');
+                    if (currentPage === 'login') {
+                        loginButtonContainer.classList.add('visible');
+                    } else {
+                        mainHeader.classList.add('visible');
+                    }
                 }, 400);
             }
             
             requestAnimationFrame(animate);
         }
         
-        // Обработка кнопки
+        // Обработка кнопки перехода на основную страницу
         document.getElementById('btnEnter').addEventListener('click', () => {
-            // Здесь можно добавить переход на главную страницу
-            console.log('Вход на сайт');
-            alert('Добро пожаловать на сайт!');
-            // window.location.href = '/main';
+            // Скрываем страницу входа
+            loginPage.style.display = 'none';
+            
+            // Показываем основную страницу
+            mainPage.style.display = 'flex';
+            currentPage = 'main';
+            
+            // Показываем заголовок основной страницы
+            setTimeout(() => {
+                mainHeader.classList.add('visible');
+            }, 100);
         });
         
         window.addEventListener('resize', () => {
@@ -444,4 +552,5 @@
     </script>
 </body>
 </html>
+
 
