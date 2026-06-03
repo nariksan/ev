@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Мобильная адаптация: запрет зума, учет safe-area -->
+    <!-- Мобильная адаптация -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,9 +23,9 @@
         body {
             background: #050505;
             overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
-            height: 100dvh; /* Dynamic viewport для мобильных */
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -678,7 +678,7 @@
             transform: rotate(180deg);
         }
         
-        /* Модальное окно - Bottom Sheet для мобильных */
+        /* Модальное окно */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1346,10 +1346,6 @@
         let isPlaying = false;
         let isExpanded = false;
         
-        // Оптимизация: меньше частиц на мобильных
-        const isMobile = window.innerWidth < 768;
-        const particleCount = isMobile ? 200 : 350;
-        
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         
@@ -1357,148 +1353,19 @@
             '#00f2ff', '#40e0d0', '#48d1cc', '#00ced1', '#7fffd4', '#afeeee'
         ];
         
-        function getEPath(centerX, centerY, scale) {
-            const points = [];
-            const w = 100 * scale;
-            const h = 140 * scale;
-            const x = centerX - w/2;
-            const y = centerY - h/2;
-            const step = 2 * scale;
-            
-            for (let i = 0; i <= h; i += step) {
-                points.push({x: x, y: y + h - i, vx: 0, vy: -1});
-            }
-            
-            for (let i = 0; i <= w; i += step) {
-                points.push({x: x + i, y: y, vx: 1, vy: 0});
-            }
-            
-            for (let i = 0; i <= h/2; i += step) {
-                points.push({x: x + w, y: y + i, vx: 0, vy: 1});
-            }
-            
-            for (let i = 0; i <= w * 0.85; i += step) {
-                points.push({x: x + w - i, y: y + h/2, vx: -1, vy: 0});
-            }
-            
-            for (let i = 0; i <= h/2; i += step) {
-                points.push({x: x + w * 0.15, y: y + h/2 + i, vx: 0, vy: 1});
-            }
-            
-            for (let i = 0; i <= w; i += step) {
-                points.push({x: x + i, y: y + h, vx: 1, vy: 0});
-            }
-            
-            for (let i = 0; i <= h/2; i += step) {
-                points.push({x: x + w, y: y + h - i, vx: 0, vy: -1});
-            }
-            
-            return points;
-        }
-        
-        let pathPoints = getEPath(canvas.width / 2, canvas.height / 2, 1.0);
-        
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            
-            reset() {
-                const idx = Math.floor(Math.random() * pathPoints.length);
-                const point = pathPoints[idx];
-                
-                this.x = point.x + (Math.random() - 0.5) * 25;
-                this.y = point.y + (Math.random() - 0.5) * 25;
-                
-                const angle = Math.atan2(point.vy, point.vx) + (Math.random() - 0.5) * 0.5;
-                const speed = 0.4 + Math.random() * 1.2;
-                this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed;
-                
-                this.life = 1.0;
-                this.decay = 0.003 + Math.random() * 0.007;
-                this.size = 0.8 + Math.random() * 2;
-                this.maxSize = this.size;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-                
-                this.driftX = (Math.random() - 0.5) * 0.25;
-                this.driftY = (Math.random() - 0.5) * 0.25;
-                
-                this.history = [];
-                this.historyMax = 6 + Math.floor(Math.random() * 10);
-            }
-            
-            update() {
-                this.history.push({x: this.x, y: this.y, life: this.life});
-                if (this.history.length > this.historyMax) {
-                    this.history.shift();
-                }
-                
-                this.x += this.vx + this.driftX + Math.sin(this.life * 10) * 0.4;
-                this.y += this.vy + this.driftY + Math.cos(this.life * 8) * 0.25;
-                
-                this.driftX += (Math.random() - 0.5) * 0.015;
-                this.driftY += (Math.random() - 0.5) * 0.015;
-                
-                this.life -= this.decay;
-                this.size = this.maxSize * this.life;
-                
-                if (this.life <= 0) {
-                    this.reset();
-                }
-            }
-            
-            draw(ctx) {
-                for (let i = 0; i < this.history.length - 1; i++) {
-                    const p1 = this.history[i];
-                    const p2 = this.history[i + 1];
-                    const alpha = (i / this.history.length) * this.life * 0.5;
-                    const width = (i / this.history.length) * this.size * 0.4;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(p1.x, p1.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.strokeStyle = this.color;
-                    ctx.globalAlpha = alpha;
-                    ctx.lineWidth = width;
-                    ctx.lineCap = 'round';
-                    ctx.stroke();
-                }
-                
-                ctx.globalAlpha = this.life * 0.8;
-                ctx.shadowBlur = 12 * this.life;
-                ctx.shadowColor = this.color;
-                
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = '#ffffff';
-                ctx.fill();
-                
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size * 1.8, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.life * 0.25;
-                ctx.fill();
-                
-                ctx.shadowBlur = 0;
-                ctx.globalAlpha = 1;
-            }
-        }
-        
-        const particles = [];
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-        
+        // Только фоновые частицы без формирования буквы
         const bgParticles = [];
-        const bgCount = isMobile ? 20 : 40;
-        for (let i = 0; i < bgCount; i++) {
+        const particleCount = window.innerWidth < 768 ? 60 : 100;
+        
+        for (let i = 0; i < particleCount; i++) {
             bgParticles.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                size: Math.random() * 1.2,
-                speed: 0.15 + Math.random() * 0.25,
-                opacity: Math.random() * 0.25
+                size: Math.random() * 2 + 0.5,
+                speed: 0.2 + Math.random() * 0.4,
+                opacity: Math.random() * 0.4 + 0.1,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                drift: (Math.random() - 0.5) * 0.3
             });
         }
         
@@ -1514,14 +1381,24 @@
             
             for (let p of bgParticles) {
                 p.y -= p.speed;
-                if (p.y < 0) p.y = canvas.height;
+                p.x += p.drift;
+                
+                if (p.y < -10) {
+                    p.y = canvas.height + 10;
+                    p.x = Math.random() * canvas.width;
+                }
+                if (p.x < -10) p.x = canvas.width + 10;
+                if (p.x > canvas.width + 10) p.x = -10;
                 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = '#40e0d0';
-                ctx.globalAlpha = p.opacity * 0.3;
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.opacity;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = p.color;
                 ctx.fill();
             }
+            ctx.shadowBlur = 0;
             ctx.globalAlpha = 1;
         }
         
@@ -1532,21 +1409,12 @@
         let isVisible = true;
         
         function animate() {
-            if (!isVisible) return; // Экономия батареи при сворачивании
+            if (!isVisible) return;
             
             ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             drawBackground();
-            
-            ctx.globalCompositeOperation = 'screen';
-            
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw(ctx);
-            }
-            
-            ctx.globalCompositeOperation = 'source-over';
             
             if (!showContent && Date.now() - startTime > 2500) {
                 showContent = true;
@@ -1563,7 +1431,6 @@
             animationId = requestAnimationFrame(animate);
         }
         
-        // Пауза анимации при сворачивании приложения
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 isVisible = false;
@@ -1574,7 +1441,6 @@
             }
         });
         
-        // Обработка кнопки перехода на основную страницу
         document.getElementById('btnEnter').addEventListener('click', () => {
             loginPage.style.display = 'none';
             mainPage.style.display = 'flex';
@@ -1588,7 +1454,6 @@
             }, 100);
         });
         
-        // Открытие модальных окон
         btnFeed.addEventListener('click', () => {
             feedModal.classList.add('active');
         });
@@ -1601,7 +1466,6 @@
             releaseModal.classList.add('active');
         });
         
-        // Play/Pause кнопка
         playBtn.addEventListener('click', () => {
             isPlaying = !isPlaying;
             if (isPlaying) {
@@ -1613,7 +1477,6 @@
             }
         });
         
-        // Кнопка "Показать все треки"
         showMoreBtn.addEventListener('click', () => {
             isExpanded = !isExpanded;
             if (isExpanded) {
@@ -1627,7 +1490,6 @@
             }
         });
         
-        // Play кнопки в списке треков
         document.querySelectorAll('.track-item-play').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1640,7 +1502,6 @@
             });
         });
         
-        // Закрытие модальных окон по крестику
         document.querySelectorAll('.modal-close').forEach(btn => {
             btn.addEventListener('click', () => {
                 const modalId = btn.getAttribute('data-close');
@@ -1650,7 +1511,6 @@
             });
         });
         
-        // Закрытие модальных окон по клику на оверлей
         feedModal.addEventListener('click', (e) => {
             if (e.target === feedModal) feedModal.classList.remove('active');
         });
@@ -1666,9 +1526,6 @@
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            pathPoints.length = 0;
-            const newPoints = getEPath(canvas.width / 2, canvas.height / 2, 1.0);
-            newPoints.forEach(p => pathPoints.push(p));
         });
         
         animate();
