@@ -349,6 +349,7 @@
             overflow: hidden;
             position: relative;
             background: #0a0f0f;
+            margin-bottom: 18px;
         }
         
         .track-cover img {
@@ -358,28 +359,20 @@
             display: block;
         }
         
-        .track-play-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(5, 5, 5, 0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-            cursor: pointer;
+        .track-info {
+            text-align: left;
         }
         
-        .track-cover:hover .track-play-overlay {
-            opacity: 1;
+        .track-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 8px;
         }
         
         .play-btn {
-            width: 70px;
-            height: 70px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: rgba(0, 242, 255, 0.9);
             border: none;
@@ -388,7 +381,8 @@
             justify-content: center;
             align-items: center;
             transition: transform 0.2s, background 0.3s;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+            flex-shrink: 0;
         }
         
         .play-btn:hover {
@@ -397,27 +391,22 @@
         }
         
         .play-btn svg {
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
             fill: #050505;
-            margin-left: 4px;
+            margin-left: 3px;
         }
         
         .play-btn.playing svg {
             margin-left: 0;
         }
         
-        .track-info {
-            padding: 18px 10px 5px;
-            text-align: left;
-        }
-        
         .track-name {
             color: #e0f5f2;
             font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 5px;
             letter-spacing: 0.05em;
+            flex: 1;
         }
         
         .track-desc {
@@ -425,6 +414,7 @@
             font-size: 0.9rem;
             opacity: 0.7;
             margin-bottom: 15px;
+            padding-left: 60px;
         }
         
         .track-meta {
@@ -441,6 +431,7 @@
             font-size: 0.95rem;
             letter-spacing: 0.1em;
             font-family: 'Courier New', monospace;
+            padding-left: 60px;
         }
         
         .btn-about-release {
@@ -659,17 +650,22 @@
             }
             
             .play-btn {
-                width: 60px;
-                height: 60px;
+                width: 40px;
+                height: 40px;
             }
             
             .play-btn svg {
-                width: 26px;
-                height: 26px;
+                width: 18px;
+                height: 18px;
             }
             
             .track-name {
                 font-size: 1.05rem;
+            }
+            
+            .track-desc,
+            .track-duration {
+                padding-left: 55px;
             }
             
             .btn-about-release {
@@ -746,16 +742,17 @@
             
             .track-cover {
                 border-radius: 12px;
+                margin-bottom: 15px;
             }
             
             .play-btn {
-                width: 55px;
-                height: 55px;
+                width: 38px;
+                height: 38px;
             }
             
             .play-btn svg {
-                width: 24px;
-                height: 24px;
+                width: 16px;
+                height: 16px;
             }
             
             .track-name {
@@ -764,6 +761,11 @@
             
             .track-desc {
                 font-size: 0.85rem;
+                padding-left: 53px;
+            }
+            
+            .track-duration {
+                padding-left: 53px;
             }
             
             .btn-about-release {
@@ -813,14 +815,14 @@
                 <div class="track-card">
                     <div class="track-cover">
                         <img src="https://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/d9/20260603/3c8f8c9a/8f7a5b2c-4d1e-4f2a-9c3b-7e8d9f0a1b2c.png" alt="Поезд на юг">
-                        <div class="track-play-overlay" id="playOverlay">
+                    </div>
+                    <div class="track-info">
+                        <div class="track-header">
                             <button class="play-btn" id="playBtn">
                                 <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             </button>
+                            <div class="track-name">Поезд на юг</div>
                         </div>
-                    </div>
-                    <div class="track-info">
-                        <div class="track-name">Поезд на юг</div>
                         <div class="track-desc">Без описания</div>
                         <div class="track-meta">
                             <span class="track-duration">3:23</span>
@@ -1125,8 +1127,7 @@
         });
         
         // Play/Pause кнопка
-        playBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
+        playBtn.addEventListener('click', () => {
             isPlaying = !isPlaying;
             if (isPlaying) {
                 playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
@@ -1135,10 +1136,6 @@
                 playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
                 playBtn.classList.remove('playing');
             }
-        });
-        
-        document.getElementById('playOverlay').addEventListener('click', () => {
-            playBtn.click();
         });
         
         // Закрытие модальных окон по крестику
