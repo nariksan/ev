@@ -7,6 +7,19 @@
     <style>
         * {
             margin: 0;
+            padding: 0Вот обновлённый код. Уменьшен отступ у имени на основной странице и добавлена кнопка «Лента обновлений» под текстом с модальным окном.
+
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVGENII — Вход</title>
+    <style>
+        * {
+            margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
@@ -227,6 +240,7 @@
             opacity: 0;
             transform: translateY(-30px);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            margin-top: 12vh;
         }
         
         .main-header.visible {
@@ -243,6 +257,146 @@
             text-align: center;
             max-width: 700px;
             line-height: 1.6;
+        }
+        
+        /* Кнопка ленты обновлений */
+        .btn-feed {
+            margin-top: 40px;
+            padding: 14px 45px;
+            background: transparent;
+            border: 1px solid #40e0d0;
+            border-radius: 50px;
+            color: #40e0d0;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-feed::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(64, 224, 208, 0.15), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-feed:hover::before {
+            left: 100%;
+        }
+        
+        .btn-feed:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.35);
+            background: rgba(64, 224, 208, 0.08);
+        }
+        
+        .btn-feed:active {
+            transform: translateY(0);
+        }
+        
+        /* Модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal {
+            background: linear-gradient(145deg, #0a1515, #050a0a);
+            border: 1px solid rgba(64, 224, 208, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.15), inset 0 0 30px rgba(0, 242, 255, 0.03);
+            transform: scale(0.9);
+            transition: transform 0.4s ease;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #48d1cc;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            line-height: 1;
+            opacity: 0.7;
+        }
+        
+        .modal-close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+            color: #00f2ff;
+        }
+        
+        .modal-title {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .feed-item {
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(64, 224, 208, 0.12);
+        }
+        
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+        
+        .feed-date {
+            color: #00f2ff;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+        
+        .feed-text {
+            color: #c0e8e5;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
         
         /* Адаптивность */
@@ -272,6 +426,23 @@
                 padding-top: 10vh;
                 padding-bottom: 8vh;
             }
+            
+            .main-header {
+                margin-top: 8vh;
+            }
+            
+            .btn-feed {
+                padding: 12px 35px;
+                font-size: 0.9rem;
+            }
+            
+            .modal {
+                padding: 30px 25px;
+            }
+            
+            .modal-title {
+                font-size: 1.3rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -291,6 +462,28 @@
             .login-page {
                 padding-top: 15vh;
                 padding-bottom: 10vh;
+            }
+            
+            .main-header {
+                margin-top: 10vh;
+            }
+            
+            .btn-feed {
+                padding: 11px 28px;
+                font-size: 0.85rem;
+                margin-top: 30px;
+            }
+            
+            .modal {
+                padding: 25px 20px;
+            }
+            
+            .modal-title {
+                font-size: 1.1rem;
+            }
+            
+            .feed-text {
+                font-size: 0.88rem;
             }
         }
     </style>
@@ -325,6 +518,23 @@
                 Мои тексты, озвученные искусственным разумом.<br>
                 Эксперимент на стыке человеческих эмоций и машинного голоса.
             </p>
+            <button class="btn-feed" id="btnFeed">Лента обновлений</button>
+        </div>
+    </div>
+    
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <h2 class="modal-title">ЛЕНТА ОБНОВЛЕНИЙ</h2>
+            <div class="feed-item">
+                <div class="feed-date">03.06.2026</div>
+                <div class="feed-text">Запуск проекта EVGENII. Первый эксперимент на стыке человеческого текста и машинного голоса.</div>
+            </div>
+            <div class="feed-item">
+                <div class="feed-date">Скоро</div>
+                <div class="feed-text">Новые аудиотреки с ИИ-озвучкой. Следите за обновлениями.</div>
+            </div>
         </div>
     </div>
     
@@ -336,6 +546,9 @@
         const mainPage = document.getElementById('mainPage');
         const loginButtonContainer = document.getElementById('loginButtonContainer');
         const mainHeader = document.getElementById('mainHeader');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const btnFeed = document.getElementById('btnFeed');
+        const modalClose = document.getElementById('modalClose');
         
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -558,6 +771,22 @@
             setTimeout(() => {
                 mainHeader.classList.add('visible');
             }, 100);
+        });
+        
+        // Открытие модального окна
+        btnFeed.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+        });
+        
+        // Закрытие модального окна
+        modalClose.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('active');
+            }
         });
         
         window.addEventListener('resize', () => {
