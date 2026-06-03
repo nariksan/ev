@@ -7,19 +7,6 @@
     <style>
         * {
             margin: 0;
-            padding: 0Вот обновлённый код. Уменьшен отступ у имени на основной странице и добавлена кнопка «Лента обновлений» под текстом с модальным окном.
-
-
-```html
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVGENII — Вход</title>
-    <style>
-        * {
-            margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
@@ -259,9 +246,16 @@
             line-height: 1.6;
         }
         
-        /* Кнопка ленты обновлений */
-        .btn-feed {
+        /* Кнопки действий */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
             margin-top: 40px;
+        }
+        
+        .btn-feed,
+        .btn-chat {
             padding: 14px 45px;
             background: transparent;
             border: 1px solid #40e0d0;
@@ -276,9 +270,11 @@
             box-shadow: 0 0 15px rgba(0, 242, 255, 0.15);
             position: relative;
             overflow: hidden;
+            min-width: 260px;
         }
         
-        .btn-feed::before {
+        .btn-feed::before,
+        .btn-chat::before {
             content: '';
             position: absolute;
             top: 0;
@@ -289,17 +285,20 @@
             transition: left 0.5s;
         }
         
-        .btn-feed:hover::before {
+        .btn-feed:hover::before,
+        .btn-chat:hover::before {
             left: 100%;
         }
         
-        .btn-feed:hover {
+        .btn-feed:hover,
+        .btn-chat:hover {
             transform: translateY(-2px);
             box-shadow: 0 0 25px rgba(0, 242, 255, 0.35);
             background: rgba(64, 224, 208, 0.08);
         }
         
-        .btn-feed:active {
+        .btn-feed:active,
+        .btn-chat:active {
             transform: translateY(0);
         }
         
@@ -399,6 +398,14 @@
             line-height: 1.5;
         }
         
+        .chat-placeholder {
+            color: #c0e8e5;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 30px 0;
+            letter-spacing: 0.05em;
+        }
+        
         /* Адаптивность */
         @media (max-width: 768px) {
             .title, .login-title {
@@ -431,9 +438,16 @@
                 margin-top: 8vh;
             }
             
-            .btn-feed {
+            .btn-feed,
+            .btn-chat {
                 padding: 12px 35px;
                 font-size: 0.9rem;
+                min-width: 220px;
+            }
+            
+            .action-buttons {
+                gap: 12px;
+                margin-top: 30px;
             }
             
             .modal {
@@ -468,10 +482,16 @@
                 margin-top: 10vh;
             }
             
-            .btn-feed {
+            .btn-feed,
+            .btn-chat {
                 padding: 11px 28px;
                 font-size: 0.85rem;
-                margin-top: 30px;
+                min-width: 200px;
+            }
+            
+            .action-buttons {
+                gap: 10px;
+                margin-top: 25px;
             }
             
             .modal {
@@ -484,6 +504,11 @@
             
             .feed-text {
                 font-size: 0.88rem;
+            }
+            
+            .chat-placeholder {
+                font-size: 0.95rem;
+                padding: 20px 0;
             }
         }
     </style>
@@ -518,14 +543,17 @@
                 Мои тексты, озвученные искусственным разумом.<br>
                 Эксперимент на стыке человеческих эмоций и машинного голоса.
             </p>
-            <button class="btn-feed" id="btnFeed">Лента обновлений</button>
+            <div class="action-buttons">
+                <button class="btn-feed" id="btnFeed">Лента обновлений</button>
+                <button class="btn-chat" id="btnChat">Чат</button>
+            </div>
         </div>
     </div>
     
-    <!-- Модальное окно -->
-    <div class="modal-overlay" id="modalOverlay">
+    <!-- Модальное окно ленты -->
+    <div class="modal-overlay" id="feedModal">
         <div class="modal">
-            <button class="modal-close" id="modalClose">&times;</button>
+            <button class="modal-close" data-close="feed">&times;</button>
             <h2 class="modal-title">ЛЕНТА ОБНОВЛЕНИЙ</h2>
             <div class="feed-item">
                 <div class="feed-date">03.06.2026</div>
@@ -538,6 +566,15 @@
         </div>
     </div>
     
+    <!-- Модальное окно чата -->
+    <div class="modal-overlay" id="chatModal">
+        <div class="modal">
+            <button class="modal-close" data-close="chat">&times;</button>
+            <h2 class="modal-title">ЧАТ</h2>
+            <div class="chat-placeholder">Чат в разработке</div>
+        </div>
+    </div>
+    
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -546,9 +583,10 @@
         const mainPage = document.getElementById('mainPage');
         const loginButtonContainer = document.getElementById('loginButtonContainer');
         const mainHeader = document.getElementById('mainHeader');
-        const modalOverlay = document.getElementById('modalOverlay');
+        const feedModal = document.getElementById('feedModal');
+        const chatModal = document.getElementById('chatModal');
         const btnFeed = document.getElementById('btnFeed');
-        const modalClose = document.getElementById('modalClose');
+        const btnChat = document.getElementById('btnChat');
         
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -773,20 +811,31 @@
             }, 100);
         });
         
-        // Открытие модального окна
+        // Открытие модальных окон
         btnFeed.addEventListener('click', () => {
-            modalOverlay.classList.add('active');
+            feedModal.classList.add('active');
         });
         
-        // Закрытие модального окна
-        modalClose.addEventListener('click', () => {
-            modalOverlay.classList.remove('active');
+        btnChat.addEventListener('click', () => {
+            chatModal.classList.add('active');
         });
         
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                modalOverlay.classList.remove('active');
-            }
+        // Закрытие модальных окон по крестику
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modalId = btn.getAttribute('data-close');
+                if (modalId === 'feed') feedModal.classList.remove('active');
+                if (modalId === 'chat') chatModal.classList.remove('active');
+            });
+        });
+        
+        // Закрытие модальных окон по клику на оверлей
+        feedModal.addEventListener('click', (e) => {
+            if (e.target === feedModal) feedModal.classList.remove('active');
+        });
+        
+        chatModal.addEventListener('click', (e) => {
+            if (e.target === chatModal) chatModal.classList.remove('active');
         });
         
         window.addEventListener('resize', () => {
