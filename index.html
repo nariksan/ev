@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Мобильная адаптация -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,7 +22,7 @@
         
         body {
             background: #050505;
-            overflow: hidden; /* Скролл только внутри main-page */
+            overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
             height: 100dvh;
@@ -42,7 +41,6 @@
             pointer-events: none;
         }
         
-        /* --- Анимации перехода страниц --- */
         .page-transition {
             transition: opacity 0.6s ease, transform 0.6s ease;
         }
@@ -51,7 +49,7 @@
             opacity: 0;
             pointer-events: none;
             transform: scale(0.95);
-            position: absolute; /* Чтобы не занимал место при скрытии */
+            position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
@@ -69,7 +67,6 @@
             height: 100%;
         }
         
-        /* Прелоадер */
         .preloader {
             position: fixed;
             top: 0;
@@ -101,7 +98,6 @@
             50% { opacity: 1; }
         }
         
-        /* Заголовок EVGENII */
         .header-anim {
             opacity: 0;
             transform: translateY(-30px);
@@ -132,7 +128,6 @@
             50% { filter: drop-shadow(0 0 40px rgba(64, 224, 208, 0.8)); }
         }
         
-        /* Страница входа */
         .login-page {
             display: flex;
             flex-direction: column;
@@ -169,7 +164,6 @@
         
         .btn-enter:active { transform: scale(0.97); }
         
-        /* Основная страница */
         .main-page {
             display: flex;
             flex-direction: column;
@@ -177,7 +171,7 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding: 20px;
-            padding-bottom: 120px; /* Отступ под нижний плеер */
+            padding-bottom: 120px;
         }
         
         .main-header {
@@ -196,7 +190,6 @@
             line-height: 1.6;
         }
         
-        /* Кнопки действий */
         .action-buttons {
             display: flex;
             flex-direction: column;
@@ -226,7 +219,6 @@
             transform: scale(0.97);
         }
         
-        /* Секции треков */
         .releases-section, .all-tracks-section {
             margin-top: 60px;
             width: 100%;
@@ -244,7 +236,6 @@
             text-transform: uppercase;
         }
         
-        /* Карточка трека */
         .track-card {
             background: linear-gradient(145deg, #0d1a1a, #060d0d);
             border: 1px solid rgba(64, 224, 208, 0.25);
@@ -314,8 +305,14 @@
             margin-bottom: 15px;
         }
         
-        .btn-about-release {
-            width: 100%;
+        .track-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-about-release, .btn-download-release {
+            flex: 1;
             padding: 13px 20px;
             background: transparent;
             border: 1px solid #40e0d0;
@@ -324,11 +321,25 @@
             font-size: 0.95rem;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
             touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
         }
         
-        /* Список треков */
+        .btn-about-release:active, .btn-download-release:active {
+            background: rgba(64, 224, 208, 0.15);
+            transform: scale(0.97);
+        }
+        
+        .btn-download-release svg {
+            width: 16px;
+            height: 16px;
+            fill: #40e0d0;
+        }
+        
         .archive-label {
             font-size: 0.9rem;
             color: #ff8c42;
@@ -406,6 +417,34 @@
             font-family: monospace;
         }
         
+        /* Кнопка скачать в списке треков */
+        .track-item-download {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(64, 224, 208, 0.1);
+            border: 1px solid rgba(64, 224, 208, 0.3);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            touch-action: manipulation;
+        }
+        
+        .track-item-download:active {
+            background: rgba(0, 242, 255, 0.2);
+            border-color: rgba(0, 242, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .track-item-download svg {
+            width: 18px;
+            height: 18px;
+            fill: #40e0d0;
+        }
+        
         .show-more-btn {
             width: 100%;
             padding: 16px;
@@ -418,7 +457,6 @@
             touch-action: manipulation;
         }
         
-        /* --- НИЖНИЙ ПЛЕЕР (STICKY PLAYER) --- */
         .sticky-player {
             position: fixed;
             bottom: 0;
@@ -438,9 +476,7 @@
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        .sticky-player.active {
-            transform: translateY(0);
-        }
+        .sticky-player.active { transform: translateY(0); }
         
         .player-info {
             display: flex;
@@ -518,7 +554,6 @@
         .ctrl-play svg { width: 18px; height: 18px; fill: #00f2ff; margin-left: 2px; }
         .ctrl-play.playing svg { margin-left: 0; }
         
-        /* Прогресс бар */
         .progress-container {
             position: absolute;
             top: -3px;
@@ -553,7 +588,7 @@
         
         .progress-container:hover .progress-bar::after { opacity: 1; }
         
-        /* Модальные окна */
+        /* --- МОДАЛЬНЫЕ ОКНА --- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -562,6 +597,7 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 200;
             display: none;
             justify-content: center;
@@ -573,7 +609,7 @@
         .modal-overlay.active { display: flex; opacity: 1; }
         
         .modal {
-            background: #0a1515;
+            background: linear-gradient(145deg, #0a1515, #050a0a);
             border: 1px solid rgba(64, 224, 208, 0.3);
             border-radius: 20px;
             padding: 40px;
@@ -582,6 +618,7 @@
             max-height: 70vh;
             overflow-y: auto;
             position: relative;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.15);
             transform: scale(0.9);
             transition: transform 0.4s ease;
         }
@@ -597,12 +634,26 @@
             color: #48d1cc;
             font-size: 1.8rem;
             cursor: pointer;
+            line-height: 1;
+            opacity: 0.7;
+            padding: 10px;
+            touch-action: manipulation;
+        }
+        
+        .modal-close:active {
+            opacity: 1;
+            transform: rotate(90deg);
+            color: #00f2ff;
         }
         
         .modal-title {
             font-size: 1.6rem;
             font-weight: 900;
-            color: #00f2ff;
+            letter-spacing: 0.2em;
+            background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 25px;
             text-align: center;
         }
@@ -611,24 +662,131 @@
         .feed-date { color: #00f2ff; font-size: 0.8rem; margin-bottom: 5px; }
         .feed-text { color: #c0e8e5; line-height: 1.5; }
         
-        /* Адаптивность */
+        /* --- МОДАЛКА СКАЧИВАНИЯ --- */
+        .download-modal-content {
+            text-align: center;
+            padding: 10px 0;
+        }
+        
+        .download-icon-animated {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            position: relative;
+        }
+        
+        .download-icon-animated svg {
+            width: 100%;
+            height: 100%;
+            fill: #40e0d0;
+            animation: downloadBounce 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes downloadBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+        
+        .download-track-name {
+            color: #00f2ff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: 0.05em;
+        }
+        
+        .download-status {
+            color: #c0e8e5;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            opacity: 0.85;
+        }
+        
+        .download-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(64, 224, 208, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+        
+        .download-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f2ff, #40e0d0);
+            width: 0%;
+            animation: downloadProgress 3s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+        
+        @keyframes downloadProgress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        .btn-download-manual {
+            padding: 14px 40px;
+            background: linear-gradient(135deg, #00f2ff, #40e0d0);
+            border: none;
+            border-radius: 50px;
+            color: #050505;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+            touch-action: manipulation;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-download-manual:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-download-manual svg {
+            width: 18px;
+            height: 18px;
+            fill: #050505;
+        }
+        
+        .download-success {
+            color: #7fffd4;
+            font-size: 1rem;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        
+        .download-success.visible {
+            opacity: 1;
+        }
+        
         @media (max-width: 768px) {
             .title { font-size: 3rem; }
             .sticky-player { padding: 8px 15px; }
             .player-cover { width: 40px; height: 40px; }
             .ctrl-btn svg { width: 20px; height: 20px; }
+            .modal { padding: 30px 25px; }
+            .modal-title { font-size: 1.3rem; }
+            .download-track-name { font-size: 1.1rem; }
+            .btn-download-manual { padding: 12px 30px; font-size: 0.9rem; }
+            .track-actions { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <!-- Прелоадер -->
     <div class="preloader" id="preloader">
         <div class="preloader-text">ЗАГРУЗКА...</div>
     </div>
     
     <canvas id="canvas"></canvas>
     
-    <!-- Страница входа -->
     <div class="login-page visible-page page-transition" id="loginPage">
         <h1 class="title header-anim" id="loginTitle">EVGENII</h1>
         <p class="subtitle header-anim" style="transition-delay: 0.2s">
@@ -637,7 +795,6 @@
         <button class="btn-enter header-anim" id="btnEnter" style="transition-delay: 0.4s">Перейти на сайт</button>
     </div>
     
-    <!-- Основная страница -->
     <div class="main-page hidden-page page-transition" id="mainPage">
         <div class="main-header header-anim" id="mainHeader">
             <h1 class="title">EVGENII</h1>
@@ -665,7 +822,13 @@
                             <div class="track-name">Поезд на юг</div>
                         </div>
                         <div class="track-desc">AI Cover • 2026</div>
-                        <button class="btn-about-release" id="btnAboutRelease">О релизе</button>
+                        <div class="track-actions">
+                            <button class="btn-about-release" id="btnAboutRelease">О релизе</button>
+                            <button class="btn-download-release" onclick="openDownloadModal(0)">
+                                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                                Скачать
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -674,8 +837,6 @@
                 <div class="archive-label">// ARCHIVE</div>
                 <h2 class="all-tracks-title">Все треки</h2>
                 <div class="tracks-list" id="tracksList">
-                    <!-- Треки генерируются JS или статично, здесь пример структуры -->
-                    <!-- Трек 0 (дублирует релиз для удобства) -->
                     <div class="track-item" onclick="toggleTrackById(0)">
                         <div class="track-item-cover">
                             <img src="https://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/d9/20260603/3c8f8c9a/8f7a5b2c-4d1e-4f2a-9c3b-7e8d9f0a1b2c.png" onerror="this.src='https://via.placeholder.com/50/0d1a1a/40e0d0?text=E'">
@@ -685,6 +846,9 @@
                             <div class="track-item-desc">EVGENII</div>
                         </div>
                         <div class="track-item-duration">3:23</div>
+                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(0)">
+                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </button>
                     </div>
                     
                     <div class="track-item" onclick="toggleTrackById(1)">
@@ -696,6 +860,9 @@
                             <div class="track-item-desc">Когда похуй</div>
                         </div>
                         <div class="track-item-duration">3:11</div>
+                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(1)">
+                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </button>
                     </div>
                     
                     <div class="track-item" onclick="toggleTrackById(2)">
@@ -707,6 +874,9 @@
                             <div class="track-item-desc">Без описания</div>
                         </div>
                         <div class="track-item-duration">3:48</div>
+                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(2)">
+                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </button>
                     </div>
                     
                     <div class="track-item" onclick="toggleTrackById(3)">
@@ -718,6 +888,9 @@
                             <div class="track-item-desc">Без описания</div>
                         </div>
                         <div class="track-item-duration">04:48</div>
+                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(3)">
+                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </button>
                     </div>
                      <div class="track-item" onclick="toggleTrackById(4)">
                         <div class="track-item-cover">
@@ -728,6 +901,9 @@
                             <div class="track-item-desc">Без описания</div>
                         </div>
                         <div class="track-item-duration">03:23</div>
+                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(4)">
+                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </button>
                     </div>
                 </div>
                 <button class="show-more-btn" id="showMoreBtn">Показать все треки</button>
@@ -735,7 +911,6 @@
         </div>
     </div>
     
-    <!-- НИЖНИЙ ПЛЕЕР -->
     <div class="sticky-player" id="stickyPlayer">
         <div class="progress-container" id="progressContainer">
             <div class="progress-bar" id="progressBar"></div>
@@ -765,7 +940,7 @@
         </div>
     </div>
     
-    <!-- Модальные окна -->
+    <!-- МОДАЛКА ЛЕНТЫ -->
     <div class="modal-overlay" id="feedModal">
         <div class="modal">
             <button class="modal-close" data-close="feed">&times;</button>
@@ -777,6 +952,7 @@
         </div>
     </div>
     
+    <!-- МОДАЛКА ЧАТА -->
     <div class="modal-overlay" id="chatModal">
         <div class="modal">
             <button class="modal-close" data-close="chat">&times;</button>
@@ -785,6 +961,7 @@
         </div>
     </div>
     
+    <!-- МОДАЛКА О РЕЛИЗЕ -->
     <div class="modal-overlay" id="releaseModal">
         <div class="modal">
             <button class="modal-close" data-close="release">&times;</button>
@@ -796,40 +973,69 @@
         </div>
     </div>
     
+    <!-- МОДАЛКА СКАЧИВАНИЯ -->
+    <div class="modal-overlay" id="downloadModal">
+        <div class="modal">
+            <button class="modal-close" id="closeDownloadModal">&times;</button>
+            <h2 class="modal-title">ПОДГОТОВКА К СКАЧИВАНИЮ</h2>
+            <div class="download-modal-content">
+                <div class="download-icon-animated">
+                    <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                </div>
+                <div class="download-track-name" id="downloadTrackName">Трек готовится для загрузки</div>
+                <div class="download-status">
+                    Скачивание происходит не сразу. Пожалуйста, подождите несколько секунд...<br>
+                    Если скачивание не началось, нажмите «Скачать».
+                </div>
+                <div class="download-progress-bar">
+                    <div class="download-progress-fill" id="downloadProgressFill"></div>
+                </div>
+                <button class="btn-download-manual" id="btnDownloadManual">
+                    <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    Скачать
+                </button>
+                <div class="download-success" id="downloadSuccess">✓ Скачивание началось</div>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // --- ДАННЫЕ ТРЕКОВ ---
-        // ВАЖНО: Замените 'src' на реальные ссылки на mp3 файлы
         const tracks = [
             {
                 title: "Поезд на юг",
                 artist: "EVGENII",
                 cover: "https://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/d9/20260603/3c8f8c9a/8f7a5b2c-4d1e-4f2a-9c3b-7e8d9f0a1b2c.png",
-                // Используем демо-трек для примера, так как реального файла нет
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
+                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                fileName: "EVGENII - Поезд на юг.mp3"
             },
             {
                 title: "А мне похуй",
                 artist: "EVGENII",
                 cover: "https://via.placeholder.com/400/4a4a4a/ffffff?text=POHUY",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+                fileName: "EVGENII - А мне похуй.mp3"
             },
             {
                 title: "Сгоревший экскиз",
                 artist: "EVGENII",
-                cover: "", // Нет обложки
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+                cover: "",
+                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+                fileName: "EVGENII - Сгоревший экскиз.mp3"
             },
             {
                 title: "Тишина",
                 artist: "EVGENII",
                 cover: "",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+                fileName: "EVGENII - Тишина.mp3"
             },
              {
                 title: "Воздух Густеет",
                 artist: "EVGENII",
                 cover: "",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
+                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+                fileName: "EVGENII - Воздух Густеет.mp3"
             }
         ];
 
@@ -837,7 +1043,7 @@
         let currentTrackIndex = 0;
         let isPlaying = false;
         const audio = new Audio();
-        audio.volume = 0.5; // Громкость по умолчанию
+        audio.volume = 0.5;
 
         // Элементы DOM
         const stickyPlayer = document.getElementById('stickyPlayer');
@@ -854,7 +1060,6 @@
         const mainHeader = document.getElementById('mainHeader');
 
         // --- ЛОГИКА ПЛЕЕРА ---
-
         function loadTrack(index) {
             currentTrackIndex = index;
             const track = tracks[index];
@@ -863,10 +1068,8 @@
             playerTitle.textContent = track.title;
             playerImg.src = track.cover || 'https://via.placeholder.com/50/111/40e0d0?text=M';
             
-            // Обновляем визуальное состояние кнопок Play/Pause везде
-            updatePlayIcons(false); // Сначала ставим паузу, пока грузится
+            updatePlayIcons(false);
             
-            // Подсветка активного трека в списке
             document.querySelectorAll('.track-item').forEach((item, i) => {
                 if(i === index) item.classList.add('active-track');
                 else item.classList.remove('active-track');
@@ -878,7 +1081,7 @@
                 audio.play().then(() => {
                     isPlaying = true;
                     updatePlayIcons(true);
-                    stickyPlayer.classList.add('active'); // Показываем плеер при первом запуске
+                    stickyPlayer.classList.add('active');
                 }).catch(e => console.log("Ошибка воспроизведения:", e));
             } else {
                 audio.pause();
@@ -889,7 +1092,7 @@
 
         function toggleTrackById(id) {
             if (currentTrackIndex === id && !audio.paused) {
-                togglePlay(); // Если тот же трек, просто пауза/плей
+                togglePlay();
             } else {
                 loadTrack(id);
                 togglePlay();
@@ -921,10 +1124,8 @@
             if(isPlaying) audio.play();
         }
 
-        // Автопереключение
         audio.addEventListener('ended', nextTrack);
 
-        // Обновление прогресс-бара
         audio.addEventListener('timeupdate', () => {
             if(audio.duration) {
                 const percent = (audio.currentTime / audio.duration) * 100;
@@ -932,7 +1133,6 @@
             }
         });
 
-        // Перемотка
         progressContainer.addEventListener('click', (e) => {
             const width = progressContainer.clientWidth;
             const clickX = e.offsetX;
@@ -940,14 +1140,117 @@
             audio.currentTime = (clickX / width) * duration;
         });
 
-        // Слушатели кнопок нижнего плеера
         mainPlayBtn.addEventListener('click', togglePlay);
         nextBtn.addEventListener('click', nextTrack);
         prevBtn.addEventListener('click', prevTrack);
 
-        // --- ЛОГИКА ИНТЕРФЕЙСА ---
+        // --- ЛОГИКА СКАЧИВАНИЯ ---
+        const downloadModal = document.getElementById('downloadModal');
+        const downloadTrackName = document.getElementById('downloadTrackName');
+        const downloadProgressFill = document.getElementById('downloadProgressFill');
+        const btnDownloadManual = document.getElementById('btnDownloadManual');
+        const downloadSuccess = document.getElementById('downloadSuccess');
+        const closeDownloadModal = document.getElementById('closeDownloadModal');
+        
+        let currentDownloadIndex = null;
+        let autoDownloadTimeout = null;
+        let autoCloseTimeout = null;
 
-        // Переход между страницами
+        function openDownloadModal(index) {
+            currentDownloadIndex = index;
+            const track = tracks[index];
+            
+            // Сбрасываем состояние модалки
+            downloadTrackName.textContent = track.title;
+            downloadSuccess.classList.remove('visible');
+            downloadProgressFill.style.animation = 'none';
+            // Перезапуск анимации прогресс-бара
+            setTimeout(() => {
+                downloadProgressFill.style.animation = 'downloadProgress 3s ease-in-out infinite';
+            }, 10);
+            
+            // Открываем модалку
+            downloadModal.classList.add('active');
+            
+            // Автозапуск скачивания через 1.5 секунды
+            clearTimeout(autoDownloadTimeout);
+            clearTimeout(autoCloseTimeout);
+            
+            autoDownloadTimeout = setTimeout(() => {
+                performDownload(index);
+            }, 1500);
+        }
+
+        function performDownload(index) {
+            const track = tracks[index];
+            const url = track.src;
+            const fileName = track.fileName;
+            
+            // Пытаемся скачать через fetch + blob (даёт правильное имя файла)
+            fetch(url, { mode: 'cors' })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.blob();
+                })
+                .then(blob => {
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(blobUrl);
+                    showDownloadSuccess();
+                })
+                .catch(err => {
+                    // Fallback: если CORS блокирует, открываем прямую ссылку
+                    console.log('CORS fallback:', err);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    showDownloadSuccess();
+                });
+        }
+
+        function showDownloadSuccess() {
+            downloadSuccess.classList.add('visible');
+            // Автозакрытие модалки через 3 секунды
+            clearTimeout(autoCloseTimeout);
+            autoCloseTimeout = setTimeout(() => {
+                downloadModal.classList.remove('active');
+            }, 3000);
+        }
+
+        // Ручная кнопка "Скачать"
+        btnDownloadManual.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentDownloadIndex !== null) {
+                performDownload(currentDownloadIndex);
+            }
+        });
+
+        // Закрытие модалки скачивания
+        closeDownloadModal.addEventListener('click', () => {
+            downloadModal.classList.remove('active');
+            clearTimeout(autoDownloadTimeout);
+            clearTimeout(autoCloseTimeout);
+        });
+
+        downloadModal.addEventListener('click', (e) => {
+            if (e.target === downloadModal) {
+                downloadModal.classList.remove('active');
+                clearTimeout(autoDownloadTimeout);
+                clearTimeout(autoCloseTimeout);
+            }
+        });
+
+        // --- ЛОГИКА ИНТЕРФЕЙСА ---
         document.getElementById('btnEnter').addEventListener('click', () => {
             loginPage.classList.remove('visible-page');
             loginPage.classList.add('hidden-page');
@@ -956,20 +1259,17 @@
                 mainPage.classList.remove('hidden-page');
                 mainPage.classList.add('visible-page');
                 
-                // Анимация появления контента
                 setTimeout(() => {
                     mainHeader.classList.add('visible');
                 }, 100);
-            }, 600); // Время совпадает с transition в CSS
+            }, 600);
         });
 
-        // Показать больше треков
         document.getElementById('showMoreBtn').addEventListener('click', function() {
             document.getElementById('tracksList').classList.toggle('expanded');
             this.textContent = this.textContent.includes('Показать') ? 'Скрыть треки' : 'Показать все треки';
         });
 
-        // Модальные окна
         const modals = {
             feed: document.getElementById('feedModal'),
             chat: document.getElementById('chatModal'),
@@ -980,9 +1280,10 @@
         document.getElementById('btnChat').onclick = () => modals.chat.classList.add('active');
         document.getElementById('btnAboutRelease').onclick = () => modals.release.classList.add('active');
 
-        document.querySelectorAll('.modal-close').forEach(btn => {
+        document.querySelectorAll('.modal-close[data-close]').forEach(btn => {
             btn.onclick = () => {
-                Object.values(modals).forEach(m => m.classList.remove('active'));
+                const modalId = btn.getAttribute('data-close');
+                if (modals[modalId]) modals[modalId].classList.remove('active');
             };
         });
 
@@ -992,7 +1293,7 @@
             };
         });
 
-        // --- CANVAS ФОН (упрощенный) ---
+        // --- CANVAS ФОН ---
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -1005,9 +1306,7 @@
         resizeCanvas();
 
         class Particle {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
@@ -1048,10 +1347,8 @@
                 document.getElementById('btnEnter').classList.add('visible');
             }, 1000);
             
-            // Инициализация первого трека (без автозапуска)
             loadTrack(0);
         };
-
     </script>
 </body>
 </html>
