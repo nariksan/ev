@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<html langОтлично! Добавляю кнопку "О проекте" и модальное окно с текстом о вашей концепции. Вот обновлённый код:
+
+
+```html
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -238,8 +243,17 @@
             font-weight: 400;
         }
 
-        /* Кнопка ленты обновлений */
-        .updates-button {
+        /* Контейнер для кнопок */
+        .buttons-container {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Кнопки */
+        .updates-button,
+        .about-button {
             display: inline-block;
             padding: 1rem 3rem;
             font-size: 1rem;
@@ -257,14 +271,15 @@
             backdrop-filter: blur(5px);
         }
 
-        .updates-button:hover {
+        .updates-button:hover,
+        .about-button:hover {
             background: rgba(0, 255, 255, 0.15);
             border-color: rgba(0, 255, 255, 0.6);
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
             transform: translateY(-2px);
         }
 
-        /* Модальное окно обновлений */
+        /* Модальное окно */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -359,6 +374,7 @@
             transform: rotate(90deg);
         }
 
+        /* Стили для списка обновлений */
         .updates-list {
             display: flex;
             flex-direction: column;
@@ -451,6 +467,37 @@
             opacity: 0.9;
         }
 
+        /* Стили для текста "О проекте" */
+        .about-text {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: #b0e0e6;
+            opacity: 0.95;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+        }
+
+        .about-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .about-text .highlight {
+            color: #00ffff;
+            font-weight: 500;
+        }
+
+        .about-text .quote {
+            border-left: 3px solid rgba(0, 255, 255, 0.5);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: #e0f7fa;
+            opacity: 0.85;
+        }
+
         /* Скроллбар для модального окна */
         .modal-content::-webkit-scrollbar {
             width: 8px;
@@ -507,6 +554,17 @@
                 font-size: 1.2rem;
             }
 
+            .buttons-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .updates-button,
+            .about-button {
+                width: 100%;
+                max-width: 300px;
+            }
+
             .modal-content {
                 padding: 2rem 1.5rem;
             }
@@ -526,6 +584,10 @@
 
             .update-title {
                 font-size: 1.05rem;
+            }
+
+            .about-text {
+                font-size: 1rem;
             }
         }
 
@@ -560,7 +622,8 @@
                 font-size: 1.1rem;
             }
 
-            .updates-button {
+            .updates-button,
+            .about-button {
                 padding: 0.8rem 2rem;
                 font-size: 0.9rem;
             }
@@ -578,6 +641,10 @@
             }
 
             .update-text {
+                font-size: 0.95rem;
+            }
+
+            .about-text {
                 font-size: 0.95rem;
             }
         }
@@ -607,7 +674,10 @@
                 <p>Мои тексты, озвученные искусственным разумом.</p>
                 <p>Эксперимент на стыке человеческих эмоций и машинного голоса.</p>
             </div>
-            <button class="updates-button" id="updatesButton">Лента обновлений</button>
+            <div class="buttons-container">
+                <button class="updates-button" id="updatesButton">Лента обновлений</button>
+                <button class="about-button" id="aboutButton">О проекте</button>
+            </div>
         </div>
     </div>
 
@@ -616,38 +686,40 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-header-icon">●</div>
-                <h2>Последние обновления</h2>
+                <h2 id="modalTitle">Последние обновления</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
-            <div class="updates-list">
-                <div class="update-item">
-                    <div class="update-date">05 июня</div>
-                    <div class="update-content">
-                        <div class="update-header">
-                            <span class="update-badge badge-new">NEW</span>
-                            <div class="update-title">Запуск проекта <strong>EVGENII</strong></div>
+            <div id="modalBody">
+                <div class="updates-list">
+                    <div class="update-item">
+                        <div class="update-date">05 июня</div>
+                        <div class="update-content">
+                            <div class="update-header">
+                                <span class="update-badge badge-new">NEW</span>
+                                <div class="update-title">Запуск проекта <strong>EVGENII</strong></div>
+                            </div>
+                            <div class="update-text">Первая публикация эксперимента 🎧 Интеграция нейросетевых голосов с авторскими текстами о природе Сахалина.</div>
                         </div>
-                        <div class="update-text">Первая публикация эксперимента 🎧 Интеграция нейросетевых голосов с авторскими текстами о природе Сахалина.</div>
                     </div>
-                </div>
-                <div class="update-item">
-                    <div class="update-date">01 июня</div>
-                    <div class="update-content">
-                        <div class="update-header">
-                            <span class="update-badge badge-new">NEW</span>
-                            <div class="update-title">Новая визуальная эстетика 🎨✨</div>
+                    <div class="update-item">
+                        <div class="update-date">01 июня</div>
+                        <div class="update-content">
+                            <div class="update-header">
+                                <span class="update-badge badge-new">NEW</span>
+                                <div class="update-title">Новая визуальная эстетика 🎨✨</div>
+                            </div>
+                            <div class="update-text">Обновлен дизайн интерфейса. Добавлены анимированные фоны, вдохновленные туманными сопками острова.</div>
                         </div>
-                        <div class="update-text">Обновлен дизайн интерфейса. Добавлены анимированные фоны, вдохновленные туманными сопками острова.</div>
                     </div>
-                </div>
-                <div class="update-item">
-                    <div class="update-date">25 мая</div>
-                    <div class="update-content">
-                        <div class="update-header">
-                            <span class="update-badge badge-sys">SYS</span>
-                            <div class="update-title">Голосовые модели <strong>v2.0</strong></div>
+                    <div class="update-item">
+                        <div class="update-date">25 мая</div>
+                        <div class="update-content">
+                            <div class="update-header">
+                                <span class="update-badge badge-sys">SYS</span>
+                                <div class="update-title">Голосовые модели <strong>v2.0</strong></div>
+                            </div>
+                            <div class="update-text">Улучшено эмоциональное окрашивание речи ИИ. Теперь интонации лучше передают меланхолию и созерцание.</div>
                         </div>
-                        <div class="update-text">Улучшено эмоциональное окрашивание речи ИИ. Теперь интонации лучше передают меланхолию и созерцание.</div>
                     </div>
                 </div>
             </div>
@@ -661,8 +733,11 @@
         const mainPage = document.getElementById('mainPage');
         const enterButton = document.getElementById('enterButton');
         const updatesButton = document.getElementById('updatesButton');
+        const aboutButton = document.getElementById('aboutButton');
         const modalOverlay = document.getElementById('modalOverlay');
         const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
         
         let width, height;
         let mouse = { x: 0, y: 0, active: false };
@@ -909,11 +984,80 @@
             }, 600);
         });
 
-        // Управление модальным окном
+        // Управление модальным окном обновлений
         updatesButton.addEventListener('click', () => {
+            modalTitle.textContent = 'Последние обновления';
+            modalBody.innerHTML = `
+                <div class="updates-list">
+                    <div class="update-item">
+                        <div class="update-date">05 июня</div>
+                        <div class="update-content">
+                            <div class="update-header">
+                                <span class="update-badge badge-new">NEW</span>
+                                <div class="update-title">Запуск проекта <strong>EVGENII</strong></div>
+                            </div>
+                            <div class="update-text">Первая публикация эксперимента 🎧 Интеграция нейросетевых голосов с авторскими текстами о природе Сахалина.</div>
+                        </div>
+                    </div>
+                    <div class="update-item">
+                        <div class="update-date">01 июня</div>
+                        <div class="update-content">
+                            <div class="update-header">
+                                <span class="update-badge badge-new">NEW</span>
+                                <div class="update-title">Новая визуальная эстетика 🎨✨</div>
+                            </div>
+                            <div class="update-text">Обновлен дизайн интерфейса. Добавлены анимированные фоны, вдохновленные туманными сопками острова.</div>
+                        </div>
+                    </div>
+                    <div class="update-item">
+                        <div class="update-date">25 мая</div>
+                        <div class="update-content">
+                            <div class="update-header">
+                                <span class="update-badge badge-sys">SYS</span>
+                                <div class="update-title">Голосовые модели <strong>v2.0</strong></div>
+                            </div>
+                            <div class="update-text">Улучшено эмоциональное окрашивание речи ИИ. Теперь интонации лучше передают меланхолию и созерцание.</div>
+                        </div>
+                    </div>
+                </div>
+            `;
             modalOverlay.classList.add('active');
         });
 
+        // Управление модальным окном "О проекте"
+        aboutButton.addEventListener('click', () => {
+            modalTitle.textContent = 'О проекте';
+            modalBody.innerHTML = `
+                <div class="about-text">
+                    <p>
+                        <span class="highlight">EVGENII</span> — это эксперимент на стыке человеческих эмоций и искусственного интеллекта.
+                    </p>
+                    
+                    <p>
+                        Я пишу тексты. Вдохновляюсь туманными сопками Сахалина, тишиной тайги, шумом прибоя. Каждое слово рождается из личных переживаний, наблюдений, размышлений.
+                    </p>
+                    
+                    <div class="quote">
+                        «Я придумываю текст и стиль исполнения. А выучить и воплотить в песню доверяю ИИ.»
+                    </div>
+                    
+                    <p>
+                        Искусственный интеллект становится моим голосом. Он заучивает мои слова, учится чувствовать ритм, подбирать интонации. Это не замена человеку — это <span class="highlight">новый инструмент выражения</span>.
+                    </p>
+                    
+                    <p>
+                        Вместе мы создаём что-то третье. Не совсем человеческое, не совсем машинное. Что-то среднее, где технологии усиливают эмоции, а не заменяют их.
+                    </p>
+                    
+                    <p>
+                        Этот проект — исследование границ между автором и исполнителем, между живым чувством и алгоритмом, между тем, кто пишет, и тем, кто поёт.
+                    </p>
+                </div>
+            `;
+            modalOverlay.classList.add('active');
+        });
+
+        // Закрытие модального окна
         closeModal.addEventListener('click', () => {
             modalOverlay.classList.remove('active');
         });
