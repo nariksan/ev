@@ -66,32 +66,47 @@
             max-width: 900px;
         }
 
+        /* Металлический текст с переливом для страницы входа */
         .login-content h1 {
             font-size: 5rem;
             font-weight: 200;
             letter-spacing: 0.3em;
             text-transform: uppercase;
             margin-bottom: 2rem;
-            text-shadow: 
-                0 0 40px rgba(0, 255, 255, 0.4), 
-                0 0 80px rgba(0, 200, 255, 0.2),
-                0 0 120px rgba(0, 150, 255, 0.1);
-            opacity: 0.95;
-            animation: glow 3s ease-in-out infinite alternate;
+            background: linear-gradient(
+                90deg,
+                #4a9eff 0%,
+                #88d4ff 15%,
+                #ffffff 30%,
+                #88d4ff 45%,
+                #4a9eff 60%,
+                #00ffff 75%,
+                #ffffff 90%,
+                #88d4ff 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: metalShine 8s ease-in-out infinite, glow 3s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.4)) drop-shadow(0 0 40px rgba(0, 200, 255, 0.2));
+        }
+
+        @keyframes metalShine {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         @keyframes glow {
             from {
-                text-shadow: 
-                    0 0 40px rgba(0, 255, 255, 0.4), 
-                    0 0 80px rgba(0, 200, 255, 0.2),
-                    0 0 120px rgba(0, 150, 255, 0.1);
+                filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.4)) drop-shadow(0 0 40px rgba(0, 200, 255, 0.2));
             }
             to {
-                text-shadow: 
-                    0 0 60px rgba(0, 255, 255, 0.6), 
-                    0 0 100px rgba(0, 200, 255, 0.3),
-                    0 0 150px rgba(0, 150, 255, 0.2);
+                filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.6)) drop-shadow(0 0 60px rgba(0, 200, 255, 0.3));
             }
         }
 
@@ -191,18 +206,30 @@
             align-items: center;
         }
 
+        /* Металлический текст с переливом для основной страницы */
         .main-content .site-title {
             font-size: 4rem;
             font-weight: 200;
             letter-spacing: 0.3em;
             text-transform: uppercase;
             margin-bottom: 2rem;
-            text-shadow: 
-                0 0 40px rgba(0, 255, 255, 0.4), 
-                0 0 80px rgba(0, 200, 255, 0.2),
-                0 0 120px rgba(0, 150, 255, 0.1);
-            opacity: 0.95;
-            animation: glow 3s ease-in-out infinite alternate;
+            background: linear-gradient(
+                90deg,
+                #4a9eff 0%,
+                #88d4ff 15%,
+                #ffffff 30%,
+                #88d4ff 45%,
+                #4a9eff 60%,
+                #00ffff 75%,
+                #ffffff 90%,
+                #88d4ff 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: metalShine 8s ease-in-out infinite, glow 3s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.4)) drop-shadow(0 0 40px rgba(0, 200, 255, 0.2));
         }
 
         .main-content h1 {
