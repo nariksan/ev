@@ -37,7 +37,6 @@
             pointer-events: none;
         }
 
-        /* Стили для страницы входа */
         .login-page {
             position: fixed;
             top: 0;
@@ -159,7 +158,6 @@
 
         .enter-button:active { transform: translateY(0); }
 
-        /* Стили для основной страницы */
         .main-page {
             position: fixed;
             top: 0;
@@ -252,7 +250,6 @@
             font-weight: 400;
         }
 
-        /* Контейнер для кнопок */
         .buttons-container {
             display: flex;
             flex-direction: column;
@@ -306,7 +303,6 @@
             font-size: 1.1rem;
         }
 
-        /* Секция музыки */
         .music-section {
             width: 100%;
             max-width: 600px;
@@ -323,7 +319,6 @@
             text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
         }
 
-        /* Карточка нового релиза */
         .new-release-card {
             background: rgba(10, 10, 15, 0.8);
             border: 1px solid rgba(0, 255, 255, 0.2);
@@ -397,7 +392,6 @@
             border-color: rgba(0, 255, 255, 0.8);
         }
 
-        /* Кнопка скачивания */
         .download-btn {
             width: 60px;
             height: 60px;
@@ -420,6 +414,12 @@
             box-shadow: 0 0 20px rgba(255, 160, 60, 0.3);
         }
 
+        .download-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
         .new-release-title {
             font-size: 1.5rem;
             font-weight: 500;
@@ -434,7 +434,6 @@
             opacity: 0.7;
         }
 
-        /* Список всех песен */
         .all-tracks-section {
             margin-top: 3rem;
         }
@@ -577,6 +576,12 @@
             box-shadow: 0 0 15px rgba(255, 160, 60, 0.2);
         }
 
+        .track-download-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
         .track-download-btn.disabled {
             opacity: 0.3;
             cursor: not-allowed;
@@ -613,7 +618,6 @@
             display: none;
         }
 
-        /* Модальное окно (общее) */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -708,7 +712,6 @@
             transform: rotate(90deg);
         }
 
-        /* Модальное окно скачивания */
         .download-modal-content {
             background: linear-gradient(145deg, rgba(20, 15, 30, 0.97) 0%, rgba(15, 10, 25, 0.97) 100%);
             border: 1px solid rgba(255, 160, 60, 0.25);
@@ -885,7 +888,6 @@
             font-size: 1.3rem;
         }
 
-        /* Стили для списка обновлений */
         .updates-list {
             display: flex;
             flex-direction: column;
@@ -976,7 +978,6 @@
             opacity: 0.9;
         }
 
-        /* Стили для текста "О проекте" */
         .about-text {
             font-size: 1.1rem;
             font-weight: 300;
@@ -1002,7 +1003,6 @@
             opacity: 0.85;
         }
 
-        /* Стили для сообщения чата */
         .chat-message {
             text-align: center;
             padding: 3rem 2rem;
@@ -1043,13 +1043,11 @@
             text-transform: uppercase;
         }
 
-        /* Скроллбар */
         .modal-content::-webkit-scrollbar { width: 8px; }
         .modal-content::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 4px; }
         .modal-content::-webkit-scrollbar-thumb { background: rgba(0, 255, 255, 0.3); border-radius: 4px; }
         .modal-content::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 255, 0.5); }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             .login-content h1 { font-size: 3rem; letter-spacing: 0.2em; }
             .login-content .subtitle { font-size: 1.2rem; }
@@ -1136,7 +1134,6 @@
     <canvas id="bgCanvas"></canvas>
     <div class="overlay"></div>
     
-    <!-- Страница входа -->
     <div class="login-page" id="loginPage">
         <div class="login-content">
             <h1>EVGENII</h1>
@@ -1146,7 +1143,6 @@
         </div>
     </div>
 
-    <!-- Основная страница -->
     <div class="main-page" id="mainPage">
         <div class="main-content">
             <h1 class="site-title">EVGENII</h1>
@@ -1164,7 +1160,6 @@
                 </div>
             </div>
 
-            <!-- Секция музыки -->
             <div class="music-section">
                 <h2 class="section-title">Новый релиз</h2>
                 <div class="new-release-card">
@@ -1173,7 +1168,11 @@
                     </div>
                     <div class="new-release-controls">
                         <button class="play-btn" id="newReleasePlayBtn">▶</button>
-                        <button class="download-btn" id="newReleaseDownloadBtn" title="Скачать"></button>
+                        <button class="download-btn" id="newReleaseDownloadBtn" title="Скачать">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                            </svg>
+                        </button>
                     </div>
                     <div class="new-release-title">Поезд на юг</div>
                     <div class="new-release-duration">3:23</div>
@@ -1188,7 +1187,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно (общее) -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -1200,11 +1198,10 @@
         </div>
     </div>
 
-    <!-- Модальное окно скачивания -->
     <div class="modal-overlay download-modal-overlay" id="downloadModalOverlay">
         <div class="download-modal-content">
             <button class="download-modal-close" id="downloadModalClose">&times;</button>
-            <div class="download-cloud-icon">⬇</div>
+            <div class="download-cloud-icon"></div>
             <h3 class="download-modal-title">Подготовка к скачиванию</h3>
             <p class="download-modal-subtitle">
                 Трек <span class="track-name-highlight" id="downloadTrackName">Поезд на юг</span> готовится для загрузки
@@ -1439,7 +1436,6 @@
             }
         }
 
-        // Преобразование названия в имя файла
         function titleToFilename(title) {
             return title.toLowerCase()
                 .replace(/ё/g, 'е')
@@ -1448,7 +1444,6 @@
                 .replace(/\s+/g, '-') + '.mp3';
         }
 
-        // Открыть окно скачивания
         function openDownloadModal(track) {
             if (!track || track.file === '#') return;
             currentDownloadTrack = track;
@@ -1457,13 +1452,11 @@
             downloadModalOverlay.classList.add('active');
         }
 
-        // Закрыть окно скачивания
         function closeDownloadModal() {
             downloadModalOverlay.classList.remove('active');
             currentDownloadTrack = null;
         }
 
-        // Реальное скачивание
         function performDownload() {
             if (!currentDownloadTrack) return;
             const link = document.createElement('a');
@@ -1474,7 +1467,6 @@
             document.body.removeChild(link);
         }
 
-        // Создание списка треков
         function renderTracks() {
             trackList.innerHTML = '';
             tracks.forEach((track, index) => {
@@ -1500,7 +1492,9 @@
                         ${currentPlayingId === track.id ? '⏸' : '▶'}
                     </button>
                     <button class="track-download-btn ${!isDownloadable ? 'disabled' : ''}" data-id="${track.id}" title="${isDownloadable ? 'Скачать' : 'Недоступно'}">
-                        
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
                     </button>
                 `;
                 
@@ -1550,7 +1544,7 @@
         function updateNewReleaseButton() {
             const firstTrack = tracks[0];
             if (currentPlayingId === firstTrack.id) {
-                newReleasePlayBtn.textContent = '⏸';
+                newReleasePlayBtn.textContent = '';
                 newReleasePlayBtn.classList.add('playing');
             } else {
                 newReleasePlayBtn.textContent = '▶';
@@ -1568,14 +1562,12 @@
             showMoreBtn.classList.add('hidden');
         });
 
-        // Обработчики модального окна скачивания
         downloadModalClose.addEventListener('click', closeDownloadModal);
         downloadModalOverlay.addEventListener('click', (e) => {
             if (e.target === downloadModalOverlay) closeDownloadModal();
         });
         downloadActionBtn.addEventListener('click', performDownload);
 
-        // Переход между страницами
         enterButton.addEventListener('click', () => {
             loginPage.classList.add('fade-out');
             setTimeout(() => {
@@ -1596,7 +1588,7 @@
                                 <span class="update-badge badge-new">NEW</span>
                                 <div class="update-title">Запуск проекта <strong>EVGENII</strong></div>
                             </div>
-                            <div class="update-text">Первая публикация эксперимента 🎧 Интеграция нейросетевых голосов с авторскими текстами о природе Сахалина.</div>
+                            <div class="update-text">Первая публикация эксперимента  Интеграция нейросетевых голосов с авторскими текстами о природе Сахалина.</div>
                         </div>
                     </div>
                     <div class="update-item">
