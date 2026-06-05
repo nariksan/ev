@@ -177,6 +177,7 @@
             color: #e0f7fa;
             text-align: center;
             padding: 2rem;
+            overflow-y: auto;
         }
 
         .main-page.active {
@@ -184,23 +185,55 @@
             pointer-events: auto;
         }
 
+        .main-content {
+            max-width: 1000px;
+        }
+
+        .main-content .site-title {
+            font-size: 4rem;
+            font-weight: 200;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            text-shadow: 
+                0 0 40px rgba(0, 255, 255, 0.4), 
+                0 0 80px rgba(0, 200, 255, 0.2),
+                0 0 120px rgba(0, 150, 255, 0.1);
+            opacity: 0.95;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
         .main-content h1 {
             font-size: 3.5rem;
             font-weight: 200;
             letter-spacing: 0.2em;
             text-transform: uppercase;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
             text-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
             opacity: 0.9;
         }
 
-        .main-content p {
-            font-size: 1.2rem;
+        .main-content .description-block {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .main-content .description-block p {
+            font-size: 1.3rem;
             font-weight: 300;
             letter-spacing: 0.1em;
-            opacity: 0.6;
-            max-width: 600px;
-            line-height: 1.6;
+            opacity: 0.75;
+            line-height: 1.7;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .main-content .description-block p:first-child {
+            font-size: 1.4rem;
+            opacity: 0.85;
+            font-weight: 400;
         }
 
         /* Адаптивность */
@@ -223,8 +256,21 @@
                 font-size: 1rem;
             }
 
-            .main-content h1 {
+            .main-content .site-title {
                 font-size: 2.5rem;
+                letter-spacing: 0.2em;
+            }
+
+            .main-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .main-content .description-block p {
+                font-size: 1.1rem;
+            }
+
+            .main-content .description-block p:first-child {
+                font-size: 1.2rem;
             }
         }
 
@@ -240,6 +286,23 @@
 
             .login-content .description {
                 font-size: 0.9rem;
+            }
+
+            .main-content .site-title {
+                font-size: 1.8rem;
+                letter-spacing: 0.15em;
+            }
+
+            .main-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .main-content .description-block p {
+                font-size: 1rem;
+            }
+
+            .main-content .description-block p:first-child {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -261,8 +324,13 @@
     <!-- Основная страница -->
     <div class="main-page" id="mainPage">
         <div class="main-content">
+            <h1 class="site-title">EVGENII</h1>
             <h1>Добро пожаловать</h1>
-            <p>Вы вошли в пространство, где технологии встречаются с творчеством</p>
+            <div class="description-block">
+                <p>Где заканчиваюсь я — и начинается ИИ.</p>
+                <p>Мои тексты, озвученные искусственным разумом.</p>
+                <p>Эксперимент на стыке человеческих эмоций и машинного голоса.</p>
+            </div>
         </div>
     </div>
 
