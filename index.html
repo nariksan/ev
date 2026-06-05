@@ -635,18 +635,19 @@
             }
 
             .buttons-row {
-                flex-direction: column;
                 gap: 1rem;
                 width: 100%;
-                align-items: center;
+                justify-content: center;
             }
 
             .updates-button,
             .about-button,
             .chat-button {
-                width: 100%;
-                max-width: 300px;
-                min-width: auto;
+                flex: 1;
+                min-width: 150px;
+                max-width: 280px;
+                padding: 0.9rem 2rem;
+                font-size: 0.95rem;
             }
 
             .modal-content {
@@ -721,9 +722,9 @@
             .updates-button,
             .about-button,
             .chat-button {
-                padding: 0.8rem 2rem;
-                font-size: 0.9rem;
-                min-width: auto;
+                padding: 0.8rem 1.5rem;
+                font-size: 0.85rem;
+                min-width: 140px;
             }
 
             .modal-content {
