@@ -66,7 +66,6 @@
             max-width: 900px;
         }
 
-        /* Металлический текст с переливом для страницы входа */
         .login-content h1 {
             font-size: 5rem;
             font-weight: 200;
@@ -93,21 +92,13 @@
         }
 
         @keyframes metalShine {
-            0%, 100% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         @keyframes glow {
-            from {
-                filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.4)) drop-shadow(0 0 40px rgba(0, 200, 255, 0.2));
-            }
-            to {
-                filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.6)) drop-shadow(0 0 60px rgba(0, 200, 255, 0.3));
-            }
+            from { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.4)) drop-shadow(0 0 40px rgba(0, 200, 255, 0.2)); }
+            to { filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.6)) drop-shadow(0 0 60px rgba(0, 200, 255, 0.3)); }
         }
 
         .login-content .subtitle {
@@ -157,22 +148,16 @@
             transition: left 0.5s ease;
         }
 
-        .enter-button:hover::before {
-            left: 100%;
-        }
+        .enter-button:hover::before { left: 100%; }
 
         .enter-button:hover {
             background: rgba(0, 255, 255, 0.1);
             border-color: rgba(0, 255, 255, 0.8);
-            box-shadow: 
-                0 0 30px rgba(0, 255, 255, 0.3),
-                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1);
             transform: translateY(-2px);
         }
 
-        .enter-button:active {
-            transform: translateY(0);
-        }
+        .enter-button:active { transform: translateY(0); }
 
         /* Стили для основной страницы */
         .main-page {
@@ -209,7 +194,6 @@
             padding-bottom: 3rem;
         }
 
-        /* Металлический текст с переливом для основной страницы */
         .main-content .site-title {
             font-size: 4rem;
             font-weight: 200;
@@ -286,7 +270,6 @@
             width: 100%;
         }
 
-        /* Кнопки */
         .updates-button,
         .about-button,
         .chat-button {
@@ -317,7 +300,6 @@
             transform: translateY(-2px);
         }
 
-        /* Иконка для кнопки чата */
         .chat-button::after {
             content: '💬';
             margin-left: 0.5rem;
@@ -413,6 +395,29 @@
         .play-btn.playing {
             background: rgba(0, 255, 255, 0.3);
             border-color: rgba(0, 255, 255, 0.8);
+        }
+
+        /* Кнопка скачивания */
+        .download-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 160, 60, 0.1);
+            border: 2px solid rgba(255, 160, 60, 0.4);
+            color: #ffb44a;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .download-btn:hover {
+            background: rgba(255, 160, 60, 0.2);
+            border-color: rgba(255, 160, 60, 0.7);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 160, 60, 0.3);
         }
 
         .new-release-title {
@@ -550,6 +555,39 @@
             border-color: rgba(0, 255, 255, 0.7);
         }
 
+        .track-download-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 160, 60, 0.1);
+            border: 1px solid rgba(255, 160, 60, 0.3);
+            color: #ffb44a;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .track-download-btn:hover {
+            background: rgba(255, 160, 60, 0.2);
+            border-color: rgba(255, 160, 60, 0.6);
+            box-shadow: 0 0 15px rgba(255, 160, 60, 0.2);
+        }
+
+        .track-download-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .track-download-btn.disabled:hover {
+            background: rgba(255, 160, 60, 0.1);
+            border-color: rgba(255, 160, 60, 0.3);
+            box-shadow: none;
+        }
+
         .show-more-btn {
             display: block;
             width: 100%;
@@ -575,7 +613,7 @@
             display: none;
         }
 
-        /* Модальное окно */
+        /* Модальное окно (общее) */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -670,6 +708,183 @@
             transform: rotate(90deg);
         }
 
+        /* Модальное окно скачивания */
+        .download-modal-content {
+            background: linear-gradient(145deg, rgba(20, 15, 30, 0.97) 0%, rgba(15, 10, 25, 0.97) 100%);
+            border: 1px solid rgba(255, 160, 60, 0.25);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            transform: translateY(20px) scale(0.95);
+            transition: transform 0.5s ease;
+            box-shadow: 
+                0 0 80px rgba(255, 140, 40, 0.15),
+                0 0 40px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 200, 100, 0.1);
+            text-align: center;
+        }
+
+        .download-modal-overlay.active .download-modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .download-modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            line-height: 1;
+        }
+
+        .download-modal-close:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .download-cloud-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(135deg, #ff9a44 0%, #e8783a 50%, #d4642e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 
+                0 0 40px rgba(255, 154, 68, 0.4),
+                0 0 80px rgba(255, 154, 68, 0.2);
+            animation: cloudPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes cloudPulse {
+            0%, 100% {
+                box-shadow: 0 0 40px rgba(255, 154, 68, 0.4), 0 0 80px rgba(255, 154, 68, 0.2);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(255, 154, 68, 0.6), 0 0 100px rgba(255, 154, 68, 0.3);
+                transform: scale(1.05);
+            }
+        }
+
+        .download-modal-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .download-modal-subtitle {
+            font-size: 1.15rem;
+            font-weight: 300;
+            color: #a0a8c0;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .download-modal-subtitle .track-name-highlight {
+            color: #ffb44a;
+            font-weight: 500;
+        }
+
+        .download-warning {
+            background: rgba(255, 160, 60, 0.08);
+            border: 1px solid rgba(255, 160, 60, 0.25);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            text-align: left;
+        }
+
+        .download-warning-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .download-warning-text {
+            font-size: 0.95rem;
+            color: #e8c89a;
+            line-height: 1.5;
+            font-family: 'Courier New', monospace;
+        }
+
+        .download-file-info {
+            background: rgba(255, 100, 60, 0.08);
+            border: 1px solid rgba(255, 100, 60, 0.25);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .download-file-label {
+            font-size: 1rem;
+            color: #e88a6a;
+            font-family: 'Courier New', monospace;
+        }
+
+        .download-file-name {
+            font-size: 1.05rem;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        .download-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: linear-gradient(135deg, #ffcc66 0%, #ff9a44 50%, #e8783a 100%);
+            border: none;
+            border-radius: 14px;
+            color: #1a0f05;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 154, 68, 0.3);
+            font-family: 'Courier New', monospace;
+        }
+
+        .download-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(255, 154, 68, 0.5);
+        }
+
+        .download-action-btn:active {
+            transform: translateY(0);
+        }
+
+        .download-action-btn .download-icon {
+            font-size: 1.3rem;
+        }
+
         /* Стили для списка обновлений */
         .updates-list {
             display: flex;
@@ -686,9 +901,7 @@
             transition: all 0.3s ease;
         }
 
-        .update-item:last-child {
-            border-bottom: none;
-        }
+        .update-item:last-child { border-bottom: none; }
 
         .update-item:hover {
             background: rgba(0, 255, 255, 0.03);
@@ -772,13 +985,8 @@
             opacity: 0.95;
         }
 
-        .about-text p {
-            margin-bottom: 1.5rem;
-        }
-
-        .about-text p:last-child {
-            margin-bottom: 0;
-        }
+        .about-text p { margin-bottom: 1.5rem; }
+        .about-text p:last-child { margin-bottom: 0; }
 
         .about-text .highlight {
             color: #00ffff;
@@ -835,280 +1043,92 @@
             text-transform: uppercase;
         }
 
-        /* Скроллбар для модального окна */
-        .modal-content::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal-content::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
-        }
-
-        .modal-content::-webkit-scrollbar-thumb {
-            background: rgba(0, 255, 255, 0.3);
-            border-radius: 4px;
-        }
-
-        .modal-content::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 255, 255, 0.5);
-        }
+        /* Скроллбар */
+        .modal-content::-webkit-scrollbar { width: 8px; }
+        .modal-content::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 4px; }
+        .modal-content::-webkit-scrollbar-thumb { background: rgba(0, 255, 255, 0.3); border-radius: 4px; }
+        .modal-content::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 255, 0.5); }
 
         /* Адаптивность */
         @media (max-width: 768px) {
-            .login-content h1 {
-                font-size: 3rem;
-                letter-spacing: 0.2em;
+            .login-content h1 { font-size: 3rem; letter-spacing: 0.2em; }
+            .login-content .subtitle { font-size: 1.2rem; }
+            .login-content .description { font-size: 1rem; }
+            .enter-button { padding: 1rem 2.5rem; font-size: 1rem; }
+            .main-content .site-title { font-size: 2.5rem; letter-spacing: 0.2em; }
+            .main-content h1 { font-size: 2.2rem; }
+            .main-content .description-block p { font-size: 1.1rem; }
+            .main-content .description-block p:first-child { font-size: 1.2rem; }
+
+            .buttons-row { gap: 1rem; width: 100%; justify-content: center; }
+            .updates-button, .about-button, .chat-button {
+                flex: 1; min-width: 150px; max-width: 280px;
+                padding: 0.9rem 2rem; font-size: 0.95rem;
             }
 
-            .login-content .subtitle {
-                font-size: 1.2rem;
-            }
+            .section-title { font-size: 1.6rem; }
+            .new-release-card { padding: 1.5rem; }
+            .new-release-cover { max-width: 250px; }
+            .play-btn, .download-btn { width: 50px; height: 50px; font-size: 1.2rem; }
+            .new-release-title { font-size: 1.3rem; }
 
-            .login-content .description {
-                font-size: 1rem;
-            }
+            .track-item { padding: 0.8rem; }
+            .track-cover { width: 45px; height: 45px; }
+            .track-title { font-size: 0.95rem; }
+            .track-desc { font-size: 0.8rem; }
+            .track-play-btn, .track-download-btn { width: 35px; height: 35px; font-size: 0.9rem; }
 
-            .enter-button {
-                padding: 1rem 2.5rem;
-                font-size: 1rem;
-            }
+            .modal-content { padding: 2rem 1.5rem; }
+            .modal-header h2 { font-size: 1.4rem; }
+            .update-item { flex-direction: column; gap: 1rem; }
+            .update-date { min-width: auto; }
+            .update-title { font-size: 1.05rem; }
+            .about-text { font-size: 1rem; }
 
-            .main-content .site-title {
-                font-size: 2.5rem;
-                letter-spacing: 0.2em;
-            }
-
-            .main-content h1 {
-                font-size: 2.2rem;
-            }
-
-            .main-content .description-block p {
-                font-size: 1.1rem;
-            }
-
-            .main-content .description-block p:first-child {
-                font-size: 1.2rem;
-            }
-
-            .buttons-row {
-                gap: 1rem;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .updates-button,
-            .about-button,
-            .chat-button {
-                flex: 1;
-                min-width: 150px;
-                max-width: 280px;
-                padding: 0.9rem 2rem;
-                font-size: 0.95rem;
-            }
-
-            .section-title {
-                font-size: 1.6rem;
-            }
-
-            .new-release-card {
-                padding: 1.5rem;
-            }
-
-            .new-release-cover {
-                max-width: 250px;
-            }
-
-            .play-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
-            }
-
-            .new-release-title {
-                font-size: 1.3rem;
-            }
-
-            .track-item {
-                padding: 0.8rem;
-            }
-
-            .track-cover {
-                width: 45px;
-                height: 45px;
-            }
-
-            .track-title {
-                font-size: 0.95rem;
-            }
-
-            .track-desc {
-                font-size: 0.8rem;
-            }
-
-            .track-play-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 0.9rem;
-            }
-
-            .modal-content {
-                padding: 2rem 1.5rem;
-            }
-
-            .modal-header h2 {
-                font-size: 1.4rem;
-            }
-
-            .update-item {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .update-date {
-                min-width: auto;
-            }
-
-            .update-title {
-                font-size: 1.05rem;
-            }
-
-            .about-text {
-                font-size: 1rem;
-            }
-
-            .chat-message .chat-icon {
-                font-size: 3rem;
-            }
-
-            .chat-message h3 {
-                font-size: 1.3rem;
-            }
-
-            .chat-message p {
-                font-size: 1rem;
-            }
+            .download-modal-content { padding: 2.5rem 1.5rem; }
+            .download-modal-title { font-size: 1.5rem; }
+            .download-modal-subtitle { font-size: 1rem; }
+            .download-cloud-icon { width: 70px; height: 70px; font-size: 2rem; }
         }
 
         @media (max-width: 480px) {
-            .login-content h1 {
-                font-size: 2.2rem;
-                letter-spacing: 0.15em;
+            .login-content h1 { font-size: 2.2rem; letter-spacing: 0.15em; }
+            .login-content .subtitle { font-size: 1rem; }
+            .login-content .description { font-size: 0.9rem; }
+            .main-content .site-title { font-size: 1.8rem; letter-spacing: 0.15em; }
+            .main-content h1 { font-size: 1.8rem; }
+            .main-content .description-block p { font-size: 1rem; }
+            .main-content .description-block p:first-child { font-size: 1.1rem; }
+
+            .updates-button, .about-button, .chat-button {
+                padding: 0.8rem 1.5rem; font-size: 0.85rem; min-width: 140px;
             }
 
-            .login-content .subtitle {
-                font-size: 1rem;
-            }
+            .section-title { font-size: 1.4rem; }
+            .new-release-card { padding: 1.2rem; }
+            .new-release-cover { max-width: 200px; }
+            .play-btn, .download-btn { width: 45px; height: 45px; font-size: 1rem; }
+            .new-release-title { font-size: 1.1rem; }
 
-            .login-content .description {
-                font-size: 0.9rem;
-            }
+            .track-cover { width: 40px; height: 40px; }
+            .track-title { font-size: 0.9rem; }
+            .track-desc { font-size: 0.75rem; }
+            .track-duration { font-size: 0.8rem; }
+            .track-play-btn, .track-download-btn { width: 32px; height: 32px; font-size: 0.85rem; }
 
-            .main-content .site-title {
-                font-size: 1.8rem;
-                letter-spacing: 0.15em;
-            }
+            .modal-content { padding: 1.5rem 1rem; }
+            .modal-header h2 { font-size: 1.2rem; }
+            .update-title { font-size: 1rem; }
+            .update-text { font-size: 0.95rem; }
+            .about-text { font-size: 0.95rem; }
 
-            .main-content h1 {
-                font-size: 1.8rem;
-            }
-
-            .main-content .description-block p {
-                font-size: 1rem;
-            }
-
-            .main-content .description-block p:first-child {
-                font-size: 1.1rem;
-            }
-
-            .updates-button,
-            .about-button,
-            .chat-button {
-                padding: 0.8rem 1.5rem;
-                font-size: 0.85rem;
-                min-width: 140px;
-            }
-
-            .section-title {
-                font-size: 1.4rem;
-            }
-
-            .new-release-card {
-                padding: 1.2rem;
-            }
-
-            .new-release-cover {
-                max-width: 200px;
-            }
-
-            .play-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 1rem;
-            }
-
-            .new-release-title {
-                font-size: 1.1rem;
-            }
-
-            .track-cover {
-                width: 40px;
-                height: 40px;
-            }
-
-            .track-title {
-                font-size: 0.9rem;
-            }
-
-            .track-desc {
-                font-size: 0.75rem;
-            }
-
-            .track-duration {
-                font-size: 0.8rem;
-            }
-
-            .track-play-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 0.85rem;
-            }
-
-            .modal-content {
-                padding: 1.5rem 1rem;
-            }
-
-            .modal-header h2 {
-                font-size: 1.2rem;
-            }
-
-            .update-title {
-                font-size: 1rem;
-            }
-
-            .update-text {
-                font-size: 0.95rem;
-            }
-
-            .about-text {
-                font-size: 0.95rem;
-            }
-
-            .chat-message {
-                padding: 2rem 1rem;
-            }
-
-            .chat-message .chat-icon {
-                font-size: 2.5rem;
-            }
-
-            .chat-message h3 {
-                font-size: 1.1rem;
-            }
-
-            .chat-message p {
-                font-size: 0.95rem;
-            }
+            .download-modal-content { padding: 2rem 1.2rem; }
+            .download-modal-title { font-size: 1.3rem; }
+            .download-modal-subtitle { font-size: 0.95rem; }
+            .download-warning-text { font-size: 0.85rem; }
+            .download-file-label, .download-file-name { font-size: 0.9rem; }
+            .download-action-btn { font-size: 1rem; padding: 1rem 1.5rem; }
+            .download-cloud-icon { width: 60px; height: 60px; font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -1146,7 +1166,6 @@
 
             <!-- Секция музыки -->
             <div class="music-section">
-                <!-- Новый релиз -->
                 <h2 class="section-title">Новый релиз</h2>
                 <div class="new-release-card">
                     <div class="new-release-cover">
@@ -1154,24 +1173,22 @@
                     </div>
                     <div class="new-release-controls">
                         <button class="play-btn" id="newReleasePlayBtn">▶</button>
+                        <button class="download-btn" id="newReleaseDownloadBtn" title="Скачать"></button>
                     </div>
                     <div class="new-release-title">Поезд на юг</div>
                     <div class="new-release-duration">3:23</div>
                 </div>
 
-                <!-- Все песни -->
                 <div class="all-tracks-section">
                     <h2 class="section-title">Все песни</h2>
-                    <div class="track-list" id="trackList">
-                        <!-- Треки будут добавлены через JavaScript -->
-                    </div>
+                    <div class="track-list" id="trackList"></div>
                     <button class="show-more-btn" id="showMoreBtn">Показать все</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно -->
+    <!-- Модальное окно (общее) -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -1179,9 +1196,31 @@
                 <h2 id="modalTitle">Последние обновления</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
-            <div id="modalBody">
-                <!-- Контент загружается динамически -->
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Модальное окно скачивания -->
+    <div class="modal-overlay download-modal-overlay" id="downloadModalOverlay">
+        <div class="download-modal-content">
+            <button class="download-modal-close" id="downloadModalClose">&times;</button>
+            <div class="download-cloud-icon">⬇</div>
+            <h3 class="download-modal-title">Подготовка к скачиванию</h3>
+            <p class="download-modal-subtitle">
+                Трек <span class="track-name-highlight" id="downloadTrackName">Поезд на юг</span> готовится для загрузки
+            </p>
+            <div class="download-warning">
+                <span class="download-warning-icon"></span>
+                <span class="download-warning-text">Скачивание происходит не сразу. Пожалуйста, подождите несколько секунд...</span>
             </div>
+            <div class="download-file-info">
+                <span class="download-file-label">Файл:</span>
+                <span class="download-file-name" id="downloadFileName">поезд-на-юг.mp3</span>
+            </div>
+            <button class="download-action-btn" id="downloadActionBtn">
+                <span class="download-icon">⬇</span>
+                <span>Скачать трек</span>
+            </button>
         </div>
     </div>
 
@@ -1200,16 +1239,22 @@
         const modalIcon = document.getElementById('modalIcon');
         const modalBody = document.getElementById('modalBody');
         const newReleasePlayBtn = document.getElementById('newReleasePlayBtn');
+        const newReleaseDownloadBtn = document.getElementById('newReleaseDownloadBtn');
         const showMoreBtn = document.getElementById('showMoreBtn');
         const trackList = document.getElementById('trackList');
+        const downloadModalOverlay = document.getElementById('downloadModalOverlay');
+        const downloadModalClose = document.getElementById('downloadModalClose');
+        const downloadTrackName = document.getElementById('downloadTrackName');
+        const downloadFileName = document.getElementById('downloadFileName');
+        const downloadActionBtn = document.getElementById('downloadActionBtn');
         
         let width, height;
         let mouse = { x: 0, y: 0, active: false };
         let time = 0;
         let currentPlayingId = null;
         let audioPlayer = new Audio();
+        let currentDownloadTrack = null;
         
-        // Данные треков
         const tracks = [
             { id: 1, title: "Поезд на юг", desc: "", file: "tracks/song7.mp3", duration: "3:23", cover: "cover/cover7.jpg", isNew: true },
             { id: 2, title: "Братья", desc: "", file: "tracks/song6.mp3", duration: "4:03", cover: "cover/cover6.jpg", isNew: true },
@@ -1224,7 +1269,6 @@
             { id: 11, title: "Placeholder V", desc: "Coming soon...", file: "#", duration: "0:00", cover: "", isNew: false }
         ];
 
-        // Параметры волн
         const WAVE_COUNT = 12;
         const waves = [];
         
@@ -1234,107 +1278,76 @@
                 this.total = total;
                 this.init();
             }
-            
             init() {
                 this.amplitude = 80 + Math.random() * 150;
                 this.frequency = 0.003 + Math.random() * 0.005;
                 this.speed = 0.008 + Math.random() * 0.012;
                 this.phase = Math.random() * Math.PI * 2;
                 this.yOffset = Math.random() * window.innerHeight;
-                
                 const hue = 170 + Math.random() * 40;
                 const saturation = 60 + Math.random() * 30;
                 const lightness = 40 + Math.random() * 30;
                 this.baseColor = `hsla(${hue}, ${saturation}%, ${lightness}%`;
                 this.alpha = 0.15 + Math.random() * 0.4;
-                
                 this.lineWidth = 1 + Math.random() * 3;
-                
                 this.points = [];
                 this.numPoints = 5 + Math.floor(Math.random() * 4);
             }
-            
             update(t) {
                 this.points = [];
                 const segmentWidth = width / (this.numPoints - 1);
-                
                 for (let i = 0; i < this.numPoints; i++) {
                     const x = i * segmentWidth;
-                    
                     let y = this.yOffset + 
                             Math.sin(x * this.frequency + t * this.speed + this.phase) * this.amplitude +
                             Math.sin(x * this.frequency * 0.5 + t * this.speed * 1.3) * this.amplitude * 0.5;
-                    
                     if (mouse.active) {
                         const dx = x - mouse.x;
                         const dy = y - mouse.y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         const maxDist = 300;
-                        
                         if (dist < maxDist) {
                             const force = (1 - dist / maxDist) * 80;
                             y += (dy / dist) * force * (this.index % 2 === 0 ? 1 : -1);
                         }
                     }
-                    
                     this.points.push({ x, y });
                 }
             }
-            
             draw(ctx) {
                 if (this.points.length < 2) return;
-                
                 ctx.beginPath();
                 ctx.moveTo(this.points[0].x, this.points[0].y);
-                
                 for (let i = 0; i < this.points.length - 1; i++) {
                     const p0 = this.points[i];
                     const p1 = this.points[i + 1];
-                    
                     const midX = (p0.x + p1.x) / 2;
                     const midY = (p0.y + p1.y) / 2;
-                    
-                    if (i === 0) {
-                        ctx.lineTo(midX, midY);
-                    } else {
-                        ctx.quadraticCurveTo(p0.x, p0.y, midX, midY);
-                    }
+                    if (i === 0) ctx.lineTo(midX, midY);
+                    else ctx.quadraticCurveTo(p0.x, p0.y, midX, midY);
                 }
-                
                 const last = this.points[this.points.length - 1];
                 ctx.lineTo(last.x, last.y);
-                
                 ctx.shadowColor = this.baseColor.replace('hsla', 'hsl').replace(/,[\d.]+%\)/, ')');
                 ctx.shadowBlur = 20 + this.index * 2;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-                
                 ctx.strokeStyle = `${this.baseColor}, ${this.alpha})`;
                 ctx.lineWidth = this.lineWidth;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.stroke();
-                
                 ctx.shadowBlur = 0;
-                
                 if (this.alpha > 0.3) {
                     ctx.beginPath();
                     ctx.moveTo(this.points[0].x, this.points[0].y);
-                    
                     for (let i = 0; i < this.points.length - 1; i++) {
                         const p0 = this.points[i];
                         const p1 = this.points[i + 1];
                         const midX = (p0.x + p1.x) / 2;
                         const midY = (p0.y + p1.y) / 2;
-                        
-                        if (i === 0) {
-                            ctx.lineTo(midX, midY);
-                        } else {
-                            ctx.quadraticCurveTo(p0.x, p0.y, midX, midY);
-                        }
+                        if (i === 0) ctx.lineTo(midX, midY);
+                        else ctx.quadraticCurveTo(p0.x, p0.y, midX, midY);
                     }
                     ctx.lineTo(last.x, last.y);
-                    
                     ctx.strokeStyle = `${this.baseColor}, ${this.alpha * 0.6})`;
                     ctx.lineWidth = this.lineWidth * 0.4;
                     ctx.stroke();
@@ -1343,10 +1356,7 @@
         }
         
         class Particle {
-            constructor() {
-                this.reset();
-            }
-            
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
@@ -1359,21 +1369,15 @@
                 const hue = 170 + Math.random() * 40;
                 this.color = `hsla(${hue}, 70%, 60%`;
             }
-            
             update() {
                 this.x += this.vx;
                 this.y += this.vy;
                 this.life--;
-                
-                if (this.life <= 0 || this.y < -10 || this.x < -10 || this.x > width + 10) {
-                    this.reset();
-                }
+                if (this.life <= 0 || this.y < -10 || this.x < -10 || this.x > width + 10) this.reset();
             }
-            
             draw(ctx) {
                 const lifeRatio = this.life / this.maxLife;
                 const alpha = this.alpha * lifeRatio * lifeRatio;
-                
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = `${this.color}, ${alpha})`;
@@ -1392,36 +1396,19 @@
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-            
             waves.length = 0;
-            for (let i = 0; i < WAVE_COUNT; i++) {
-                waves.push(new Wave(i, WAVE_COUNT));
-            }
-            
+            for (let i = 0; i < WAVE_COUNT; i++) waves.push(new Wave(i, WAVE_COUNT));
             particles.length = 0;
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                particles.push(new Particle());
-            }
+            for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
         }
         
         function animate() {
             time += 1;
-            
             ctx.fillStyle = 'rgba(5, 5, 8, 0.15)';
             ctx.fillRect(0, 0, width, height);
-            
-            for (const p of particles) {
-                p.update();
-                p.draw(ctx);
-            }
-            
-            for (const wave of waves) {
-                wave.update(time);
-                wave.draw(ctx);
-            }
-            
+            for (const p of particles) { p.update(); p.draw(ctx); }
+            for (const wave of waves) { wave.update(time); wave.draw(ctx); }
             drawFlares(ctx);
-            
             requestAnimationFrame(animate);
         }
         
@@ -1431,21 +1418,17 @@
                 { x: width * 0.7, y: height * 0.6, size: 2, alpha: 0.4 },
                 { x: width * 0.5, y: height * 0.3, size: 4, alpha: 0.3 },
             ];
-            
             for (const flare of flarePositions) {
                 const fx = flare.x + Math.sin(time * 0.01) * 50;
                 const fy = flare.y + Math.cos(time * 0.013) * 30;
-                
                 const gradient = ctx.createRadialGradient(fx, fy, 0, fx, fy, flare.size * 8);
                 gradient.addColorStop(0, `rgba(200, 255, 255, ${flare.alpha})`);
                 gradient.addColorStop(0.5, `rgba(0, 255, 255, ${flare.alpha * 0.3})`);
                 gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
-                
                 ctx.beginPath();
                 ctx.arc(fx, fy, flare.size * 8, 0, Math.PI * 2);
                 ctx.fillStyle = gradient;
                 ctx.fill();
-                
                 ctx.beginPath();
                 ctx.arc(fx, fy, flare.size, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(255, 255, 255, ${flare.alpha})`;
@@ -1454,6 +1437,41 @@
                 ctx.fill();
                 ctx.shadowBlur = 0;
             }
+        }
+
+        // Преобразование названия в имя файла
+        function titleToFilename(title) {
+            return title.toLowerCase()
+                .replace(/ё/g, 'е')
+                .replace(/[^a-zа-я0-9\s]/g, '')
+                .trim()
+                .replace(/\s+/g, '-') + '.mp3';
+        }
+
+        // Открыть окно скачивания
+        function openDownloadModal(track) {
+            if (!track || track.file === '#') return;
+            currentDownloadTrack = track;
+            downloadTrackName.textContent = track.title;
+            downloadFileName.textContent = titleToFilename(track.title);
+            downloadModalOverlay.classList.add('active');
+        }
+
+        // Закрыть окно скачивания
+        function closeDownloadModal() {
+            downloadModalOverlay.classList.remove('active');
+            currentDownloadTrack = null;
+        }
+
+        // Реальное скачивание
+        function performDownload() {
+            if (!currentDownloadTrack) return;
+            const link = document.createElement('a');
+            link.href = currentDownloadTrack.file;
+            link.download = titleToFilename(currentDownloadTrack.title);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // Создание списка треков
@@ -1466,13 +1484,13 @@
                 if (currentPlayingId === track.id) trackItem.classList.add('playing');
                 
                 const coverHtml = track.cover 
-                    ? `<img src="${track.cover}" alt="${track.title}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'placeholder\'>🎵</div>';">`
+                    ? `<img src="${track.cover}" alt="${track.title}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'placeholder\'></div>';">`
                     : '<div class="placeholder">🎵</div>';
                 
+                const isDownloadable = track.file !== '#';
+                
                 trackItem.innerHTML = `
-                    <div class="track-cover">
-                        ${coverHtml}
-                    </div>
+                    <div class="track-cover">${coverHtml}</div>
                     <div class="track-info">
                         <div class="track-title">${track.title}</div>
                         ${track.desc ? `<div class="track-desc">${track.desc}</div>` : ''}
@@ -1481,51 +1499,54 @@
                     <button class="track-play-btn" data-id="${track.id}">
                         ${currentPlayingId === track.id ? '⏸' : '▶'}
                     </button>
+                    <button class="track-download-btn ${!isDownloadable ? 'disabled' : ''}" data-id="${track.id}" title="${isDownloadable ? 'Скачать' : 'Недоступно'}">
+                        
+                    </button>
                 `;
                 
                 trackList.appendChild(trackItem);
             });
 
-            // Обработчики кнопок play
             document.querySelectorAll('.track-play-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const trackId = parseInt(btn.dataset.id);
-                    playTrack(trackId);
+                    playTrack(parseInt(btn.dataset.id));
                 });
             });
 
-            // Обработчики клика на трек
+            document.querySelectorAll('.track-download-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (btn.classList.contains('disabled')) return;
+                    const trackId = parseInt(btn.dataset.id);
+                    const track = tracks.find(t => t.id === trackId);
+                    openDownloadModal(track);
+                });
+            });
+
             document.querySelectorAll('.track-item').forEach(item => {
                 item.addEventListener('click', () => {
                     const btn = item.querySelector('.track-play-btn');
-                    const trackId = parseInt(btn.dataset.id);
-                    playTrack(trackId);
+                    playTrack(parseInt(btn.dataset.id));
                 });
             });
         }
 
-        // Воспроизведение трека
         function playTrack(trackId) {
             const track = tracks.find(t => t.id === trackId);
             if (!track || track.file === '#') return;
-
             if (currentPlayingId === trackId) {
-                // Пауза
                 audioPlayer.pause();
                 currentPlayingId = null;
             } else {
-                // Воспроизведение
                 audioPlayer.src = track.file;
                 audioPlayer.play();
                 currentPlayingId = trackId;
             }
-
             renderTracks();
             updateNewReleaseButton();
         }
 
-        // Обновление кнопки нового релиза
         function updateNewReleaseButton() {
             const firstTrack = tracks[0];
             if (currentPlayingId === firstTrack.id) {
@@ -1537,33 +1558,32 @@
             }
         }
 
-        // Кнопка нового релиза
-        newReleasePlayBtn.addEventListener('click', () => {
-            playTrack(1);
-        });
+        newReleasePlayBtn.addEventListener('click', () => playTrack(1));
+        newReleaseDownloadBtn.addEventListener('click', () => openDownloadModal(tracks[0]));
 
-        // Кнопка "Показать все"
         let allTracksVisible = false;
         showMoreBtn.addEventListener('click', () => {
             allTracksVisible = !allTracksVisible;
-            const hiddenTracks = document.querySelectorAll('.track-item.hidden');
-            hiddenTracks.forEach(track => {
-                track.classList.remove('hidden');
-            });
+            document.querySelectorAll('.track-item.hidden').forEach(track => track.classList.remove('hidden'));
             showMoreBtn.classList.add('hidden');
         });
+
+        // Обработчики модального окна скачивания
+        downloadModalClose.addEventListener('click', closeDownloadModal);
+        downloadModalOverlay.addEventListener('click', (e) => {
+            if (e.target === downloadModalOverlay) closeDownloadModal();
+        });
+        downloadActionBtn.addEventListener('click', performDownload);
 
         // Переход между страницами
         enterButton.addEventListener('click', () => {
             loginPage.classList.add('fade-out');
-            
             setTimeout(() => {
                 mainPage.classList.add('active');
                 renderTracks();
             }, 600);
         });
 
-        // Управление модальным окном обновлений
         updatesButton.addEventListener('click', () => {
             modalIcon.textContent = '●';
             modalTitle.textContent = 'Последние обновления';
@@ -1604,37 +1624,21 @@
             modalOverlay.classList.add('active');
         });
 
-        // Управление модальным окном "О проекте"
         aboutButton.addEventListener('click', () => {
-            modalIcon.textContent = '';
+            modalIcon.textContent = '◈';
             modalTitle.textContent = 'О проекте';
             modalBody.innerHTML = `
                 <div class="about-text">
-                    <p>
-                        <span class="highlight">EVGENII</span> — это эксперимент на стыке человеческих эмоций и искусственного интеллекта.
-                    </p>
-                    
-                    <div class="quote">
-                        «Я придумываю текст и стиль исполнения. А выучить и воплотить в песню доверяю ИИ.»
-                    </div>
-                    
-                    <p>
-                        Искусственный интеллект становится моим голосом. Он заучивает мои слова, учится чувствовать ритм, подбирать интонации. Это не замена человеку — это <span class="highlight">новый инструмент выражения</span>.
-                    </p>
-                    
-                    <p>
-                        Вместе мы создаём что-то третье. Не совсем человеческое, не совсем машинное. Что-то среднее, где технологии усиливают эмоции, а не заменяют их.
-                    </p>
-                    
-                    <p>
-                        Этот проект — исследование границ между автором и исполнителем, между живым чувством и алгоритмом, между тем, кто пишет, и тем, кто поёт.
-                    </p>
+                    <p><span class="highlight">EVGENII</span> — это эксперимент на стыке человеческих эмоций и искусственного интеллекта.</p>
+                    <div class="quote">«Я придумываю текст и стиль исполнения. А выучить и воплотить в песню доверяю ИИ.»</div>
+                    <p>Искусственный интеллект становится моим голосом. Он заучивает мои слова, учится чувствовать ритм, подбирать интонации. Это не замена человеку — это <span class="highlight">новый инструмент выражения</span>.</p>
+                    <p>Вместе мы создаём что-то третье. Не совсем человеческое, не совсем машинное. Что-то среднее, где технологии усиливают эмоции, а не заменяют их.</p>
+                    <p>Этот проект — исследование границ между автором и исполнителем, между живым чувством и алгоритмом, между тем, кто пишет, и тем, кто поёт.</p>
                 </div>
             `;
             modalOverlay.classList.add('active');
         });
 
-        // Управление модальным окном чата
         chatButton.addEventListener('click', () => {
             modalIcon.textContent = '💬';
             modalTitle.textContent = 'Чат';
@@ -1649,16 +1653,9 @@
             modalOverlay.classList.add('active');
         });
 
-        // Закрытие модального окна
-        closeModal.addEventListener('click', () => {
-            modalOverlay.classList.remove('active');
-        });
-
-        // Закрытие по клику вне окна
+        closeModal.addEventListener('click', () => modalOverlay.classList.remove('active'));
         modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                modalOverlay.classList.remove('active');
-            }
+            if (e.target === modalOverlay) modalOverlay.classList.remove('active');
         });
         
         window.addEventListener('mousemove', (e) => {
@@ -1666,11 +1663,7 @@
             mouse.y = e.clientY;
             mouse.active = true;
         });
-        
-        window.addEventListener('mouseleave', () => {
-            mouse.active = false;
-        });
-        
+        window.addEventListener('mouseleave', () => mouse.active = false);
         window.addEventListener('resize', resize);
         
         resize();
