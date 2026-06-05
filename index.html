@@ -1,10 +1,9 @@
-
-html_content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Абстрактный фон — Сахалинские сопки</title>
+    <title>EVGENII — Эксперимент на стыке эмоций и кода</title>
     <style>
         * {
             margin: 0;
@@ -27,39 +26,6 @@ html_content = '''<!DOCTYPE html>
             z-index: 0;
         }
         
-        .content {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            color: #e0f7fa;
-            text-align: center;
-            padding: 2rem;
-            pointer-events: none;
-        }
-        
-        .content h1 {
-            font-size: 3.5rem;
-            font-weight: 200;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 40px rgba(0, 255, 255, 0.3), 0 0 80px rgba(0, 200, 255, 0.1);
-            opacity: 0.9;
-        }
-        
-        .content p {
-            font-size: 1.2rem;
-            font-weight: 300;
-            letter-spacing: 0.1em;
-            opacity: 0.6;
-            max-width: 600px;
-            line-height: 1.6;
-        }
-        
         .overlay {
             position: fixed;
             top: 0;
@@ -70,20 +36,242 @@ html_content = '''<!DOCTYPE html>
             z-index: 0;
             pointer-events: none;
         }
+
+        /* Стили для страницы входа */
+        .login-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
+            pointer-events: auto;
+        }
+
+        .login-page.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .login-content {
+            text-align: center;
+            color: #e0f7fa;
+            padding: 2rem;
+            max-width: 900px;
+        }
+
+        .login-content h1 {
+            font-size: 5rem;
+            font-weight: 200;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            text-shadow: 
+                0 0 40px rgba(0, 255, 255, 0.4), 
+                0 0 80px rgba(0, 200, 255, 0.2),
+                0 0 120px rgba(0, 150, 255, 0.1);
+            opacity: 0.95;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 
+                    0 0 40px rgba(0, 255, 255, 0.4), 
+                    0 0 80px rgba(0, 200, 255, 0.2),
+                    0 0 120px rgba(0, 150, 255, 0.1);
+            }
+            to {
+                text-shadow: 
+                    0 0 60px rgba(0, 255, 255, 0.6), 
+                    0 0 100px rgba(0, 200, 255, 0.3),
+                    0 0 150px rgba(0, 150, 255, 0.2);
+            }
+        }
+
+        .login-content .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            margin-bottom: 1rem;
+            opacity: 0.85;
+            line-height: 1.6;
+        }
+
+        .login-content .description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .enter-button {
+            display: inline-block;
+            padding: 1.2rem 3.5rem;
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #e0f7fa;
+            background: transparent;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enter-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .enter-button:hover::before {
+            left: 100%;
+        }
+
+        .enter-button:hover {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: rgba(0, 255, 255, 0.8);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.3),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .enter-button:active {
+            transform: translateY(0);
+        }
+
+        /* Стили для основной страницы */
+        .main-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.2s ease-in-out;
+            color: #e0f7fa;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .main-page.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .main-content h1 {
+            font-size: 3.5rem;
+            font-weight: 200;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
+            opacity: 0.9;
+        }
+
+        .main-content p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .login-content h1 {
+                font-size: 3rem;
+                letter-spacing: 0.2em;
+            }
+
+            .login-content .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .login-content .description {
+                font-size: 1rem;
+            }
+
+            .enter-button {
+                padding: 1rem 2.5rem;
+                font-size: 1rem;
+            }
+
+            .main-content h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-content h1 {
+                font-size: 2.2rem;
+                letter-spacing: 0.15em;
+            }
+
+            .login-content .subtitle {
+                font-size: 1rem;
+            }
+
+            .login-content .description {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
     <div class="overlay"></div>
     
-    <div class="content">
-        <h1>Сахалин</h1>
-        <p>Пластичный силуэт сопок в потоке света</p>
+    <!-- Страница входа -->
+    <div class="login-page" id="loginPage">
+        <div class="login-content">
+            <h1>EVGENII</h1>
+            <p class="subtitle">Где заканчиваюсь я — и начинается ИИ.</p>
+            <p class="description">Эксперимент на стыке эмоций и кода.</p>
+            <button class="enter-button" id="enterButton">Перейти на сайт</button>
+        </div>
+    </div>
+
+    <!-- Основная страница -->
+    <div class="main-page" id="mainPage">
+        <div class="main-content">
+            <h1>Добро пожаловать</h1>
+            <p>Вы вошли в пространство, где технологии встречаются с творчеством</p>
+        </div>
     </div>
 
     <script>
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
+        const loginPage = document.getElementById('loginPage');
+        const mainPage = document.getElementById('mainPage');
+        const enterButton = document.getElementById('enterButton');
         
         let width, height;
         let mouse = { x: 0, y: 0, active: false };
@@ -101,24 +289,20 @@ html_content = '''<!DOCTYPE html>
             }
             
             init() {
-                // Случайные параметры для каждой волны
                 this.amplitude = 80 + Math.random() * 150;
                 this.frequency = 0.003 + Math.random() * 0.005;
                 this.speed = 0.008 + Math.random() * 0.012;
                 this.phase = Math.random() * Math.PI * 2;
                 this.yOffset = Math.random() * window.innerHeight;
                 
-                // Цвета в диапазоне бирюзового/голубого
-                const hue = 170 + Math.random() * 40; // 170-210 (бирюза до голубого)
+                const hue = 170 + Math.random() * 40;
                 const saturation = 60 + Math.random() * 30;
                 const lightness = 40 + Math.random() * 30;
                 this.baseColor = `hsla(${hue}, ${saturation}%, ${lightness}%`;
                 this.alpha = 0.15 + Math.random() * 0.4;
                 
-                // Толщина линии
                 this.lineWidth = 1 + Math.random() * 3;
                 
-                // Контрольные точки для плавных кривых
                 this.points = [];
                 this.numPoints = 5 + Math.floor(Math.random() * 4);
             }
@@ -130,12 +314,10 @@ html_content = '''<!DOCTYPE html>
                 for (let i = 0; i < this.numPoints; i++) {
                     const x = i * segmentWidth;
                     
-                    // Базовая волна
                     let y = this.yOffset + 
                             Math.sin(x * this.frequency + t * this.speed + this.phase) * this.amplitude +
                             Math.sin(x * this.frequency * 0.5 + t * this.speed * 1.3) * this.amplitude * 0.5;
                     
-                    // Добавляем влияние мыши
                     if (mouse.active) {
                         const dx = x - mouse.x;
                         const dy = y - mouse.y;
@@ -158,12 +340,10 @@ html_content = '''<!DOCTYPE html>
                 ctx.beginPath();
                 ctx.moveTo(this.points[0].x, this.points[0].y);
                 
-                // Рисуем плавную кривую через все точки
                 for (let i = 0; i < this.points.length - 1; i++) {
                     const p0 = this.points[i];
                     const p1 = this.points[i + 1];
                     
-                    // Используем квадратичные кривые для плавности
                     const midX = (p0.x + p1.x) / 2;
                     const midY = (p0.y + p1.y) / 2;
                     
@@ -174,27 +354,22 @@ html_content = '''<!DOCTYPE html>
                     }
                 }
                 
-                // Доходим до последней точки
                 const last = this.points[this.points.length - 1];
                 ctx.lineTo(last.x, last.y);
                 
-                // Эффект свечения
                 ctx.shadowColor = this.baseColor.replace('hsla', 'hsl').replace(/,[\d.]+%\)/, ')');
                 ctx.shadowBlur = 20 + this.index * 2;
                 ctx.shadowOffsetX = 0;
                 ctx.shadowOffsetY = 0;
                 
-                // Стиль линии
                 ctx.strokeStyle = `${this.baseColor}, ${this.alpha})`;
                 ctx.lineWidth = this.lineWidth;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.stroke();
                 
-                // Сброс теней
                 ctx.shadowBlur = 0;
                 
-                // Дополнительная светящаяся линия по центру (для эффекта ядра)
                 if (this.alpha > 0.3) {
                     ctx.beginPath();
                     ctx.moveTo(this.points[0].x, this.points[0].y);
@@ -220,7 +395,6 @@ html_content = '''<!DOCTYPE html>
             }
         }
         
-        // Частицы для эффекта дыма/тумана
         class Particle {
             constructor() {
                 this.reset();
@@ -272,13 +446,11 @@ html_content = '''<!DOCTYPE html>
             canvas.width = width;
             canvas.height = height;
             
-            // Переинициализируем волны при ресайзе
             waves.length = 0;
             for (let i = 0; i < WAVE_COUNT; i++) {
                 waves.push(new Wave(i, WAVE_COUNT));
             }
             
-            // Переинициализируем частицы
             particles.length = 0;
             for (let i = 0; i < PARTICLE_COUNT; i++) {
                 particles.push(new Particle());
@@ -288,30 +460,25 @@ html_content = '''<!DOCTYPE html>
         function animate() {
             time += 1;
             
-            // Очистка с лёгким следом для эффекта движения
             ctx.fillStyle = 'rgba(5, 5, 8, 0.15)';
             ctx.fillRect(0, 0, width, height);
             
-            // Рисуем частицы (дым/туман)
             for (const p of particles) {
                 p.update();
                 p.draw(ctx);
             }
             
-            // Рисуем волны
             for (const wave of waves) {
                 wave.update(time);
                 wave.draw(ctx);
             }
             
-            // Дополнительный эффект световых бликов (lens flare)
             drawFlares(ctx);
             
             requestAnimationFrame(animate);
         }
         
         function drawFlares(ctx) {
-            // Несколько случайных бликов
             const flarePositions = [
                 { x: width * 0.3, y: height * 0.4, size: 3, alpha: 0.6 },
                 { x: width * 0.7, y: height * 0.6, size: 2, alpha: 0.4 },
@@ -319,11 +486,9 @@ html_content = '''<!DOCTYPE html>
             ];
             
             for (const flare of flarePositions) {
-                // Движение бликов
                 const fx = flare.x + Math.sin(time * 0.01) * 50;
                 const fy = flare.y + Math.cos(time * 0.013) * 30;
                 
-                // Градиент для блика
                 const gradient = ctx.createRadialGradient(fx, fy, 0, fx, fy, flare.size * 8);
                 gradient.addColorStop(0, `rgba(200, 255, 255, ${flare.alpha})`);
                 gradient.addColorStop(0.5, `rgba(0, 255, 255, ${flare.alpha * 0.3})`);
@@ -334,7 +499,6 @@ html_content = '''<!DOCTYPE html>
                 ctx.fillStyle = gradient;
                 ctx.fill();
                 
-                // Яркое ядро
                 ctx.beginPath();
                 ctx.arc(fx, fy, flare.size, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(255, 255, 255, ${flare.alpha})`;
@@ -345,7 +509,15 @@ html_content = '''<!DOCTYPE html>
             }
         }
         
-        // События мыши
+        // Переход между страницами
+        enterButton.addEventListener('click', () => {
+            loginPage.classList.add('fade-out');
+            
+            setTimeout(() => {
+                mainPage.classList.add('active');
+            }, 600);
+        });
+        
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
@@ -358,17 +530,9 @@ html_content = '''<!DOCTYPE html>
         
         window.addEventListener('resize', resize);
         
-        // Инициализация
         resize();
         animate();
     </script>
 </body>
-</html>'''
-
-# Save to output directory
-with open('/mnt/agents/output/abstract_background.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print("Файл создан: /mnt/agents/output/abstract_background.html")
-
+</html>
 
