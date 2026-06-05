@@ -1,1355 +1,374 @@
-<!DOCTYPE html>
+
+html_content = '''<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>EVGENII — Вход</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Абстрактный фон — Сахалинские сопки</title>
     <style>
-        :root {
-            --safe-area-top: env(safe-area-inset-top, 0px);
-            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-            --primary-glow: rgba(0, 242, 255, 0.6);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            background: #050505;
+            background: #050508;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 100vh;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
         }
         
         canvas {
             position: fixed;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .content {
+            position: relative;
             z-index: 1;
-            pointer-events: none;
-        }
-        
-        .page-transition {
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        
-        .hidden-page {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.95);
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1;
-        }
-
-        .visible-page {
-            opacity: 1;
-            pointer-events: auto;
-            transform: scale(1);
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            background: #050505;
-            transition: opacity 0.8s ease-out, visibility 0.8s;
-        }
-        
-        .preloader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .preloader-text {
-            color: #40e0d0;
-            font-size: 2rem;
-            letter-spacing: 0.5em;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-        
-        .header-anim {
-            opacity: 0;
-            transform: translateY(-30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        
-        .header-anim.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .title {
-            font-size: 5rem;
-            font-weight: 900;
-            letter-spacing: 0.3em;
-            background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 30px var(--primary-glow);
-            position: relative;
-            animation: glow 3s ease-in-out infinite;
-            text-align: center;
-        }
-        
-        @keyframes glow {
-            0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.6)); }
-            50% { filter: drop-shadow(0 0 40px rgba(64, 224, 208, 0.8)); }
-        }
-        
-        .login-page {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-        }
-        
-        .subtitle {
-            color: #48d1cc;
-            font-size: 1rem;
-            letter-spacing: 0.5em;
-            margin-top: 15px;
-            opacity: 0.7;
+            min-height: 100vh;
+            color: #e0f7fa;
             text-align: center;
+            padding: 2rem;
+            pointer-events: none;
         }
         
-        .btn-enter {
-            margin-top: 40px;
-            padding: 18px 60px;
-            background: linear-gradient(135deg, #00f2ff, #40e0d0);
-            border: none;
-            border-radius: 50px;
-            color: #050505;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
+        .content h1 {
+            font-size: 3.5rem;
+            font-weight: 200;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
-            touch-action: manipulation;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 40px rgba(0, 255, 255, 0.3), 0 0 80px rgba(0, 200, 255, 0.1);
+            opacity: 0.9;
         }
         
-        .btn-enter:active { transform: scale(0.97); }
-        
-        .main-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 20px;
-            padding-bottom: 120px;
-        }
-        
-        .main-header {
-            text-align: center;
-            width: 100%;
-            max-width: 900px;
-            margin-top: 40px;
-        }
-        
-        .main-description {
-            color: #48d1cc;
-            font-size: 1.1rem;
+        .content p {
+            font-size: 1.2rem;
+            font-weight: 300;
             letter-spacing: 0.1em;
-            margin-top: 20px;
-            opacity: 0.8;
+            opacity: 0.6;
+            max-width: 600px;
             line-height: 1.6;
         }
         
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 40px;
-            align-items: center;
-        }
-        
-        .btn-feed, .btn-chat {
-            padding: 14px 45px;
-            background: transparent;
-            border: 1px solid #40e0d0;
-            border-radius: 50px;
-            color: #40e0d0;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            min-width: 260px;
-            touch-action: manipulation;
-        }
-        
-        .btn-feed:active, .btn-chat:active {
-            background: rgba(64, 224, 208, 0.15);
-            transform: scale(0.97);
-        }
-        
-        .releases-section, .all-tracks-section {
-            margin-top: 60px;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .releases-title {
-            font-size: 1.5rem;
-            font-weight: 900;
-            letter-spacing: 0.25em;
-            background: linear-gradient(135deg, #00f2ff, #40e0d0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 35px;
-            text-transform: uppercase;
-        }
-        
-        .track-card {
-            background: linear-gradient(145deg, #0d1a1a, #060d0d);
-            border: 1px solid rgba(64, 224, 208, 0.25);
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 420px;
-            margin: 0 auto;
-            box-shadow: 0 0 40px rgba(0, 242, 255, 0.1);
-        }
-        
-        .track-cover {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            border-radius: 14px;
-            overflow: hidden;
-            position: relative;
-            background: #0a0f0f;
-            margin-bottom: 18px;
-        }
-        
-        .track-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .track-info { text-align: left; }
-        
-        .track-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 8px;
-        }
-        
-        .play-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: rgba(0, 242, 255, 0.9);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.2s;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
-            flex-shrink: 0;
-            touch-action: manipulation;
-        }
-        
-        .play-btn:active { transform: scale(0.92); }
-        .play-btn svg { width: 20px; height: 20px; fill: #050505; margin-left: 2px; }
-        
-        .track-name {
-            color: #e0f5f2;
-            font-size: 1.2rem;
-            font-weight: bold;
-            flex: 1;
-        }
-        
-        .track-desc {
-            color: #48d1cc;
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-bottom: 15px;
-        }
-        
-        .track-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .btn-about-release, .btn-download-release {
-            flex: 1;
-            padding: 13px 20px;
-            background: transparent;
-            border: 1px solid #40e0d0;
-            border-radius: 50px;
-            color: #40e0d0;
-            font-size: 0.95rem;
-            font-weight: bold;
-            cursor: pointer;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-        
-        .btn-about-release:active, .btn-download-release:active {
-            background: rgba(64, 224, 208, 0.15);
-            transform: scale(0.97);
-        }
-        
-        .btn-download-release svg {
-            width: 16px;
-            height: 16px;
-            fill: #40e0d0;
-        }
-        
-        .archive-label {
-            font-size: 0.9rem;
-            color: #ff8c42;
-            letter-spacing: 0.2em;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            text-align: left;
-        }
-        
-        .all-tracks-title {
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 30px;
-            text-align: left;
-        }
-        
-        .tracks-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 400px;
-            overflow: hidden;
-            transition: max-height 0.6s ease;
-        }
-        
-        .tracks-list.expanded { max-height: 2000px; }
-        
-        .track-item {
-            background: linear-gradient(145deg, rgba(13, 26, 26, 0.8), rgba(6, 13, 13, 0.9));
-            border: 1px solid rgba(64, 224, 208, 0.2);
-            border-radius: 16px;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.2s;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-        
-        .track-item.active-track {
-            border-color: #00f2ff;
-            background: rgba(0, 242, 255, 0.05);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
-        }
-        
-        .track-item-cover {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            overflow: hidden;
-            flex-shrink: 0;
-            background: #0a0f0f;
-        }
-        
-        .track-item-cover img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .track-item-info { flex: 1; min-width: 0; text-align: left; }
-        
-        .track-item-name {
-            color: #e0f5f2;
-            font-size: 1rem;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .track-item-duration {
-            color: #fdcb6e;
-            font-size: 0.9rem;
-            font-family: monospace;
-        }
-        
-        /* Кнопка скачать в списке треков */
-        .track-item-download {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: rgba(64, 224, 208, 0.1);
-            border: 1px solid rgba(64, 224, 208, 0.3);
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-            touch-action: manipulation;
-        }
-        
-        .track-item-download:active {
-            background: rgba(0, 242, 255, 0.2);
-            border-color: rgba(0, 242, 255, 0.5);
-            transform: scale(1.05);
-        }
-        
-        .track-item-download svg {
-            width: 18px;
-            height: 18px;
-            fill: #40e0d0;
-        }
-        
-        .show-more-btn {
-            width: 100%;
-            padding: 16px;
-            background: rgba(13, 26, 26, 0.6);
-            border: 1px dashed rgba(64, 224, 208, 0.3);
-            border-radius: 16px;
-            color: #48d1cc;
-            margin-top: 12px;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-        
-        .sticky-player {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(5, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(64, 224, 208, 0.2);
-            z-index: 100;
-            padding: 10px 20px;
-            padding-bottom: calc(10px + var(--safe-area-bottom));
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transform: translateY(100%);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .sticky-player.active { transform: translateY(0); }
-        
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .player-cover {
-            width: 45px;
-            height: 45px;
-            border-radius: 8px;
-            background: #111;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        
-        .player-cover img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .player-text {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .player-title {
-            color: #fff;
-            font-size: 0.95rem;
-            font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .player-artist {
-            color: #40e0d0;
-            font-size: 0.75rem;
-            opacity: 0.8;
-        }
-        
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .ctrl-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-            touch-action: manipulation;
-        }
-        
-        .ctrl-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: #e0f5f2;
-            transition: fill 0.2s;
-        }
-        
-        .ctrl-btn:active svg { fill: #00f2ff; }
-        
-        .ctrl-play {
-            width: 40px;
-            height: 40px;
-            background: rgba(0, 242, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .ctrl-play svg { width: 18px; height: 18px; fill: #00f2ff; margin-left: 2px; }
-        .ctrl-play.playing svg { margin-left: 0; }
-        
-        .progress-container {
-            position: absolute;
-            top: -3px;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            cursor: pointer;
-            background: rgba(255,255,255,0.05);
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #00f2ff, #40e0d0);
-            width: 0%;
-            position: relative;
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-        }
-        
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            right: -4px;
-            top: -2px;
-            width: 10px;
-            height: 10px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 5px rgba(0,0,0,0.5);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        
-        .progress-container:hover .progress-bar::after { opacity: 1; }
-        
-        /* --- МОДАЛЬНЫЕ ОКНА --- */
-        .modal-overlay {
+        .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 200;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .modal-overlay.active { display: flex; opacity: 1; }
-        
-        .modal {
-            background: linear-gradient(145deg, #0a1515, #050a0a);
-            border: 1px solid rgba(64, 224, 208, 0.3);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 550px;
-            width: 90%;
-            max-height: 70vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.15);
-            transform: scale(0.9);
-            transition: transform 0.4s ease;
-        }
-        
-        .modal-overlay.active .modal { transform: scale(1); }
-        
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: #48d1cc;
-            font-size: 1.8rem;
-            cursor: pointer;
-            line-height: 1;
-            opacity: 0.7;
-            padding: 10px;
-            touch-action: manipulation;
-        }
-        
-        .modal-close:active {
-            opacity: 1;
-            transform: rotate(90deg);
-            color: #00f2ff;
-        }
-        
-        .modal-title {
-            font-size: 1.6rem;
-            font-weight: 900;
-            letter-spacing: 0.2em;
-            background: linear-gradient(135deg, #00f2ff, #40e0d0, #7fffd4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        
-        .feed-item { padding: 18px 0; border-bottom: 1px solid rgba(64, 224, 208, 0.12); }
-        .feed-date { color: #00f2ff; font-size: 0.8rem; margin-bottom: 5px; }
-        .feed-text { color: #c0e8e5; line-height: 1.5; }
-        
-        /* --- МОДАЛКА СКАЧИВАНИЯ --- */
-        .download-modal-content {
-            text-align: center;
-            padding: 10px 0;
-        }
-        
-        .download-icon-animated {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 25px;
-            position: relative;
-        }
-        
-        .download-icon-animated svg {
-            width: 100%;
-            height: 100%;
-            fill: #40e0d0;
-            animation: downloadBounce 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes downloadBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(8px); }
-        }
-        
-        .download-track-name {
-            color: #00f2ff;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            letter-spacing: 0.05em;
-        }
-        
-        .download-status {
-            color: #c0e8e5;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            opacity: 0.85;
-        }
-        
-        .download-progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(64, 224, 208, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-bottom: 25px;
-        }
-        
-        .download-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00f2ff, #40e0d0);
-            width: 0%;
-            animation: downloadProgress 3s ease-in-out infinite;
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-        }
-        
-        @keyframes downloadProgress {
-            0% { width: 0%; }
-            50% { width: 70%; }
-            100% { width: 100%; }
-        }
-        
-        .btn-download-manual {
-            padding: 14px 40px;
-            background: linear-gradient(135deg, #00f2ff, #40e0d0);
-            border: none;
-            border-radius: 50px;
-            color: #050505;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
-            touch-action: manipulation;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .btn-download-manual:active {
-            transform: scale(0.97);
-        }
-        
-        .btn-download-manual svg {
-            width: 18px;
-            height: 18px;
-            fill: #050505;
-        }
-        
-        .download-success {
-            color: #7fffd4;
-            font-size: 1rem;
-            margin-top: 15px;
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-        
-        .download-success.visible {
-            opacity: 1;
-        }
-        
-        @media (max-width: 768px) {
-            .title { font-size: 3rem; }
-            .sticky-player { padding: 8px 15px; }
-            .player-cover { width: 40px; height: 40px; }
-            .ctrl-btn svg { width: 20px; height: 20px; }
-            .modal { padding: 30px 25px; }
-            .modal-title { font-size: 1.3rem; }
-            .download-track-name { font-size: 1.1rem; }
-            .btn-download-manual { padding: 12px 30px; font-size: 0.9rem; }
-            .track-actions { flex-direction: column; }
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(5, 5, 8, 0.4) 100%);
+            z-index: 0;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="preloader" id="preloader">
-        <div class="preloader-text">ЗАГРУЗКА...</div>
+    <canvas id="bgCanvas"></canvas>
+    <div class="overlay"></div>
+    
+    <div class="content">
+        <h1>Сахалин</h1>
+        <p>Пластичный силуэт сопок в потоке света</p>
     </div>
-    
-    <canvas id="canvas"></canvas>
-    
-    <div class="login-page visible-page page-transition" id="loginPage">
-        <h1 class="title header-anim" id="loginTitle">EVGENII</h1>
-        <p class="subtitle header-anim" style="transition-delay: 0.2s">
-            Где заканчиваюсь я — и начинается ИИ.
-        </p>
-        <button class="btn-enter header-anim" id="btnEnter" style="transition-delay: 0.4s">Перейти на сайт</button>
-    </div>
-    
-    <div class="main-page hidden-page page-transition" id="mainPage">
-        <div class="main-header header-anim" id="mainHeader">
-            <h1 class="title">EVGENII</h1>
-            <p class="main-description">
-                Эксперимент на стыке человеческих эмоций и машинного голоса.
-            </p>
-            
-            <div class="action-buttons">
-                <button class="btn-feed" id="btnFeed">Лента обновлений</button>
-                <button class="btn-chat" id="btnChat">Чат</button>
-            </div>
-            
-            <div class="releases-section">
-                <h2 class="releases-title">Новые релизы</h2>
-                <div class="track-card">
-                    <div class="track-cover">
-                        <img src="https://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/d9/20260603/3c8f8c9a/8f7a5b2c-4d1e-4f2a-9c3b-7e8d9f0a1b2c.png" alt="Поезд на юг" onerror="this.src='https://via.placeholder.com/400/0d1a1a/40e0d0?text=EVGENII'">
-                    </div>
-                    <div class="track-info">
-                        <div class="track-header">
-                            <button class="play-btn" onclick="toggleTrackById(0)">
-                                <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                <svg class="icon-pause" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                            </button>
-                            <div class="track-name">Поезд на юг</div>
-                        </div>
-                        <div class="track-desc">AI Cover • 2026</div>
-                        <div class="track-actions">
-                            <button class="btn-about-release" id="btnAboutRelease">О релизе</button>
-                            <button class="btn-download-release" onclick="openDownloadModal(0)">
-                                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                                Скачать
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="all-tracks-section">
-                <div class="archive-label">// ARCHIVE</div>
-                <h2 class="all-tracks-title">Все треки</h2>
-                <div class="tracks-list" id="tracksList">
-                    <div class="track-item" onclick="toggleTrackById(0)">
-                        <div class="track-item-cover">
-                            <img src="https://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/d9/20260603/3c8f8c9a/8f7a5b2c-4d1e-4f2a-9c3b-7e8d9f0a1b2c.png" onerror="this.src='https://via.placeholder.com/50/0d1a1a/40e0d0?text=E'">
-                        </div>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Поезд на юг</div>
-                            <div class="track-item-desc">EVGENII</div>
-                        </div>
-                        <div class="track-item-duration">3:23</div>
-                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(0)">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    
-                    <div class="track-item" onclick="toggleTrackById(1)">
-                        <div class="track-item-cover">
-                            <img src="https://via.placeholder.com/50/4a4a4a/ffffff?text=A" alt="А мне похуй">
-                        </div>
-                        <div class="track-item-info">
-                            <div class="track-item-name">А мне похуй</div>
-                            <div class="track-item-desc">Когда похуй</div>
-                        </div>
-                        <div class="track-item-duration">3:11</div>
-                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(1)">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    
-                    <div class="track-item" onclick="toggleTrackById(2)">
-                        <div class="track-item-cover">
-                             <div style="width:100%;height:100%;background:#111;display:flex;justify-content:center;align-items:center;color:#40e0d0">♫</div>
-                        </div>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Сгоревший экскиз</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">3:48</div>
-                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(2)">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                    
-                    <div class="track-item" onclick="toggleTrackById(3)">
-                        <div class="track-item-cover">
-                            <div style="width:100%;height:100%;background:#111;display:flex;justify-content:center;align-items:center;color:#40e0d0">♫</div>
-                        </div>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Тишина</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">04:48</div>
-                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(3)">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                     <div class="track-item" onclick="toggleTrackById(4)">
-                        <div class="track-item-cover">
-                            <div style="width:100%;height:100%;background:#111;display:flex;justify-content:center;align-items:center;color:#40e0d0">♫</div>
-                        </div>
-                        <div class="track-item-info">
-                            <div class="track-item-name">Воздух Густеет</div>
-                            <div class="track-item-desc">Без описания</div>
-                        </div>
-                        <div class="track-item-duration">03:23</div>
-                        <button class="track-item-download" onclick="event.stopPropagation(); openDownloadModal(4)">
-                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
-                </div>
-                <button class="show-more-btn" id="showMoreBtn">Показать все треки</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="sticky-player" id="stickyPlayer">
-        <div class="progress-container" id="progressContainer">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-        
-        <div class="player-info">
-            <div class="player-cover">
-                <img id="playerImg" src="" alt="">
-            </div>
-            <div class="player-text">
-                <div class="player-title" id="playerTitle">Выберите трек</div>
-                <div class="player-artist">EVGENII PROJECT</div>
-            </div>
-        </div>
-        
-        <div class="player-controls">
-            <button class="ctrl-btn" id="prevBtn">
-                <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-            </button>
-            <button class="ctrl-btn ctrl-play" id="mainPlayBtn">
-                <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                <svg class="icon-pause" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </button>
-            <button class="ctrl-btn" id="nextBtn">
-                <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-            </button>
-        </div>
-    </div>
-    
-    <!-- МОДАЛКА ЛЕНТЫ -->
-    <div class="modal-overlay" id="feedModal">
-        <div class="modal">
-            <button class="modal-close" data-close="feed">&times;</button>
-            <h2 class="modal-title">ЛЕНТА ОБНОВЛЕНИЙ</h2>
-            <div class="feed-item">
-                <div class="feed-date">03.06.2026</div>
-                <div class="feed-text">Запуск проекта EVGENII. Первый эксперимент на стыке человеческого текста и машинного голоса.</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- МОДАЛКА ЧАТА -->
-    <div class="modal-overlay" id="chatModal">
-        <div class="modal">
-            <button class="modal-close" data-close="chat">&times;</button>
-            <h2 class="modal-title">ЧАТ</h2>
-            <div style="color:#c0e8e5;text-align:center">Чат в разработке</div>
-        </div>
-    </div>
-    
-    <!-- МОДАЛКА О РЕЛИЗЕ -->
-    <div class="modal-overlay" id="releaseModal">
-        <div class="modal">
-            <button class="modal-close" data-close="release">&times;</button>
-            <h2 class="modal-title">О РЕЛИЗЕ</h2>
-            <div style="color:#c0e8e5;line-height:1.6">
-                Поезд на юг — первый релиз проекта EVGENII.<br><br>
-                Трек создан на стыке человеческого текста и машинного голоса.
-            </div>
-        </div>
-    </div>
-    
-    <!-- МОДАЛКА СКАЧИВАНИЯ -->
-    <div class="modal-overlay" id="downloadModal">
-        <div class="modal">
-            <button class="modal-close" id="closeDownloadModal">&times;</button>
-            <h2 class="modal-title">ПОДГОТОВКА К СКАЧИВАНИЮ</h2>
-            <div class="download-modal-content">
-                <div class="download-icon-animated">
-                    <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                </div>
-                <div class="download-track-name" id="downloadTrackName">Трек готовится для загрузки</div>
-                <div class="download-status">
-                    Скачивание происходит не сразу. Пожалуйста, подождите несколько секунд...<br>
-                    Если скачивание не началось, нажмите «Скачать».
-                </div>
-                <div class="download-progress-bar">
-                    <div class="download-progress-fill" id="downloadProgressFill"></div>
-                </div>
-                <button class="btn-download-manual" id="btnDownloadManual">
-                    <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                    Скачать
-                </button>
-                <div class="download-success" id="downloadSuccess">✓ Скачивание началось</div>
-            </div>
-        </div>
-    </div>
-    
+
     <script>
-        // --- ДАННЫЕ ТРЕКОВ ---
-        const tracks = [
-            {
-                title: "Поезд на юг",
-                artist: "EVGENII",
-                cover: "https://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/d9/20260603/3c8f8c9a/8f7a5b2c-4d1e-4f2a-9c3b-7e8d9f0a1b2c.png",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                fileName: "EVGENII - Поезд на юг.mp3"
-            },
-            {
-                title: "А мне похуй",
-                artist: "EVGENII",
-                cover: "https://via.placeholder.com/400/4a4a4a/ffffff?text=POHUY",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-                fileName: "EVGENII - А мне похуй.mp3"
-            },
-            {
-                title: "Сгоревший экскиз",
-                artist: "EVGENII",
-                cover: "",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-                fileName: "EVGENII - Сгоревший экскиз.mp3"
-            },
-            {
-                title: "Тишина",
-                artist: "EVGENII",
-                cover: "",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-                fileName: "EVGENII - Тишина.mp3"
-            },
-             {
-                title: "Воздух Густеет",
-                artist: "EVGENII",
-                cover: "",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-                fileName: "EVGENII - Воздух Густеет.mp3"
-            }
-        ];
-
-        // --- ПЕРЕМЕННЫЕ СОСТОЯНИЯ ---
-        let currentTrackIndex = 0;
-        let isPlaying = false;
-        const audio = new Audio();
-        audio.volume = 0.5;
-
-        // Элементы DOM
-        const stickyPlayer = document.getElementById('stickyPlayer');
-        const playerImg = document.getElementById('playerImg');
-        const playerTitle = document.getElementById('playerTitle');
-        const mainPlayBtn = document.getElementById('mainPlayBtn');
-        const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const loginPage = document.getElementById('loginPage');
-        const mainPage = document.getElementById('mainPage');
-        const loginTitle = document.getElementById('loginTitle');
-        const mainHeader = document.getElementById('mainHeader');
-
-        // --- ЛОГИКА ПЛЕЕРА ---
-        function loadTrack(index) {
-            currentTrackIndex = index;
-            const track = tracks[index];
-            
-            audio.src = track.src;
-            playerTitle.textContent = track.title;
-            playerImg.src = track.cover || 'https://via.placeholder.com/50/111/40e0d0?text=M';
-            
-            updatePlayIcons(false);
-            
-            document.querySelectorAll('.track-item').forEach((item, i) => {
-                if(i === index) item.classList.add('active-track');
-                else item.classList.remove('active-track');
-            });
-        }
-
-        function togglePlay() {
-            if (audio.paused) {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    updatePlayIcons(true);
-                    stickyPlayer.classList.add('active');
-                }).catch(e => console.log("Ошибка воспроизведения:", e));
-            } else {
-                audio.pause();
-                isPlaying = false;
-                updatePlayIcons(false);
-            }
-        }
-
-        function toggleTrackById(id) {
-            if (currentTrackIndex === id && !audio.paused) {
-                togglePlay();
-            } else {
-                loadTrack(id);
-                togglePlay();
-            }
-        }
-
-        function updatePlayIcons(playing) {
-            const playIcons = document.querySelectorAll('.icon-play');
-            const pauseIcons = document.querySelectorAll('.icon-pause');
-            
-            playIcons.forEach(icon => icon.style.display = playing ? 'none' : 'block');
-            pauseIcons.forEach(icon => icon.style.display = playing ? 'block' : 'none');
-            
-            if(playing) mainPlayBtn.classList.add('playing');
-            else mainPlayBtn.classList.remove('playing');
-        }
-
-        function nextTrack() {
-            let nextIndex = currentTrackIndex + 1;
-            if (nextIndex >= tracks.length) nextIndex = 0;
-            loadTrack(nextIndex);
-            if(isPlaying) audio.play();
-        }
-
-        function prevTrack() {
-            let prevIndex = currentTrackIndex - 1;
-            if (prevIndex < 0) prevIndex = tracks.length - 1;
-            loadTrack(prevIndex);
-            if(isPlaying) audio.play();
-        }
-
-        audio.addEventListener('ended', nextTrack);
-
-        audio.addEventListener('timeupdate', () => {
-            if(audio.duration) {
-                const percent = (audio.currentTime / audio.duration) * 100;
-                progressBar.style.width = `${percent}%`;
-            }
-        });
-
-        progressContainer.addEventListener('click', (e) => {
-            const width = progressContainer.clientWidth;
-            const clickX = e.offsetX;
-            const duration = audio.duration;
-            audio.currentTime = (clickX / width) * duration;
-        });
-
-        mainPlayBtn.addEventListener('click', togglePlay);
-        nextBtn.addEventListener('click', nextTrack);
-        prevBtn.addEventListener('click', prevTrack);
-
-        // --- ЛОГИКА СКАЧИВАНИЯ ---
-        const downloadModal = document.getElementById('downloadModal');
-        const downloadTrackName = document.getElementById('downloadTrackName');
-        const downloadProgressFill = document.getElementById('downloadProgressFill');
-        const btnDownloadManual = document.getElementById('btnDownloadManual');
-        const downloadSuccess = document.getElementById('downloadSuccess');
-        const closeDownloadModal = document.getElementById('closeDownloadModal');
-        
-        let currentDownloadIndex = null;
-        let autoDownloadTimeout = null;
-        let autoCloseTimeout = null;
-
-        function openDownloadModal(index) {
-            currentDownloadIndex = index;
-            const track = tracks[index];
-            
-            // Сбрасываем состояние модалки
-            downloadTrackName.textContent = track.title;
-            downloadSuccess.classList.remove('visible');
-            downloadProgressFill.style.animation = 'none';
-            // Перезапуск анимации прогресс-бара
-            setTimeout(() => {
-                downloadProgressFill.style.animation = 'downloadProgress 3s ease-in-out infinite';
-            }, 10);
-            
-            // Открываем модалку
-            downloadModal.classList.add('active');
-            
-            // Автозапуск скачивания через 1.5 секунды
-            clearTimeout(autoDownloadTimeout);
-            clearTimeout(autoCloseTimeout);
-            
-            autoDownloadTimeout = setTimeout(() => {
-                performDownload(index);
-            }, 1500);
-        }
-
-        function performDownload(index) {
-            const track = tracks[index];
-            const url = track.src;
-            const fileName = track.fileName;
-            
-            // Пытаемся скачать через fetch + blob (даёт правильное имя файла)
-            fetch(url, { mode: 'cors' })
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.blob();
-                })
-                .then(blob => {
-                    const blobUrl = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = blobUrl;
-                    a.download = fileName;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(blobUrl);
-                    showDownloadSuccess();
-                })
-                .catch(err => {
-                    // Fallback: если CORS блокирует, открываем прямую ссылку
-                    console.log('CORS fallback:', err);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileName;
-                    a.target = '_blank';
-                    a.rel = 'noopener noreferrer';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    showDownloadSuccess();
-                });
-        }
-
-        function showDownloadSuccess() {
-            downloadSuccess.classList.add('visible');
-            // Автозакрытие модалки через 3 секунды
-            clearTimeout(autoCloseTimeout);
-            autoCloseTimeout = setTimeout(() => {
-                downloadModal.classList.remove('active');
-            }, 3000);
-        }
-
-        // Ручная кнопка "Скачать"
-        btnDownloadManual.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (currentDownloadIndex !== null) {
-                performDownload(currentDownloadIndex);
-            }
-        });
-
-        // Закрытие модалки скачивания
-        closeDownloadModal.addEventListener('click', () => {
-            downloadModal.classList.remove('active');
-            clearTimeout(autoDownloadTimeout);
-            clearTimeout(autoCloseTimeout);
-        });
-
-        downloadModal.addEventListener('click', (e) => {
-            if (e.target === downloadModal) {
-                downloadModal.classList.remove('active');
-                clearTimeout(autoDownloadTimeout);
-                clearTimeout(autoCloseTimeout);
-            }
-        });
-
-        // --- ЛОГИКА ИНТЕРФЕЙСА ---
-        document.getElementById('btnEnter').addEventListener('click', () => {
-            loginPage.classList.remove('visible-page');
-            loginPage.classList.add('hidden-page');
-            
-            setTimeout(() => {
-                mainPage.classList.remove('hidden-page');
-                mainPage.classList.add('visible-page');
-                
-                setTimeout(() => {
-                    mainHeader.classList.add('visible');
-                }, 100);
-            }, 600);
-        });
-
-        document.getElementById('showMoreBtn').addEventListener('click', function() {
-            document.getElementById('tracksList').classList.toggle('expanded');
-            this.textContent = this.textContent.includes('Показать') ? 'Скрыть треки' : 'Показать все треки';
-        });
-
-        const modals = {
-            feed: document.getElementById('feedModal'),
-            chat: document.getElementById('chatModal'),
-            release: document.getElementById('releaseModal')
-        };
-
-        document.getElementById('btnFeed').onclick = () => modals.feed.classList.add('active');
-        document.getElementById('btnChat').onclick = () => modals.chat.classList.add('active');
-        document.getElementById('btnAboutRelease').onclick = () => modals.release.classList.add('active');
-
-        document.querySelectorAll('.modal-close[data-close]').forEach(btn => {
-            btn.onclick = () => {
-                const modalId = btn.getAttribute('data-close');
-                if (modals[modalId]) modals[modalId].classList.remove('active');
-            };
-        });
-
-        Object.values(modals).forEach(modal => {
-            modal.onclick = (e) => {
-                if(e.target === modal) modal.classList.remove('active');
-            };
-        });
-
-        // --- CANVAS ФОН ---
-        const canvas = document.getElementById('canvas');
+        const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
         
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Particle {
-            constructor() { this.reset(); }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speedY = Math.random() * 0.5 + 0.1;
-                this.opacity = Math.random() * 0.5;
+        let width, height;
+        let mouse = { x: 0, y: 0, active: false };
+        let time = 0;
+        
+        // Параметры волн
+        const WAVE_COUNT = 12;
+        const waves = [];
+        
+        class Wave {
+            constructor(index, total) {
+                this.index = index;
+                this.total = total;
+                this.init();
             }
-            update() {
-                this.y -= this.speedY;
-                if(this.y < 0) this.reset();
+            
+            init() {
+                // Случайные параметры для каждой волны
+                this.amplitude = 80 + Math.random() * 150;
+                this.frequency = 0.003 + Math.random() * 0.005;
+                this.speed = 0.008 + Math.random() * 0.012;
+                this.phase = Math.random() * Math.PI * 2;
+                this.yOffset = Math.random() * window.innerHeight;
+                
+                // Цвета в диапазоне бирюзового/голубого
+                const hue = 170 + Math.random() * 40; // 170-210 (бирюза до голубого)
+                const saturation = 60 + Math.random() * 30;
+                const lightness = 40 + Math.random() * 30;
+                this.baseColor = `hsla(${hue}, ${saturation}%, ${lightness}%`;
+                this.alpha = 0.15 + Math.random() * 0.4;
+                
+                // Толщина линии
+                this.lineWidth = 1 + Math.random() * 3;
+                
+                // Контрольные точки для плавных кривых
+                this.points = [];
+                this.numPoints = 5 + Math.floor(Math.random() * 4);
             }
-            draw() {
-                ctx.fillStyle = `rgba(64, 224, 208, ${this.opacity})`;
+            
+            update(t) {
+                this.points = [];
+                const segmentWidth = width / (this.numPoints - 1);
+                
+                for (let i = 0; i < this.numPoints; i++) {
+                    const x = i * segmentWidth;
+                    
+                    // Базовая волна
+                    let y = this.yOffset + 
+                            Math.sin(x * this.frequency + t * this.speed + this.phase) * this.amplitude +
+                            Math.sin(x * this.frequency * 0.5 + t * this.speed * 1.3) * this.amplitude * 0.5;
+                    
+                    // Добавляем влияние мыши
+                    if (mouse.active) {
+                        const dx = x - mouse.x;
+                        const dy = y - mouse.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const maxDist = 300;
+                        
+                        if (dist < maxDist) {
+                            const force = (1 - dist / maxDist) * 80;
+                            y += (dy / dist) * force * (this.index % 2 === 0 ? 1 : -1);
+                        }
+                    }
+                    
+                    this.points.push({ x, y });
+                }
+            }
+            
+            draw(ctx) {
+                if (this.points.length < 2) return;
+                
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-                ctx.fill();
+                ctx.moveTo(this.points[0].x, this.points[0].y);
+                
+                // Рисуем плавную кривую через все точки
+                for (let i = 0; i < this.points.length - 1; i++) {
+                    const p0 = this.points[i];
+                    const p1 = this.points[i + 1];
+                    
+                    // Используем квадратичные кривые для плавности
+                    const midX = (p0.x + p1.x) / 2;
+                    const midY = (p0.y + p1.y) / 2;
+                    
+                    if (i === 0) {
+                        ctx.lineTo(midX, midY);
+                    } else {
+                        ctx.quadraticCurveTo(p0.x, p0.y, midX, midY);
+                    }
+                }
+                
+                // Доходим до последней точки
+                const last = this.points[this.points.length - 1];
+                ctx.lineTo(last.x, last.y);
+                
+                // Эффект свечения
+                ctx.shadowColor = this.baseColor.replace('hsla', 'hsl').replace(/,[\d.]+%\)/, ')');
+                ctx.shadowBlur = 20 + this.index * 2;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                
+                // Стиль линии
+                ctx.strokeStyle = `${this.baseColor}, ${this.alpha})`;
+                ctx.lineWidth = this.lineWidth;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+                
+                // Сброс теней
+                ctx.shadowBlur = 0;
+                
+                // Дополнительная светящаяся линия по центру (для эффекта ядра)
+                if (this.alpha > 0.3) {
+                    ctx.beginPath();
+                    ctx.moveTo(this.points[0].x, this.points[0].y);
+                    
+                    for (let i = 0; i < this.points.length - 1; i++) {
+                        const p0 = this.points[i];
+                        const p1 = this.points[i + 1];
+                        const midX = (p0.x + p1.x) / 2;
+                        const midY = (p0.y + p1.y) / 2;
+                        
+                        if (i === 0) {
+                            ctx.lineTo(midX, midY);
+                        } else {
+                            ctx.quadraticCurveTo(p0.x, p0.y, midX, midY);
+                        }
+                    }
+                    ctx.lineTo(last.x, last.y);
+                    
+                    ctx.strokeStyle = `${this.baseColor}, ${this.alpha * 0.6})`;
+                    ctx.lineWidth = this.lineWidth * 0.4;
+                    ctx.stroke();
+                }
             }
         }
-
-        for(let i=0; i<50; i++) particles.push(new Particle());
-
+        
+        // Частицы для эффекта дыма/тумана
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = -Math.random() * 0.5 - 0.1;
+                this.size = Math.random() * 2 + 0.5;
+                this.alpha = Math.random() * 0.3 + 0.1;
+                this.life = Math.random() * 200 + 100;
+                this.maxLife = this.life;
+                const hue = 170 + Math.random() * 40;
+                this.color = `hsla(${hue}, 70%, 60%`;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life--;
+                
+                if (this.life <= 0 || this.y < -10 || this.x < -10 || this.x > width + 10) {
+                    this.reset();
+                }
+            }
+            
+            draw(ctx) {
+                const lifeRatio = this.life / this.maxLife;
+                const alpha = this.alpha * lifeRatio * lifeRatio;
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `${this.color}, ${alpha})`;
+                ctx.shadowColor = this.color.replace('hsla', 'hsl').replace(/,[\d.]+%\)/, ')');
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+        
+        const particles = [];
+        const PARTICLE_COUNT = 60;
+        
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Переинициализируем волны при ресайзе
+            waves.length = 0;
+            for (let i = 0; i < WAVE_COUNT; i++) {
+                waves.push(new Wave(i, WAVE_COUNT));
+            }
+            
+            // Переинициализируем частицы
+            particles.length = 0;
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push(new Particle());
+            }
+        }
+        
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
+            time += 1;
+            
+            // Очистка с лёгким следом для эффекта движения
+            ctx.fillStyle = 'rgba(5, 5, 8, 0.15)';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Рисуем частицы (дым/туман)
+            for (const p of particles) {
                 p.update();
-                p.draw();
-            });
+                p.draw(ctx);
+            }
+            
+            // Рисуем волны
+            for (const wave of waves) {
+                wave.update(time);
+                wave.draw(ctx);
+            }
+            
+            // Дополнительный эффект световых бликов (lens flare)
+            drawFlares(ctx);
+            
             requestAnimationFrame(animate);
         }
-        animate();
-
-        // Прелоадер
-        window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('preloader').classList.add('hidden');
-                loginTitle.classList.add('visible');
-                document.querySelector('.subtitle').classList.add('visible');
-                document.getElementById('btnEnter').classList.add('visible');
-            }, 1000);
+        
+        function drawFlares(ctx) {
+            // Несколько случайных бликов
+            const flarePositions = [
+                { x: width * 0.3, y: height * 0.4, size: 3, alpha: 0.6 },
+                { x: width * 0.7, y: height * 0.6, size: 2, alpha: 0.4 },
+                { x: width * 0.5, y: height * 0.3, size: 4, alpha: 0.3 },
+            ];
             
-            loadTrack(0);
-        };
+            for (const flare of flarePositions) {
+                // Движение бликов
+                const fx = flare.x + Math.sin(time * 0.01) * 50;
+                const fy = flare.y + Math.cos(time * 0.013) * 30;
+                
+                // Градиент для блика
+                const gradient = ctx.createRadialGradient(fx, fy, 0, fx, fy, flare.size * 8);
+                gradient.addColorStop(0, `rgba(200, 255, 255, ${flare.alpha})`);
+                gradient.addColorStop(0.5, `rgba(0, 255, 255, ${flare.alpha * 0.3})`);
+                gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
+                
+                ctx.beginPath();
+                ctx.arc(fx, fy, flare.size * 8, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                
+                // Яркое ядро
+                ctx.beginPath();
+                ctx.arc(fx, fy, flare.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${flare.alpha})`;
+                ctx.shadowColor = 'rgba(0, 255, 255, 0.8)';
+                ctx.shadowBlur = 20;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+        
+        // События мыши
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            mouse.active = true;
+        });
+        
+        window.addEventListener('mouseleave', () => {
+            mouse.active = false;
+        });
+        
+        window.addEventListener('resize', resize);
+        
+        // Инициализация
+        resize();
+        animate();
     </script>
 </body>
-</html>
+</html>'''
+
+# Save to output directory
+with open('/mnt/agents/output/abstract_background.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("Файл создан: /mnt/agents/output/abstract_background.html")
+
 
