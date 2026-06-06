@@ -6,18 +6,6 @@
     <title>EVGENII — Эксперимент на стыке эмоций и кода</title>
     <style>
         * {
-            margin:Вот готовый код с исправленным текстом и красивой рамкой:
-
-
-```html
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVGENII — Эксперимент на стыке эмоций и кода</title>
-    <style>
-        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -1540,7 +1528,9 @@
                     <div class="track-cover">${coverHtml}</div>
                     <div class="track-info">
                         <div class="track-title">${track.title}</div>
-                        ${track.desc ? `<div class="track-desc"><LaTex>id_1</LaTex>{track.duration}</div>
+                        ${track.desc ? `<div class="track-desc">${track.desc}</div>` : ''}
+                    </div>
+                    <div class="track-duration">${track.duration}</div>
                     <button class="track-play-btn" data-id="${track.id}">
                         ${currentPlayingId === track.id ? '⏸' : '▶'}
                     </button>
