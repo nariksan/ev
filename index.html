@@ -6,6 +6,18 @@
     <title>EVGENII — Эксперимент на стыке эмоций и кода</title>
     <style>
         * {
+            margin:Вот готовый код с исправленным текстом и красивой рамкой:
+
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVGENII — Эксперимент на стыке эмоций и кода</title>
+    <style>
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -227,27 +239,47 @@
             opacity: 0.9;
         }
 
-        .main-content .description-block {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
+        .description-frame {
+            background: rgba(0, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem 2.5rem;
             margin-bottom: 3rem;
-        }
-
-        .main-content .description-block p {
-            font-size: 1.3rem;
-            font-weight: 300;
-            letter-spacing: 0.1em;
-            opacity: 0.75;
-            line-height: 1.7;
             max-width: 800px;
-            margin: 0 auto;
+            position: relative;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 40px rgba(0, 255, 255, 0.05),
+                inset 0 0 60px rgba(0, 255, 255, 0.02);
         }
 
-        .main-content .description-block p:first-child {
-            font-size: 1.4rem;
+        .description-frame::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.6), transparent);
+            border-radius: 2px;
+        }
+
+        .description-frame p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 0.08em;
+            color: #e0f7fa;
             opacity: 0.85;
+            line-height: 1.8;
+            text-align: center;
+            margin: 0.8rem 0;
+        }
+
+        .description-frame p:first-child {
+            font-size: 1.25rem;
             font-weight: 400;
+            opacity: 0.95;
+            color: #ffffff;
         }
 
         .buttons-container {
@@ -1055,8 +1087,19 @@
             .enter-button { padding: 1rem 2.5rem; font-size: 1rem; }
             .main-content .site-title { font-size: 2.5rem; letter-spacing: 0.2em; }
             .main-content h1 { font-size: 2.2rem; }
-            .main-content .description-block p { font-size: 1.1rem; }
-            .main-content .description-block p:first-child { font-size: 1.2rem; }
+            
+            .description-frame {
+                padding: 1.5rem 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            .description-frame p {
+                font-size: 1.05rem;
+            }
+            
+            .description-frame p:first-child {
+                font-size: 1.1rem;
+            }
 
             .buttons-row { gap: 1rem; width: 100%; justify-content: center; }
             .updates-button, .about-button, .chat-button {
@@ -1095,8 +1138,19 @@
             .login-content .description { font-size: 0.9rem; }
             .main-content .site-title { font-size: 1.8rem; letter-spacing: 0.15em; }
             .main-content h1 { font-size: 1.8rem; }
-            .main-content .description-block p { font-size: 1rem; }
-            .main-content .description-block p:first-child { font-size: 1.1rem; }
+            
+            .description-frame {
+                padding: 1.2rem 1rem;
+            }
+            
+            .description-frame p {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+            
+            .description-frame p:first-child {
+                font-size: 1rem;
+            }
 
             .updates-button, .about-button, .chat-button {
                 padding: 0.8rem 1.5rem; font-size: 0.85rem; min-width: 140px;
@@ -1147,11 +1201,12 @@
         <div class="main-content">
             <h1 class="site-title">EVGENII</h1>
             <h1>Добро пожаловать</h1>
-            <div class="description-block">
-                <p>Где заканчиваюсь я — и начинается ИИ.</p>
+            
+            <div class="description-frame">
                 <p>Мои тексты, озвученные искусственным разумом.</p>
                 <p>Эксперимент на стыке человеческих эмоций и машинного голоса.</p>
             </div>
+            
             <div class="buttons-container">
                 <button class="updates-button" id="updatesButton">Лента обновлений</button>
                 <div class="buttons-row">
@@ -1485,9 +1540,7 @@
                     <div class="track-cover">${coverHtml}</div>
                     <div class="track-info">
                         <div class="track-title">${track.title}</div>
-                        ${track.desc ? `<div class="track-desc">${track.desc}</div>` : ''}
-                    </div>
-                    <div class="track-duration">${track.duration}</div>
+                        ${track.desc ? `<div class="track-desc"><LaTex>id_1</LaTex>{track.duration}</div>
                     <button class="track-play-btn" data-id="${track.id}">
                         ${currentPlayingId === track.id ? '⏸' : '▶'}
                     </button>
