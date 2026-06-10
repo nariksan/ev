@@ -61,6 +61,217 @@ html_content = '''<!DOCTYPE html>
             letter-spacing: 0.3em;
             text-transform: uppercase;
         }
+        
+        /* Кнопка входа */
+        .auth-button {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid rgba(0, 200, 255, 0.6);
+            color: #00d4ff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            z-index: 20;
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
+        }
+        .auth-button:hover {
+            background: rgba(0, 200, 255, 0.15);
+            border-color: rgba(0, 200, 255, 0.9);
+            box-shadow: 
+                0 0 20px rgba(0, 200, 255, 0.4),
+                0 0 40px rgba(0, 200, 255, 0.2);
+            transform: translateX(-50%) translateY(-2px);
+        }
+        
+        /* Модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 5, 16, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .auth-container {
+            background: rgba(0, 15, 30, 0.95);
+            border: 1px solid rgba(0, 200, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 
+                0 0 40px rgba(0, 200, 255, 0.2),
+                inset 0 0 60px rgba(0, 200, 255, 0.05);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .auth-container {
+            transform: scale(1);
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background: transparent;
+            border: none;
+            color: rgba(0, 200, 255, 0.6);
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-button:hover {
+            background: rgba(0, 200, 255, 0.1);
+            color: #00d4ff;
+            transform: rotate(90deg);
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(0, 200, 255, 0.2);
+        }
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: rgba(150, 220, 255, 0.6);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab-button.active {
+            color: #00d4ff;
+        }
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+        }
+        .tab-button:hover {
+            color: #00d4ff;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(150, 220, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 20, 40, 0.6);
+            border: 1px solid rgba(0, 200, 255, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-group input:focus {
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 200, 255, 0.2);
+            background: rgba(0, 20, 40, 0.8);
+        }
+        .form-group input::placeholder {
+            color: rgba(150, 220, 255, 0.4);
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, rgba(0, 200, 255, 0.2), rgba(0, 255, 200, 0.2));
+            border: 2px solid rgba(0, 200, 255, 0.5);
+            color: #00d4ff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        .submit-button:hover {
+            background: linear-gradient(135deg, rgba(0, 200, 255, 0.3), rgba(0, 255, 200, 0.3));
+            border-color: #00d4ff;
+            box-shadow: 0 0 25px rgba(0, 200, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .forgot-password a {
+            color: rgba(150, 220, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        .forgot-password a:hover {
+            color: #00d4ff;
+        }
     </style>
 </head>
 <body>
@@ -68,6 +279,62 @@ html_content = '''<!DOCTYPE html>
     <div class="content">
         <div class="title" data-text="EVGENII">EVGENII</div>
         <div class="subtitle">Где заканчиваюсь я — и начинается ИИ.<br>Эксперимент на стыке эмоций и кода.</div>
+    </div>
+    
+    <!-- Кнопка входа -->
+    <button class="auth-button" onclick="openModal()">Войти / Зарегистрироваться</button>
+    
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="authModal" onclick="closeModalOnOverlay(event)">
+        <div class="auth-container" onclick="event.stopPropagation()">
+            <button class="close-button" onclick="closeModal()">&times;</button>
+            
+            <div class="auth-tabs">
+                <button class="tab-button active" onclick="switchTab('login')">Вход</button>
+                <button class="tab-button" onclick="switchTab('register')">Регистрация</button>
+            </div>
+            
+            <!-- Форма входа -->
+            <div class="form-section active" id="loginForm">
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Пароль</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="submit-button">Войти</button>
+                    <div class="forgot-password">
+                        <a href="#" onclick="alert('Функция восстановления пароля')">Забыли пароль?</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Форма регистрации -->
+            <div class="form-section" id="registerForm">
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="register-name">Имя</label>
+                        <input type="text" id="register-name" placeholder="Ваше имя" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Пароль</label>
+                        <input type="password" id="register-password" placeholder="Минимум 8 символов" required minlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm">Подтвердите пароль</label>
+                        <input type="password" id="register-confirm" placeholder="Повторите пароль" required>
+                    </div>
+                    <button type="submit" class="submit-button">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -260,6 +527,77 @@ html_content = '''<!DOCTYPE html>
         }
 
         animate();
+        
+        // === ФУНКЦИИ МОДАЛЬНОГО ОКНА ===
+        function openModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function closeModalOnOverlay(event) {
+            if (event.target === event.currentTarget) {
+                closeModal();
+            }
+        }
+        
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab-button');
+            const forms = document.querySelectorAll('.form-section');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+        
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Здесь будет логика входа
+            console.log('Вход:', { email, password });
+            alert('Функция входа будет реализована позже');
+            closeModal();
+        }
+        
+        function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+            
+            if (password !== confirm) {
+                alert('Пароли не совпадают!');
+                return;
+            }
+            
+            // Здесь будет логика регистрации
+            console.log('Регистрация:', { name, email, password });
+            alert('Функция регистрации будет реализована позже');
+            closeModal();
+        }
+        
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
     </script>
 </body>
 </html>'''
