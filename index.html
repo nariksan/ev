@@ -14,23 +14,38 @@ html_content = '''<!DOCTYPE html>
             background: #000510;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            width: 100vw;
+            height: 100vh;
         }
         canvas {
             display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
+        
+        /* Контейнер с контентом - использует flexbox для точного центрирования */
         .content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
             pointer-events: none;
             z-index: 10;
-            width: 90%;
-            max-width: 1200px;
+            padding: 20px;
         }
+        
+        /* Заголовок - размер зависит от viewport width для одинакового вида */
         .title {
-            font-size: clamp(3rem, 10vw, 8rem);
+            font-size: 8vw;
             font-weight: 900;
             letter-spacing: 0.15em;
             text-transform: uppercase;
@@ -42,6 +57,8 @@ html_content = '''<!DOCTYPE html>
                 0 0 100px rgba(0, 200, 255, 0.2);
             position: relative;
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            line-height: 1.2;
+            margin-bottom: 2vh;
         }
         .title::after {
             content: attr(data-text);
@@ -57,26 +74,29 @@ html_content = '''<!DOCTYPE html>
             background-clip: text;
             color: transparent;
         }
+        
+        /* Подзаголовок */
         .subtitle {
-            margin-top: 1rem;
-            font-size: clamp(0.9rem, 2vw, 1.3rem);
+            font-size: 2vw;
             color: rgba(150, 220, 255, 0.7);
             letter-spacing: 0.3em;
             text-transform: uppercase;
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            line-height: 1.8;
+            max-width: 80vw;
         }
         
-        /* Кнопка */
+        /* Кнопка - фиксированная позиция с процентными отступами */
         .listen-btn {
             position: fixed;
-            bottom: 50px;
+            bottom: 8vh;
             left: 50%;
             transform: translateX(-50%);
-            padding: 18px 40px;
+            padding: 2vh 4vw;
             background: transparent;
             border: 2px solid rgba(0, 200, 255, 0.6);
             color: rgba(0, 200, 255, 0.9);
-            font-size: 1.1rem;
+            font-size: 1.5vw;
             font-weight: 600;
             letter-spacing: 0.2em;
             text-transform: uppercase;
@@ -89,6 +109,7 @@ html_content = '''<!DOCTYPE html>
             box-shadow: 
                 0 0 20px rgba(0, 200, 255, 0.3),
                 inset 0 0 20px rgba(0, 200, 255, 0.1);
+            white-space: nowrap;
         }
         .listen-btn:hover {
             background: rgba(0, 200, 255, 0.15);
@@ -121,6 +142,50 @@ html_content = '''<!DOCTYPE html>
             opacity: 0;
             pointer-events: none;
             transform: translateX(-50%) scale(0.8);
+        }
+        
+        /* Медиа-запросы для мобильных устройств */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 12vw;
+            }
+            .subtitle {
+                font-size: 3.5vw;
+                letter-spacing: 0.15em;
+            }
+            .listen-btn {
+                font-size: 3vw;
+                padding: 2.5vh 6vw;
+            }
+        }
+        
+        /* Для очень маленьких экранов */
+        @media (max-width: 480px) {
+            .title {
+                font-size: 15vw;
+            }
+            .subtitle {
+                font-size: 4vw;
+                letter-spacing: 0.1em;
+            }
+            .listen-btn {
+                font-size: 3.5vw;
+                padding: 2vh 5vw;
+            }
+        }
+        
+        /* Для очень больших экранов */
+        @media (min-width: 1920px) {
+            .title {
+                font-size: 6vw;
+            }
+            .subtitle {
+                font-size: 1.5vw;
+            }
+            .listen-btn {
+                font-size: 1.2vw;
+                padding: 1.5vh 3vw;
+            }
         }
     </style>
 </head>
@@ -371,5 +436,5 @@ html_content = '''<!DOCTYPE html>
 with open('/mnt/agents/output/neon_particles_background.html', 'w', encoding='utf-8') as f:
     f.write(html_content)
 
-print("Файл успешно создан!")
+print("Файл обновлен с адаптивной сеткой!")
 
