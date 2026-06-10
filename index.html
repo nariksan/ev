@@ -57,6 +57,67 @@ html_content = '''<!DOCTYPE html>
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+
+```python
+html_content = '''<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Particles Background</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000510;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+            width: 90%;
+            max-width: 1200px;
+        }
+        .title {
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow:
+                0 0 10px rgba(0, 200, 255, 0.8),
+                0 0 30px rgba(0, 200, 255, 0.6),
+                0 0 60px rgba(0, 200, 255, 0.4),
+                0 0 100px rgba(0, 200, 255, 0.2);
+            position: relative;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            line-height: 1.1;
+        }
+        .title::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            transform: scaleY(-1);
+            opacity: 0.25;
+            filter: blur(2px);
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
         /* Неоновая рамка для подзаголовка */
@@ -136,7 +197,81 @@ html_content = '''<!DOCTYPE html>
             text-shadow: 0 0 10px rgba(0, 200, 255, 0.4);
         }
         
-        /* Кнопка */
+        /* Блок с кнопками */
+        .buttons-container {
+            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            pointer-events: all;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+        }
+        
+        .btn-main {
+            padding: 16px 48px;
+            background: rgba(0, 200, 255, 0.1);
+            border: 2px solid rgba(0, 200, 255, 0.6);
+            color: rgba(0, 200, 255, 0.95);
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            box-shadow: 
+                0 0 20px rgba(0, 200, 255, 0.3),
+                inset 0 0 20px rgba(0, 200, 255, 0.1);
+            min-width: 280px;
+        }
+        
+        .btn-main:hover {
+            background: rgba(0, 200, 255, 0.2);
+            border-color: rgba(0, 200, 255, 0.9);
+            box-shadow: 
+                0 0 30px rgba(0, 200, 255, 0.5),
+                inset 0 0 30px rgba(0, 200, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .btn-secondary-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn-secondary {
+            padding: 14px 36px;
+            background: rgba(0, 200, 255, 0.08);
+            border: 1.5px solid rgba(0, 200, 255, 0.5);
+            color: rgba(0, 200, 255, 0.9);
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            box-shadow: 
+                0 0 15px rgba(0, 200, 255, 0.2),
+                inset 0 0 15px rgba(0, 200, 255, 0.08);
+            min-width: 200px;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(0, 200, 255, 0.15);
+            border-color: rgba(0, 200, 255, 0.8);
+            box-shadow: 
+                0 0 25px rgba(0, 200, 255, 0.4),
+                inset 0 0 25px rgba(0, 200, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        /* Кнопка слушать */
         .listen-btn {
             position: fixed;
             bottom: 50px;
@@ -201,6 +336,184 @@ html_content = '''<!DOCTYPE html>
             font-size: 0.5em;
             letter-spacing: 0.2em;
         }
+        
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 5, 16, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: rgba(0, 15, 30, 0.95);
+            border: 1px solid rgba(0, 200, 255, 0.4);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow:
+                0 0 30px rgba(0, 200, 255, 0.3),
+                0 0 60px rgba(0, 200, 255, 0.15),
+                inset 0 0 30px rgba(0, 200, 255, 0.1);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(0, 200, 255, 0.7);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            line-height: 1;
+        }
+        
+        .modal-close:hover {
+            color: rgba(0, 200, 255, 1);
+            transform: rotate(90deg);
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 15px rgba(0, 200, 255, 0.6);
+            letter-spacing: 0.1em;
+        }
+        
+        .modal-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(150, 220, 255, 0.9);
+        }
+        
+        .modal-text p {
+            margin-bottom: 1rem;
+        }
+        
+        .modal-text .highlight {
+            color: rgba(0, 200, 255, 1);
+            font-weight: 600;
+        }
+        
+        /* Стили для ленты обновлений */
+        .update-item {
+            background: rgba(0, 200, 255, 0.05);
+            border-left: 3px solid rgba(0, 200, 255, 0.5);
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .update-date {
+            font-size: 0.85rem;
+            color: rgba(0, 200, 255, 0.6);
+            margin-bottom: 5px;
+            letter-spacing: 0.1em;
+        }
+        
+        .update-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: rgba(0, 200, 255, 0.95);
+            margin-bottom: 8px;
+        }
+        
+        .update-desc {
+            font-size: 1rem;
+            color: rgba(150, 220, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        /* Стили для чата */
+        .chat-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .chat-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .chat-title {
+            font-size: 1.5rem;
+            color: rgba(0, 200, 255, 0.9);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .chat-text {
+            font-size: 1.1rem;
+            color: rgba(150, 220, 255, 0.7);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .chat-soon {
+            font-size: 1.3rem;
+            color: rgba(0, 200, 255, 1);
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-shadow: 0 0 20px rgba(0, 200, 255, 0.6);
+            animation: pulseText 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseText {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+        
+        /* Скроллбар для модальных окон */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(0, 20, 40, 0.3);
+            border-radius: 4px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(0, 200, 255, 0.4);
+            border-radius: 4px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 200, 255, 0.6);
+        }
     </style>
 </head>
 <body>
@@ -210,9 +523,70 @@ html_content = '''<!DOCTYPE html>
         <div class="subtitle-frame visible" id="subtitleFrame">
             <div class="subtitle" id="mainSubtitle">Где заканчиваюсь я — и начинается ИИ.<br>Эксперимент на стыке эмоций и кода.</div>
         </div>
+        
+        <!-- Блок с кнопками -->
+        <div class="buttons-container fade-in" id="buttonsContainer" style="opacity: 0;">
+            <button class="btn-main" onclick="openModal('updates')">Лента обновлений</button>
+            <div class="btn-secondary-row">
+                <button class="btn-secondary" onclick="openModal('about')">О проекте</button>
+                <button class="btn-secondary" onclick="openModal('chat')">Чат</button>
+            </div>
+        </div>
     </div>
     
     <button class="listen-btn" id="listenBtn">Слушать синтез</button>
+
+    <!-- Модальное окно: Лента обновлений -->
+    <div class="modal-overlay" id="modalUpdates">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('updates')">&times;</button>
+            <h2 class="modal-title">Лента обновлений</h2>
+            <div class="modal-text">
+                <div class="update-item">
+                    <div class="update-date">10 июня 2026</div>
+                    <div class="update-title">Запуск проекта EVGENII</div>
+                    <div class="update-desc">Добро пожаловать! Мы рады представить вам наш экспериментальный проект на стыке человеческих эмоций и искусственного интеллекта.</div>
+                </div>
+                <div class="update-item">
+                    <div class="update-date">Скоро</div>
+                    <div class="update-title">Новые треки</div>
+                    <div class="update-desc">В разработке несколько новых композиций. Следите за обновлениями!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно: О проекте -->
+    <div class="modal-overlay" id="modalAbout">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('about')">&times;</button>
+            <h2 class="modal-title">О проекте</h2>
+            <div class="modal-text">
+                <p><span class="highlight">EVGENII</span> — это эксперимент на стыке человеческих эмоций и искусственного интеллекта.</p>
+                
+                <p>«Я придумываю текст и стиль исполнения. А выучить и воплотить в песню доверяю ИИ.»</p>
+                
+                <p>Искусственный интеллект становится моим голосом. Он заучивает мои слова, учится чувствовать ритм, подбирать интонации. Это не замена человеку — это новый инструмент выражения.</p>
+                
+                <p>Вместе мы создаём что-то третье. Не совсем человеческое, не совсем машинное. Что-то среднее, где технологии усиливают эмоции, а не заменяют их.</p>
+                
+                <p>Этот проект — исследование границ между автором и исполнителем, между живым чувством и алгоритмом, между тем, кто пишет, и тем, кто поёт.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно: Чат -->
+    <div class="modal-overlay" id="modalChat">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('chat')">&times;</button>
+            <div class="chat-message">
+                <div class="chat-icon">💬</div>
+                <div class="chat-title">Извините, чат временно не работает</div>
+                <div class="chat-text">Мы работаем над улучшением функции общения.</div>
+                <div class="chat-soon">СКОРО БУДЕТ</div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const canvas = document.getElementById('bg');
@@ -221,6 +595,7 @@ html_content = '''<!DOCTYPE html>
         const subtitleFrame = document.getElementById('subtitleFrame');
         const mainSubtitle = document.getElementById('mainSubtitle');
         const listenBtn = document.getElementById('listenBtn');
+        const buttonsContainer = document.getElementById('buttonsContainer');
 
         let width, height;
         let time = 0;
@@ -436,6 +811,8 @@ html_content = '''<!DOCTYPE html>
                 mainTitle.classList.add('fade-in');
                 subtitleFrame.classList.remove('fade-out');
                 subtitleFrame.classList.add('fade-in');
+                buttonsContainer.classList.remove('fade-in');
+                buttonsContainer.classList.add('fade-in');
                 
                 // Небольшая задержка перед появлением
                 setTimeout(() => {
@@ -443,8 +820,47 @@ html_content = '''<!DOCTYPE html>
                     mainTitle.classList.add('visible');
                     subtitleFrame.classList.remove('fade-in');
                     subtitleFrame.classList.add('visible');
+                    buttonsContainer.classList.remove('fade-in');
+                    buttonsContainer.classList.add('visible');
                 }, 100);
             }, 800);
+        });
+        
+        // === МОДАЛЬНЫЕ ОКНА ===
+        function openModal(type) {
+            const modal = document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1));
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeModal(type) {
+            const modal = document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1));
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Закрытие модального окна при клике на оверлей
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+        
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
         });
     </script>
 </body>
