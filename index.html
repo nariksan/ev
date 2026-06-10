@@ -15,18 +15,18 @@ html_content = '''<!DOCTYPE html>
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Гарантирует отсутствие полос прокрутки */
+            overflow: hidden;
             background: #000510;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         canvas {
-            position: fixed; /* Жестко фиксирует фон относительно окна браузера */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
             display: block;
-            z-index: 1; /* Фон всегда позади контента */
+            z-index: 1;
         }
         .content {
             position: absolute;
@@ -68,13 +68,68 @@ html_content = '''<!DOCTYPE html>
             background-clip: text;
             color: transparent;
         }
+        
+        /* Стили для рамки подзаголовка */
+        .subtitle-frame {
+            margin-top: 2rem;
+            padding: 25px 40px;
+            border: 1px solid rgba(0, 200, 255, 0.3);
+            background: rgba(0, 10, 20, 0.4);
+            backdrop-filter: blur(5px);
+            border-radius: 4px;
+            position: relative;
+            display: inline-block;
+            box-shadow: 
+                0 0 15px rgba(0, 200, 255, 0.1),
+                inset 0 0 20px rgba(0, 200, 255, 0.05);
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        /* Декоративные уголки для рамки */
+        .subtitle-frame::before,
+        .subtitle-frame::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(0, 200, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .subtitle-frame::before {
+            top: -2px;
+            left: -2px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .subtitle-frame::after {
+            bottom: -2px;
+            right: -2px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        .subtitle-frame:hover {
+            border-color: rgba(0, 200, 255, 0.6);
+            box-shadow: 
+                0 0 25px rgba(0, 200, 255, 0.2),
+                inset 0 0 30px rgba(0, 200, 255, 0.1);
+        }
+        
+        .subtitle-frame:hover::before,
+        .subtitle-frame:hover::after {
+            width: 20px;
+            height: 20px;
+            border-color: rgba(0, 200, 255, 1);
+        }
+
         .subtitle {
-            margin-top: 1rem;
-            font-size: clamp(0.9rem, 2vw, 1.3rem);
-            color: rgba(150, 220, 255, 0.7);
-            letter-spacing: 0.3em;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            color: rgba(150, 220, 255, 0.9);
+            letter-spacing: 0.15em;
+            line-height: 1.6;
             text-transform: uppercase;
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
         }
         
         /* Новый блок под текстом */
@@ -404,7 +459,11 @@ html_content = '''<!DOCTYPE html>
     <canvas id="bg"></canvas>
     <div class="content">
         <div class="title visible" data-text="EVGENII" id="mainTitle">EVGENII</div>
-        <div class="subtitle visible" id="mainSubtitle">Где заканчиваюсь я — и начинается ИИ.<br>Эксперимент на стыке эмоций и кода.</div>
+        
+        <!-- Обертка для подзаголовка с рамкой -->
+        <div class="subtitle-frame visible" id="subtitleFrame">
+            <div class="subtitle" id="mainSubtitle">Где заканчиваюсь я — и начинается ИИ.<br>Эксперимент на стыке эмоций и кода.</div>
+        </div>
         
         <!-- Новый блок с лентой обновлений -->
         <div class="updates-section" id="updatesSection">
@@ -487,6 +546,7 @@ html_content = '''<!DOCTYPE html>
         const canvas = document.getElementById('bg');
         const ctx = canvas.getContext('2d');
         const mainTitle = document.getElementById('mainTitle');
+        const subtitleFrame = document.getElementById('subtitleFrame');
         const mainSubtitle = document.getElementById('mainSubtitle');
         const listenBtn = document.getElementById('listenBtn');
         const updatesSection = document.getElementById('updatesSection');
@@ -505,7 +565,6 @@ html_content = '''<!DOCTYPE html>
         let isTransitioned = false;
 
         function resize() {
-            // Устанавливаем внутренние размеры canvas равными размерам окна просмотра
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
@@ -697,11 +756,11 @@ html_content = '''<!DOCTYPE html>
             // Скрываем кнопку
             listenBtn.classList.add('btn-hidden');
             
-            // Анимация исчезновения старого текста
+            // Анимация исчезновения старого текста и рамки
             mainTitle.classList.remove('visible');
             mainTitle.classList.add('fade-out');
-            mainSubtitle.classList.remove('visible');
-            mainSubtitle.classList.add('fade-out');
+            subtitleFrame.classList.remove('visible');
+            subtitleFrame.classList.add('fade-out');
             
             // Ждем окончания анимации исчезновения
             setTimeout(() => {
@@ -713,18 +772,18 @@ html_content = '''<!DOCTYPE html>
                 // Показываем секцию обновлений
                 updatesSection.classList.add('visible');
                 
-                // Анимация появления нового текста
+                // Анимация появления нового текста и рамки
                 mainTitle.classList.remove('fade-out');
                 mainTitle.classList.add('fade-in');
-                mainSubtitle.classList.remove('fade-out');
-                mainSubtitle.classList.add('fade-in');
+                subtitleFrame.classList.remove('fade-out');
+                subtitleFrame.classList.add('fade-in');
                 
                 // Небольшая задержка перед появлением
                 setTimeout(() => {
                     mainTitle.classList.remove('fade-in');
                     mainTitle.classList.add('visible');
-                    mainSubtitle.classList.remove('fade-in');
-                    mainSubtitle.classList.add('visible');
+                    subtitleFrame.classList.remove('fade-in');
+                    subtitleFrame.classList.add('visible');
                 }, 100);
             }, 800);
         });
