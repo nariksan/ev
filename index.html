@@ -3,565 +3,408 @@ html_content = '''<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Particles Background</title>
+    <title>EVGENII - AI Experiment</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-        body {
-            background: #000510;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        canvas {
-            display: block;
-        }
-        .content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            pointer-events: none;
-            z-index: 10;
-            width: 90%;
-            max-width: 1200px;
-        }
-        .title {
-            font-size: clamp(3rem, 10vw, 8rem);
-            font-weight: 900;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #ffffff;
-            text-shadow:
-                0 0 10px rgba(0, 200, 255, 0.8),
-                0 0 30px rgba(0, 200, 255, 0.6),
-                0 0 60px rgba(0, 200, 255, 0.4),
-                0 0 100px rgba(0, 200, 255, 0.2);
-            position: relative;
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-            line-height: 1.1;
-        }
-        .title::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            transform: scaleY(-1);
-            opacity: 0.25;
-            filter: blur(2px);
-            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-
-```python
-html_content = '''<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Particles Background</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: #000510;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        canvas {
-            display: block;
-        }
-        .content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            pointer-events: none;
-            z-index: 10;
-            width: 90%;
-            max-width: 1200px;
-        }
-        .title {
-            font-size: clamp(3rem, 10vw, 8rem);
-            font-weight: 900;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #ffffff;
-            text-shadow:
-                0 0 10px rgba(0, 200, 255, 0.8),
-                0 0 30px rgba(0, 200, 255, 0.6),
-                0 0 60px rgba(0, 200, 255, 0.4),
-                0 0 100px rgba(0, 200, 255, 0.2);
-            position: relative;
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-            line-height: 1.1;
-        }
-        .title::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            transform: scaleY(-1);
-            opacity: 0.25;
-            filter: blur(2px);
-            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
         }
         
-        /* Неоновая рамка для подзаголовка */
-        .subtitle-frame {
+        body {
+            background: #000510;
+            overflow: hidden; /* Скрываем скролл страницы, скролл только внутри модалок */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Основной контейнер контента */
+        .main-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            pointer-events: none; /* Чтобы клики проходили сквозь пустые места */
+        }
+
+        /* Заголовок EVGENII / ДОБРО ПОЖАЛОВАТЬ */
+        .title-container {
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.8s ease;
+            pointer-events: auto;
+        }
+
+        .title {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow:
+                0 0 10px rgba(0, 200, 255, 0.8),
+                0 0 30px rgba(0, 200, 255, 0.6),
+                0 0 60px rgba(0, 200, 255, 0.4);
+            line-height: 1;
+        }
+
+        .title-line { display: block; }
+        .title-line-small { 
+            font-size: 0.5em; 
+            letter-spacing: 0.2em; 
+            margin-top: 10px;
+        }
+
+        /* Неоновая рамка с подзаголовком */
+        .neon-box {
             display: inline-block;
-            margin-top: 2rem;
-            padding: 20px 40px;
+            padding: 25px 40px;
             border: 1px solid rgba(0, 200, 255, 0.4);
             border-radius: 12px;
-            background: rgba(0, 20, 40, 0.3);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 10, 20, 0.6);
+            backdrop-filter: blur(10px);
             box-shadow:
-                0 0 15px rgba(0, 200, 255, 0.3),
-                0 0 30px rgba(0, 200, 255, 0.15),
-                0 0 60px rgba(0, 200, 255, 0.08),
-                inset 0 0 15px rgba(0, 200, 255, 0.1),
-                inset 0 0 30px rgba(0, 200, 255, 0.05);
-            position: relative;
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-            animation: framePulse 4s ease-in-out infinite;
+                0 0 15px rgba(0, 200, 255, 0.2),
+                inset 0 0 20px rgba(0, 200, 255, 0.05);
+            text-align: center;
+            margin-bottom: 3rem;
+            transition: all 0.8s ease;
+            pointer-events: auto;
+            max-width: 90%;
         }
-        
-        .subtitle-frame::before {
-            content: '';
-            position: absolute;
-            top: -1px;
-            left: -1px;
-            right: -1px;
-            bottom: -1px;
-            border-radius: 12px;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(0, 200, 255, 0.1) 50%,
-                transparent 70%
-            );
-            pointer-events: none;
-            opacity: 0;
-            animation: frameShine 6s ease-in-out infinite;
+
+        .subtitle-text {
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+            color: rgba(180, 230, 255, 0.9);
+            letter-spacing: 0.1em;
+            line-height: 1.6;
+            text-shadow: 0 0 5px rgba(0, 200, 255, 0.3);
         }
-        
-        @keyframes framePulse {
-            0%, 100% {
-                box-shadow:
-                    0 0 15px rgba(0, 200, 255, 0.3),
-                    0 0 30px rgba(0, 200, 255, 0.15),
-                    0 0 60px rgba(0, 200, 255, 0.08),
-                    inset 0 0 15px rgba(0, 200, 255, 0.1),
-                    inset 0 0 30px rgba(0, 200, 255, 0.05);
-            }
-            50% {
-                box-shadow:
-                    0 0 20px rgba(0, 200, 255, 0.4),
-                    0 0 40px rgba(0, 200, 255, 0.2),
-                    0 0 80px rgba(0, 200, 255, 0.1),
-                    inset 0 0 20px rgba(0, 200, 255, 0.15),
-                    inset 0 0 40px rgba(0, 200, 255, 0.08);
-            }
-        }
-        
-        @keyframes frameShine {
-            0%, 100% {
-                opacity: 0;
-                transform: translateX(-100%);
-            }
-            50% {
-                opacity: 1;
-                transform: translateX(100%);
-            }
-        }
-        
-        .subtitle {
-            font-size: clamp(0.9rem, 2vw, 1.3rem);
-            color: rgba(150, 220, 255, 0.9);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(0, 200, 255, 0.4);
-        }
-        
-        /* Блок с кнопками */
-        .buttons-container {
-            margin-top: 3rem;
+
+        /* Контейнер для кнопок навигации */
+        .nav-buttons {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.5rem;
-            pointer-events: all;
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            gap: 20px;
+            opacity: 0; /* Скрыто по умолчанию */
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+            pointer-events: auto;
+            width: 100%;
+            max-width: 600px;
         }
-        
-        .btn-main {
-            padding: 16px 48px;
-            background: rgba(0, 200, 255, 0.1);
-            border: 2px solid rgba(0, 200, 255, 0.6);
-            color: rgba(0, 200, 255, 0.95);
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            box-shadow: 
-                0 0 20px rgba(0, 200, 255, 0.3),
-                inset 0 0 20px rgba(0, 200, 255, 0.1);
-            min-width: 280px;
-        }
-        
-        .btn-main:hover {
-            background: rgba(0, 200, 255, 0.2);
-            border-color: rgba(0, 200, 255, 0.9);
-            box-shadow: 
-                0 0 30px rgba(0, 200, 255, 0.5),
-                inset 0 0 30px rgba(0, 200, 255, 0.2);
-            transform: translateY(-3px);
-        }
-        
-        .btn-secondary-row {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .btn-secondary {
-            padding: 14px 36px;
-            background: rgba(0, 200, 255, 0.08);
-            border: 1.5px solid rgba(0, 200, 255, 0.5);
-            color: rgba(0, 200, 255, 0.9);
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            box-shadow: 
-                0 0 15px rgba(0, 200, 255, 0.2),
-                inset 0 0 15px rgba(0, 200, 255, 0.08);
-            min-width: 200px;
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(0, 200, 255, 0.15);
-            border-color: rgba(0, 200, 255, 0.8);
-            box-shadow: 
-                0 0 25px rgba(0, 200, 255, 0.4),
-                inset 0 0 25px rgba(0, 200, 255, 0.15);
-            transform: translateY(-2px);
-        }
-        
-        /* Кнопка слушать */
-        .listen-btn {
-            position: fixed;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 18px 40px;
-            background: transparent;
-            border: 2px solid rgba(0, 200, 255, 0.6);
-            color: rgba(0, 200, 255, 0.9);
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            cursor: pointer;
-            pointer-events: all;
-            z-index: 20;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            box-shadow: 
-                0 0 20px rgba(0, 200, 255, 0.3),
-                inset 0 0 20px rgba(0, 200, 255, 0.1);
-        }
-        .listen-btn:hover {
-            background: rgba(0, 200, 255, 0.15);
-            border-color: rgba(0, 200, 255, 0.9);
-            box-shadow: 
-                0 0 30px rgba(0, 200, 255, 0.5),
-                inset 0 0 30px rgba(0, 200, 255, 0.2);
-            transform: translateX(-50%) translateY(-3px);
-        }
-        .listen-btn:active {
-            transform: translateX(-50%) translateY(0);
-        }
-        
-        /* Состояния для анимации перехода */
-        .fade-out {
-            opacity: 0;
-            transform: translateY(-30px);
-        }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        .visible {
+
+        .nav-buttons.show {
             opacity: 1;
             transform: translateY(0);
         }
-        
-        /* Скрываем кнопку после нажатия */
-        .btn-hidden {
+
+        .btn-main-action {
+            width: 100%;
+            max-width: 350px;
+            padding: 18px;
+            background: rgba(0, 200, 255, 0.1);
+            border: 2px solid rgba(0, 200, 255, 0.6);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.2);
+        }
+
+        .btn-main-action:hover {
+            background: rgba(0, 200, 255, 0.25);
+            box-shadow: 0 0 40px rgba(0, 200, 255, 0.4);
+            transform: scale(1.02);
+        }
+
+        .secondary-row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap; /* Чтобы на очень маленьких экранах переносилось */
+        }
+
+        .btn-secondary {
+            flex: 1;
+            min-width: 140px;
+            max-width: 200px;
+            padding: 14px 20px;
+            background: transparent;
+            border: 1px solid rgba(0, 200, 255, 0.4);
+            color: rgba(0, 200, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 200, 255, 0.1);
+            border-color: rgba(0, 200, 255, 0.8);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0, 200, 255, 0.3);
+        }
+
+        /* Кнопка "Слушать синтез" (стартовая) */
+        .start-btn {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 40px;
+            background: transparent;
+            border: 1px solid rgba(0, 200, 255, 0.5);
+            color: rgba(0, 200, 255, 0.8);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            z-index: 50;
+            border-radius: 50px;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .start-btn:hover {
+            background: rgba(0, 200, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.4);
+            color: #fff;
+        }
+
+        .start-btn.hidden {
             opacity: 0;
             pointer-events: none;
-            transform: translateX(-50%) scale(0.8);
+            transform: translateX(-50%) translateY(20px);
         }
-        
-        /* Стили для двухстрочного заголовка */
-        .title-line {
-            display: block;
-        }
-        .title-line-small {
-            font-size: 0.5em;
-            letter-spacing: 0.2em;
-        }
-        
-        /* Модальные окна */
+
+        /* === МОДАЛЬНЫЕ ОКНА === */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 5, 16, 0.85);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 5, 10, 0.9);
+            backdrop-filter: blur(15px);
             z-index: 100;
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            padding: 20px;
         }
-        
+
         .modal-overlay.active {
-            display: flex;
             opacity: 1;
+            visibility: visible;
         }
-        
-        .modal-content {
+
+        .modal-window {
             background: rgba(0, 15, 30, 0.95);
-            border: 1px solid rgba(0, 200, 255, 0.4);
+            border: 1px solid rgba(0, 200, 255, 0.3);
             border-radius: 16px;
-            padding: 40px;
-            max-width: 700px;
-            width: 90%;
-            max-height: 80vh;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow:
-                0 0 30px rgba(0, 200, 255, 0.3),
-                0 0 60px rgba(0, 200, 255, 0.15),
-                inset 0 0 30px rgba(0, 200, 255, 0.1);
             position: relative;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(0, 200, 255, 0.15);
+            transform: scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        .modal-overlay.active .modal-content {
+
+        .modal-overlay.active .modal-window {
             transform: scale(1);
         }
-        
-        .modal-close {
+
+        .close-modal {
             position: absolute;
             top: 15px;
             right: 20px;
             background: none;
             border: none;
-            color: rgba(0, 200, 255, 0.7);
+            color: rgba(0, 200, 255, 0.6);
             font-size: 2rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: color 0.3s;
             line-height: 1;
         }
-        
-        .modal-close:hover {
-            color: rgba(0, 200, 255, 1);
-            transform: rotate(90deg);
+
+        .close-modal:hover {
+            color: #fff;
         }
-        
-        .modal-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 0 15px rgba(0, 200, 255, 0.6);
+
+        .modal-h2 {
+            font-size: 1.8rem;
+            color: #fff;
+            margin-bottom: 25px;
+            text-transform: uppercase;
             letter-spacing: 0.1em;
+            text-shadow: 0 0 10px rgba(0, 200, 255, 0.5);
+            border-bottom: 1px solid rgba(0, 200, 255, 0.2);
+            padding-bottom: 15px;
         }
-        
-        .modal-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: rgba(150, 220, 255, 0.9);
+
+        .modal-body p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(200, 230, 255, 0.85);
+            margin-bottom: 15px;
         }
-        
-        .modal-text p {
-            margin-bottom: 1rem;
+
+        .highlight {
+            color: rgba(0, 220, 255, 1);
+            font-weight: bold;
         }
-        
-        .modal-text .highlight {
-            color: rgba(0, 200, 255, 1);
-            font-weight: 600;
-        }
-        
-        /* Стили для ленты обновлений */
-        .update-item {
-            background: rgba(0, 200, 255, 0.05);
+
+        /* Стили для ленты новостей */
+        .news-item {
+            background: rgba(255, 255, 255, 0.03);
             border-left: 3px solid rgba(0, 200, 255, 0.5);
-            padding: 15px 20px;
+            padding: 15px;
             margin-bottom: 15px;
             border-radius: 0 8px 8px 0;
         }
-        
-        .update-date {
-            font-size: 0.85rem;
+        .news-date {
+            font-size: 0.8rem;
             color: rgba(0, 200, 255, 0.6);
             margin-bottom: 5px;
-            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
-        
-        .update-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: rgba(0, 200, 255, 0.95);
-            margin-bottom: 8px;
-        }
-        
-        .update-desc {
-            font-size: 1rem;
-            color: rgba(150, 220, 255, 0.8);
-            line-height: 1.6;
-        }
-        
-        /* Стили для чата */
-        .chat-message {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .chat-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-        
-        .chat-title {
-            font-size: 1.5rem;
-            color: rgba(0, 200, 255, 0.9);
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .chat-text {
+        .news-title {
             font-size: 1.1rem;
-            color: rgba(150, 220, 255, 0.7);
+            color: #fff;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        /* Стили для чата */
+        .chat-placeholder {
+            text-align: center;
+            padding: 30px 0;
+        }
+        .chat-icon {
+            font-size: 3rem;
             margin-bottom: 20px;
-            line-height: 1.6;
+            opacity: 0.7;
         }
-        
-        .chat-soon {
-            font-size: 1.3rem;
-            color: rgba(0, 200, 255, 1);
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            text-shadow: 0 0 20px rgba(0, 200, 255, 0.6);
-            animation: pulseText 2s ease-in-out infinite;
+        .soon-badge {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 20px;
+            border: 1px solid rgba(0, 200, 255, 0.4);
+            border-radius: 20px;
+            color: rgba(0, 200, 255, 0.9);
+            font-weight: bold;
+            letter-spacing: 0.15em;
+            animation: pulse 2s infinite;
         }
-        
-        @keyframes pulseText {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.6;
-            }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 200, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 200, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 200, 255, 0); }
         }
-        
-        /* Скроллбар для модальных окон */
-        .modal-content::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .modal-content::-webkit-scrollbar-track {
-            background: rgba(0, 20, 40, 0.3);
-            border-radius: 4px;
-        }
-        
-        .modal-content::-webkit-scrollbar-thumb {
-            background: rgba(0, 200, 255, 0.4);
-            border-radius: 4px;
-        }
-        
-        .modal-content::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 200, 255, 0.6);
+
+        /* Адаптив для мобильных */
+        @media (max-width: 600px) {
+            .neon-box { padding: 20px; width: 95%; }
+            .secondary-row { flex-direction: column; align-items: center; }
+            .btn-secondary { width: 100%; max-width: 300px; }
+            .modal-window { padding: 25px; }
         }
     </style>
 </head>
 <body>
-    <canvas id="bg"></canvas>
-    <div class="content">
-        <div class="title visible" data-text="EVGENII" id="mainTitle">EVGENII</div>
-        <div class="subtitle-frame visible" id="subtitleFrame">
-            <div class="subtitle" id="mainSubtitle">Где заканчиваюсь я — и начинается ИИ.<br>Эксперимент на стыке эмоций и кода.</div>
-        </div>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Стартовая кнопка -->
+    <button class="start-btn" id="startBtn">Слушать синтез</button>
+
+    <!-- Основной контент -->
+    <div class="main-wrapper">
         
-        <!-- Блок с кнопками -->
-        <div class="buttons-container fade-in" id="buttonsContainer" style="opacity: 0;">
-            <button class="btn-main" onclick="openModal('updates')">Лента обновлений</button>
-            <div class="btn-secondary-row">
-                <button class="btn-secondary" onclick="openModal('about')">О проекте</button>
-                <button class="btn-secondary" onclick="openModal('chat')">Чат</button>
+        <!-- Заголовок -->
+        <div class="title-container" id="titleContainer">
+            <h1 class="title" id="mainTitle">EVGENII</h1>
+        </div>
+
+        <!-- Неоновая рамка с описанием -->
+        <div class="neon-box" id="neonBox">
+            <p class="subtitle-text" id="subtitleText">
+                Где заканчиваюсь я — и начинается ИИ.<br>
+                Эксперимент на стыке эмоций и кода.
+            </p>
+        </div>
+
+        <!-- Блок кнопок (появляется после старта) -->
+        <div class="nav-buttons" id="navButtons">
+            <button class="btn-main-action" onclick="openModal('modalUpdates')">Лента обновлений</button>
+            
+            <div class="secondary-row">
+                <button class="btn-secondary" onclick="openModal('modalAbout')">О проекте</button>
+                <button class="btn-secondary" onclick="openModal('modalChat')">Чат</button>
             </div>
         </div>
-    </div>
-    
-    <button class="listen-btn" id="listenBtn">Слушать синтез</button>
 
-    <!-- Модальное окно: Лента обновлений -->
+    </div>
+
+    <!-- === МОДАЛКИ === -->
+
+    <!-- 1. Лента обновлений -->
     <div class="modal-overlay" id="modalUpdates">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('updates')">&times;</button>
-            <h2 class="modal-title">Лента обновлений</h2>
-            <div class="modal-text">
-                <div class="update-item">
-                    <div class="update-date">10 июня 2026</div>
-                    <div class="update-title">Запуск проекта EVGENII</div>
-                    <div class="update-desc">Добро пожаловать! Мы рады представить вам наш экспериментальный проект на стыке человеческих эмоций и искусственного интеллекта.</div>
+        <div class="modal-window">
+            <button class="close-modal" onclick="closeModal('modalUpdates')">&times;</button>
+            <h2 class="modal-h2">Лента обновлений</h2>
+            <div class="modal-body">
+                <div class="news-item">
+                    <div class="news-date">10 Июня 2026</div>
+                    <div class="news-title">Запуск платформы</div>
+                    <div>Мы открылись! Теперь вы можете слышать мой новый голос.</div>
                 </div>
-                <div class="update-item">
-                    <div class="update-date">Скоро</div>
-                    <div class="update-title">Новые треки</div>
-                    <div class="update-desc">В разработке несколько новых композиций. Следите за обновлениями!</div>
+                <div class="news-item">
+                    <div class="news-date">Скоро</div>
+                    <div class="news-title">Новый альбом "Digital Soul"</div>
+                    <div>Работа над новыми треками идет полным ходом.</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно: О проекте -->
+    <!-- 2. О проекте -->
     <div class="modal-overlay" id="modalAbout">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('about')">&times;</button>
-            <h2 class="modal-title">О проекте</h2>
-            <div class="modal-text">
+        <div class="modal-window">
+            <button class="close-modal" onclick="closeModal('modalAbout')">&times;</button>
+            <h2 class="modal-h2">О проекте</h2>
+            <div class="modal-body">
                 <p><span class="highlight">EVGENII</span> — это эксперимент на стыке человеческих эмоций и искусственного интеллекта.</p>
                 
                 <p>«Я придумываю текст и стиль исполнения. А выучить и воплотить в песню доверяю ИИ.»</p>
@@ -575,31 +418,80 @@ html_content = '''<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- Модальное окно: Чат -->
+    <!-- 3. Чат -->
     <div class="modal-overlay" id="modalChat">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('chat')">&times;</button>
-            <div class="chat-message">
+        <div class="modal-window">
+            <button class="close-modal" onclick="closeModal('modalChat')">&times;</button>
+            <div class="chat-placeholder">
                 <div class="chat-icon">💬</div>
-                <div class="chat-title">Извините, чат временно не работает</div>
-                <div class="chat-text">Мы работаем над улучшением функции общения.</div>
-                <div class="chat-soon">СКОРО БУДЕТ</div>
+                <h2 class="modal-h2" style="border:none; text-align:center;">Чат</h2>
+                <p>Извините, чат временно не работает.</p>
+                <p>Мы работаем над улучшением функции общения.</p>
+                <div class="soon-badge">СКОРО БУДЕТ</div>
             </div>
         </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('bg');
-        const ctx = canvas.getContext('2d');
+        // === ЛОГИКА ИНТЕРФЕЙСА ===
+        const startBtn = document.getElementById('startBtn');
         const mainTitle = document.getElementById('mainTitle');
-        const subtitleFrame = document.getElementById('subtitleFrame');
-        const mainSubtitle = document.getElementById('mainSubtitle');
-        const listenBtn = document.getElementById('listenBtn');
-        const buttonsContainer = document.getElementById('buttonsContainer');
+        const subtitleText = document.getElementById('subtitleText');
+        const navButtons = document.getElementById('navButtons');
+        const neonBox = document.getElementById('neonBox');
 
+        let isStarted = false;
+
+        startBtn.addEventListener('click', () => {
+            if(isStarted) return;
+            isStarted = true;
+
+            // 1. Скрываем кнопку старта
+            startBtn.classList.add('hidden');
+
+            // 2. Меняем контент с анимацией
+            mainTitle.style.opacity = '0';
+            mainTitle.style.transform = 'translateY(-20px)';
+            neonBox.style.opacity = '0';
+            neonBox.style.transform = 'translateY(-20px)';
+
+            setTimeout(() => {
+                // Обновляем текст
+                mainTitle.innerHTML = '<span class="title-line">ДОБРО</span><span class="title-line title-line-small">ПОЖАЛОВАТЬ</span>';
+                subtitleText.innerHTML = 'Мои тексты, озвученные искусственным разумом.<br>Эксперимент на стыке человеческих эмоций и машинного голоса.';
+                
+                // Возвращаем видимость
+                mainTitle.style.opacity = '1';
+                mainTitle.style.transform = 'translateY(0)';
+                neonBox.style.opacity = '1';
+                neonBox.style.transform = 'translateY(0)';
+
+                // Показываем кнопки навигации
+                navButtons.classList.add('show');
+            }, 600);
+        });
+
+        // === МОДАЛЬНЫЕ ОКНА ===
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Закрытие по клику вне окна
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // === CANVAS BACKGROUND (Particles) ===
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
         let width, height;
-        let time = 0;
-        let isTransitioned = false;
+        let particles = [];
 
         function resize() {
             width = canvas.width = window.innerWidth;
@@ -608,10 +500,6 @@ html_content = '''<!DOCTYPE html>
         window.addEventListener('resize', resize);
         resize();
 
-        // === ПАРТИКЛЫ ===
-        const particles = [];
-        const particleCount = 180;
-
         class Particle {
             constructor() {
                 this.reset();
@@ -619,249 +507,51 @@ html_content = '''<!DOCTYPE html>
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.size = Math.random() * 3 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.5;
-                this.opacity = Math.random() * 0.8 + 0.2;
-                this.life = Math.random() * 300 + 100;
-                this.maxLife = this.life;
-                const colors = [
-                    '0, 200, 255',
-                    '0, 255, 200',
-                    '100, 200, 255',
-                    '0, 220, 240'
-                ];
-                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 0.5;
+                this.alpha = Math.random() * 0.5 + 0.1;
             }
             update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.life--;
-                if (this.life <= 0 || this.x < -50 || this.x > width + 50 || this.y < -50 || this.y > height + 50) {
-                    this.reset();
-                }
+                this.x += this.vx;
+                this.y += this.vy;
+                if(this.x < 0 || this.x > width) this.vx *= -1;
+                if(this.y < 0 || this.y > height) this.vy *= -1;
             }
             draw() {
-                const alpha = (this.life / this.maxLife) * this.opacity;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${this.color}, ${alpha})`;
-                ctx.shadowBlur = 12;
-                ctx.shadowColor = `rgba(${this.color}, ${alpha * 0.6})`;
+                ctx.fillStyle = `rgba(0, 200, 255, ${this.alpha})`;
                 ctx.fill();
-                ctx.shadowBlur = 0;
             }
         }
 
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
+        for(let i=0; i<100; i++) particles.push(new Particle());
 
-        // === БЛИКИ / ЛИНЗЫ ===
-        const flares = [];
-        for (let i = 0; i < 8; i++) {
-            flares.push({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                size: Math.random() * 100 + 50,
-                speedX: (Math.random() - 0.5) * 0.2,
-                speedY: (Math.random() - 0.5) * 0.2,
-                opacity: Math.random() * 0.12 + 0.03,
-                hue: 160 + Math.random() * 40,
-                pulse: Math.random() * Math.PI * 2
-            });
-        }
-
-        function drawFlare(flare, t) {
-            const pulse = Math.sin(t * 0.5 + flare.pulse) * 0.5 + 0.5;
-            const gradient = ctx.createRadialGradient(
-                flare.x, flare.y, 0,
-                flare.x, flare.y, flare.size
-            );
-            gradient.addColorStop(0, `hsla(${flare.hue}, 100%, 70%, ${flare.opacity * pulse})`);
-            gradient.addColorStop(0.4, `hsla(${flare.hue}, 100%, 50%, ${flare.opacity * pulse * 0.4})`);
-            gradient.addColorStop(1, 'transparent');
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(flare.x, flare.y, flare.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        // === ЛЁГКИЕ СВЕТОВЫЕ ПОЛОСЫ (атмосфера) ===
-        const lightStreaks = [];
-        for (let i = 0; i < 5; i++) {
-            lightStreaks.push({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                width: Math.random() * 200 + 100,
-                height: Math.random() * 2 + 0.5,
-                angle: Math.random() * Math.PI * 2,
-                speed: (Math.random() - 0.5) * 0.3,
-                opacity: Math.random() * 0.08 + 0.02,
-                hue: 170 + Math.random() * 30
-            });
-        }
-
-        function drawLightStreak(streak, t) {
-            ctx.save();
-            ctx.translate(streak.x, streak.y);
-            ctx.rotate(streak.angle + t * 0.1);
-            const gradient = ctx.createLinearGradient(-streak.width / 2, 0, streak.width / 2, 0);
-            gradient.addColorStop(0, 'transparent');
-            gradient.addColorStop(0.5, `hsla(${streak.hue}, 100%, 70%, ${streak.opacity})`);
-            gradient.addColorStop(1, 'transparent');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(-streak.width / 2, -streak.height / 2, streak.width, streak.height);
-            ctx.restore();
-        }
-
-        // === ГЛАВНЫЙ ЦИКЛ ===
         function animate() {
-            time += 0.016;
-
-            // Очистка с trail-эффектом
-            ctx.fillStyle = 'rgba(0, 5, 16, 0.12)';
-            ctx.fillRect(0, 0, width, height);
-
-            // Фоновый градиент
-            const bgGradient = ctx.createRadialGradient(
-                width * 0.5, height * 0.5, 0,
-                width * 0.5, height * 0.5, width * 0.8
-            );
-            bgGradient.addColorStop(0, 'rgba(0, 30, 60, 0.25)');
-            bgGradient.addColorStop(0.5, 'rgba(0, 10, 30, 0.08)');
-            bgGradient.addColorStop(1, 'transparent');
-            ctx.fillStyle = bgGradient;
-            ctx.fillRect(0, 0, width, height);
-
-            // Блики
-            flares.forEach(flare => {
-                flare.x += flare.speedX;
-                flare.y += flare.speedY;
-                if (flare.x < -150) flare.x = width + 150;
-                if (flare.x > width + 150) flare.x = -150;
-                if (flare.y < -150) flare.y = height + 150;
-                if (flare.y > height + 150) flare.y = -150;
-                drawFlare(flare, time);
-            });
-
-            // Световые полосы
-            lightStreaks.forEach(streak => {
-                streak.x += streak.speed;
-                streak.y += streak.speed * 0.3;
-                if (streak.x < -200) streak.x = width + 200;
-                if (streak.x > width + 200) streak.x = -200;
-                if (streak.y < -200) streak.y = height + 200;
-                if (streak.y > height + 200) streak.y = -200;
-                drawLightStreak(streak, time);
-            });
-
-            // Соединяющие линии между близкими партиклами
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Рисуем связи
+            ctx.strokeStyle = 'rgba(0, 200, 255, 0.05)';
+            ctx.lineWidth = 0.5;
+            for(let i=0; i<particles.length; i++) {
+                for(let j=i+1; j<particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 150) {
-                        const alpha = (1 - dist / 150) * 0.1;
-                        ctx.strokeStyle = `rgba(0, 200, 255, ${alpha})`;
-                        ctx.lineWidth = 0.5;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < 150) {
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
                         ctx.stroke();
                     }
                 }
+                particles[i].update();
+                particles[i].draw();
             }
-
-            // Партиклы
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
             requestAnimationFrame(animate);
         }
-
         animate();
-        
-        // === ОБРАБОТЧИК КНОПКИ ===
-        listenBtn.addEventListener('click', function() {
-            if (isTransitioned) return;
-            isTransitioned = true;
-            
-            // Скрываем кнопку
-            listenBtn.classList.add('btn-hidden');
-            
-            // Анимация исчезновения старого текста
-            mainTitle.classList.remove('visible');
-            mainTitle.classList.add('fade-out');
-            subtitleFrame.classList.remove('visible');
-            subtitleFrame.classList.add('fade-out');
-            
-            // Ждем окончания анимации исчезновения
-            setTimeout(() => {
-                // Меняем текст на двухстрочный формат
-                mainTitle.setAttribute('data-text', 'ДОБРО ПОЖАЛОВАТЬ');
-                mainTitle.innerHTML = '<span class="title-line">ДОБРО</span><span class="title-line title-line-small">ПОЖАЛОВАТЬ</span>';
-                mainSubtitle.innerHTML = 'Мои тексты, озвученные искусственным разумом.<br>Эксперимент на стыке человеческих эмоций и машинного голоса.';
-                
-                // Анимация появления нового текста
-                mainTitle.classList.remove('fade-out');
-                mainTitle.classList.add('fade-in');
-                subtitleFrame.classList.remove('fade-out');
-                subtitleFrame.classList.add('fade-in');
-                buttonsContainer.classList.remove('fade-in');
-                buttonsContainer.classList.add('fade-in');
-                
-                // Небольшая задержка перед появлением
-                setTimeout(() => {
-                    mainTitle.classList.remove('fade-in');
-                    mainTitle.classList.add('visible');
-                    subtitleFrame.classList.remove('fade-in');
-                    subtitleFrame.classList.add('visible');
-                    buttonsContainer.classList.remove('fade-in');
-                    buttonsContainer.classList.add('visible');
-                }, 100);
-            }, 800);
-        });
-        
-        // === МОДАЛЬНЫЕ ОКНА ===
-        function openModal(type) {
-            const modal = document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1));
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-        
-        function closeModal(type) {
-            const modal = document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1));
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        }
-        
-        // Закрытие модального окна при клике на оверлей
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-        });
-        
-        // Закрытие по Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
-                    modal.classList.remove('active');
-                });
-                document.body.style.overflow = '';
-            }
-        });
     </script>
 </body>
 </html>'''
