@@ -1,4 +1,4 @@
-h '''<!DOCTYPE html>
+html_content = '''<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -89,8 +89,8 @@ h '''<!DOCTYPE html>
             flex-wrap: wrap;
         }
         
-        /* Кнопка Лента обновлений */
-        .updates-btn, .about-btn {
+        /* Кнопка Лента обновлений и О проекте */
+        .updates-btn, .about-btn, .chat-btn {
             padding: 15px 35px;
             background: transparent;
             border: 2px solid rgba(255, 180, 100, 0.6);
@@ -108,7 +108,7 @@ h '''<!DOCTYPE html>
                 0 0 20px rgba(255, 180, 100, 0.3),
                 inset 0 0 20px rgba(255, 180, 100, 0.1);
         }
-        .updates-btn:hover, .about-btn:hover {
+        .updates-btn:hover, .about-btn:hover, .chat-btn:hover {
             background: rgba(255, 180, 100, 0.15);
             border-color: rgba(255, 180, 100, 0.9);
             box-shadow: 
@@ -116,8 +116,33 @@ h '''<!DOCTYPE html>
                 inset 0 0 30px rgba(255, 180, 100, 0.2);
             transform: translateY(-3px);
         }
-        .updates-btn:active, .about-btn:active {
+        .updates-btn:active, .about-btn:active, .chat-btn:active {
             transform: translateY(0);
+        }
+        
+        /* Специальный стиль для кнопки чата - индикатор "скоро" */
+        .chat-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .chat-btn::before {
+            content: 'SOON';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: rgba(255, 180, 100, 0.9);
+            color: #000510;
+            font-size: 0.6rem;
+            font-weight: 900;
+            padding: 3px 8px;
+            border-radius: 10px;
+            letter-spacing: 0.1em;
+            animation: pulse-soon 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-soon {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
         }
         
         /* Миндальное (модальное) окно */
@@ -244,6 +269,60 @@ h '''<!DOCTYPE html>
             line-height: 1.7;
         }
         
+        /* Стили для модального окна чата */
+        .chat-modal-body {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .chat-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .chat-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: rgba(255, 200, 150, 0.95);
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 180, 100, 0.5);
+        }
+        .chat-description {
+            color: rgba(200, 220, 240, 0.8);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        .chat-soon {
+            display: inline-block;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 0.3em;
+            color: rgba(255, 180, 100, 0.9);
+            text-shadow: 
+                0 0 20px rgba(255, 180, 100, 0.6),
+                0 0 40px rgba(255, 180, 100, 0.4);
+            padding: 15px 40px;
+            border: 2px solid rgba(255, 180, 100, 0.5);
+            border-radius: 50px;
+            background: rgba(255, 180, 100, 0.1);
+            animation: pulse-soon-text 2s ease-in-out infinite;
+        }
+        @keyframes pulse-soon-text {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(255, 180, 100, 0.3);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(255, 180, 100, 0.6);
+                transform: scale(1.05);
+            }
+        }
+        
         /* Кнопка Слушать синтез */
         .listen-btn {
             position: fixed;
@@ -322,6 +401,7 @@ h '''<!DOCTYPE html>
             <div class="buttons-container">
                 <button class="updates-btn" id="updatesBtn">Лента обновлений</button>
                 <button class="about-btn" id="aboutBtn">О проекте</button>
+                <button class="chat-btn" id="chatBtn">Чат</button>
             </div>
         </div>
     </div>
@@ -374,6 +454,24 @@ h '''<!DOCTYPE html>
             </div>
         </div>
     </div>
+    
+    <!-- Миндальное (модальное) окно Чат -->
+    <div class="modal-overlay" id="chatModalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Чат</h2>
+                <button class="modal-close" id="chatModalClose">&times;</button>
+            </div>
+            <div class="modal-body chat-modal-body">
+                <div class="chat-icon">💬</div>
+                <div class="chat-title">Извините, чат временно не работает</div>
+                <div class="chat-description">
+                    Мы работаем над улучшением функции общения.
+                </div>
+                <div class="chat-soon">СКОРО БУДЕТ</div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const canvas = document.getElementById('bg');
@@ -384,10 +482,13 @@ h '''<!DOCTYPE html>
         const updatesSection = document.getElementById('updatesSection');
         const updatesBtn = document.getElementById('updatesBtn');
         const aboutBtn = document.getElementById('aboutBtn');
+        const chatBtn = document.getElementById('chatBtn');
         const modalOverlay = document.getElementById('modalOverlay');
         const modalClose = document.getElementById('modalClose');
         const aboutModalOverlay = document.getElementById('aboutModalOverlay');
         const aboutModalClose = document.getElementById('aboutModalClose');
+        const chatModalOverlay = document.getElementById('chatModalOverlay');
+        const chatModalClose = document.getElementById('chatModalClose');
 
         let width, height;
         let time = 0;
@@ -626,7 +727,6 @@ h '''<!DOCTYPE html>
             modalOverlay.classList.remove('active');
         });
         
-        // Закрытие по клику на оверлей
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {
                 modalOverlay.classList.remove('active');
@@ -642,14 +742,28 @@ h '''<!DOCTYPE html>
             aboutModalOverlay.classList.remove('active');
         });
         
-        // Закрытие по клику на оверлей
         aboutModalOverlay.addEventListener('click', function(e) {
             if (e.target === aboutModalOverlay) {
                 aboutModalOverlay.classList.remove('active');
             }
         });
         
-        // Закрытие по Escape
+        // === ОБРАБОТЧИКИ МОДАЛЬНОГО ОКНА ЧАТ ===
+        chatBtn.addEventListener('click', function() {
+            chatModalOverlay.classList.add('active');
+        });
+        
+        chatModalClose.addEventListener('click', function() {
+            chatModalOverlay.classList.remove('active');
+        });
+        
+        chatModalOverlay.addEventListener('click', function(e) {
+            if (e.target === chatModalOverlay) {
+                chatModalOverlay.classList.remove('active');
+            }
+        });
+        
+        // Закрытие всех модальных окон по Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 if (modalOverlay.classList.contains('active')) {
@@ -657,6 +771,9 @@ h '''<!DOCTYPE html>
                 }
                 if (aboutModalOverlay.classList.contains('active')) {
                     aboutModalOverlay.classList.remove('active');
+                }
+                if (chatModalOverlay.classList.contains('active')) {
+                    chatModalOverlay.classList.remove('active');
                 }
             }
         });
