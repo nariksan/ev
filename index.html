@@ -1,4 +1,4 @@
-html_content = '''<!DOCTYPE html>
+h '''<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -81,8 +81,16 @@ html_content = '''<!DOCTYPE html>
             transform: translateY(0);
         }
         
+        /* Контейнер для кнопок */
+        .buttons-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
         /* Кнопка Лента обновлений */
-        .updates-btn {
+        .updates-btn, .about-btn {
             padding: 15px 35px;
             background: transparent;
             border: 2px solid rgba(255, 180, 100, 0.6);
@@ -100,7 +108,7 @@ html_content = '''<!DOCTYPE html>
                 0 0 20px rgba(255, 180, 100, 0.3),
                 inset 0 0 20px rgba(255, 180, 100, 0.1);
         }
-        .updates-btn:hover {
+        .updates-btn:hover, .about-btn:hover {
             background: rgba(255, 180, 100, 0.15);
             border-color: rgba(255, 180, 100, 0.9);
             box-shadow: 
@@ -108,7 +116,7 @@ html_content = '''<!DOCTYPE html>
                 inset 0 0 30px rgba(255, 180, 100, 0.2);
             transform: translateY(-3px);
         }
-        .updates-btn:active {
+        .updates-btn:active, .about-btn:active {
             transform: translateY(0);
         }
         
@@ -212,6 +220,30 @@ html_content = '''<!DOCTYPE html>
             color: rgba(200, 220, 240, 0.9);
         }
         
+        /* Стили для текста "О проекте" */
+        .about-text {
+            color: rgba(200, 220, 240, 0.9);
+            line-height: 1.9;
+            font-size: 1.05rem;
+        }
+        .about-text p {
+            margin-bottom: 20px;
+        }
+        .about-text p:last-child {
+            margin-bottom: 0;
+        }
+        .about-quote {
+            font-style: italic;
+            color: rgba(255, 200, 150, 0.9);
+            padding: 20px;
+            margin: 25px 0;
+            background: rgba(255, 180, 100, 0.08);
+            border-left: 4px solid rgba(255, 180, 100, 0.6);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
         /* Кнопка Слушать синтез */
         .listen-btn {
             position: fixed;
@@ -287,13 +319,16 @@ html_content = '''<!DOCTYPE html>
         
         <!-- Новый блок с лентой обновлений -->
         <div class="updates-section" id="updatesSection">
-            <button class="updates-btn" id="updatesBtn">Лента обновлений</button>
+            <div class="buttons-container">
+                <button class="updates-btn" id="updatesBtn">Лента обновлений</button>
+                <button class="about-btn" id="aboutBtn">О проекте</button>
+            </div>
         </div>
     </div>
     
     <button class="listen-btn" id="listenBtn">Слушать синтез</button>
     
-    <!-- Миндальное (модальное) окно -->
+    <!-- Миндальное (модальное) окно Лента обновлений -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -316,6 +351,29 @@ html_content = '''<!DOCTYPE html>
             </div>
         </div>
     </div>
+    
+    <!-- Миндальное (модальное) окно О проекте -->
+    <div class="modal-overlay" id="aboutModalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">О проекте</h2>
+                <button class="modal-close" id="aboutModalClose">&times;</button>
+            </div>
+            <div class="modal-body about-text">
+                <p>EVGENII — это эксперимент на стыке человеческих эмоций и искусственного интеллекта.</p>
+                
+                <div class="about-quote">
+                    «Я придумываю текст и стиль исполнения. А выучить и воплотить в песню доверяю ИИ.»
+                </div>
+                
+                <p>Искусственный интеллект становится моим голосом. Он заучивает мои слова, учится чувствовать ритм, подбирать интонации. Это не замена человеку — это новый инструмент выражения.</p>
+                
+                <p>Вместе мы создаём что-то третье. Не совсем человеческое, не совсем машинное. Что-то среднее, где технологии усиливают эмоции, а не заменяют их.</p>
+                
+                <p>Этот проект — исследование границ между автором и исполнителем, между живым чувством и алгоритмом, между тем, кто пишет, и тем, кто поёт.</p>
+            </div>
+        </div>
+    </div>
 
     <script>
         const canvas = document.getElementById('bg');
@@ -325,8 +383,11 @@ html_content = '''<!DOCTYPE html>
         const listenBtn = document.getElementById('listenBtn');
         const updatesSection = document.getElementById('updatesSection');
         const updatesBtn = document.getElementById('updatesBtn');
+        const aboutBtn = document.getElementById('aboutBtn');
         const modalOverlay = document.getElementById('modalOverlay');
         const modalClose = document.getElementById('modalClose');
+        const aboutModalOverlay = document.getElementById('aboutModalOverlay');
+        const aboutModalClose = document.getElementById('aboutModalClose');
 
         let width, height;
         let time = 0;
@@ -556,7 +617,7 @@ html_content = '''<!DOCTYPE html>
             }, 800);
         });
         
-        // === ОБРАБОТЧИКИ МОДАЛЬНОГО ОКНА ===
+        // === ОБРАБОТЧИКИ МОДАЛЬНОГО ОКНА ЛЕНТА ОБНОВЛЕНИЙ ===
         updatesBtn.addEventListener('click', function() {
             modalOverlay.classList.add('active');
         });
@@ -572,10 +633,31 @@ html_content = '''<!DOCTYPE html>
             }
         });
         
+        // === ОБРАБОТЧИКИ МОДАЛЬНОГО ОКНА О ПРОЕКТЕ ===
+        aboutBtn.addEventListener('click', function() {
+            aboutModalOverlay.classList.add('active');
+        });
+        
+        aboutModalClose.addEventListener('click', function() {
+            aboutModalOverlay.classList.remove('active');
+        });
+        
+        // Закрытие по клику на оверлей
+        aboutModalOverlay.addEventListener('click', function(e) {
+            if (e.target === aboutModalOverlay) {
+                aboutModalOverlay.classList.remove('active');
+            }
+        });
+        
         // Закрытие по Escape
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
-                modalOverlay.classList.remove('active');
+            if (e.key === 'Escape') {
+                if (modalOverlay.classList.contains('active')) {
+                    modalOverlay.classList.remove('active');
+                }
+                if (aboutModalOverlay.classList.contains('active')) {
+                    aboutModalOverlay.classList.remove('active');
+                }
             }
         });
     </script>
