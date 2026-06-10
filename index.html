@@ -43,9 +43,8 @@ html_content = '''<!DOCTYPE html>
             padding: 20px;
         }
         
-        /* Заголовок - разбит на две строки */
+        /* Заголовок - используем span для разного размера слов */
         .title {
-            font-size: clamp(2.5rem, 12vw, 7rem);
             font-weight: 900;
             letter-spacing: 0.05em;
             text-transform: uppercase;
@@ -59,8 +58,13 @@ html_content = '''<!DOCTYPE html>
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
             line-height: 1.1;
             margin-bottom: 3vh;
-            word-break: break-word;
-            max-width: 100%;
+            white-space: nowrap;
+        }
+        .title .word-large {
+            font-size: clamp(2.5rem, 10vw, 7rem);
+        }
+        .title .word-small {
+            font-size: clamp(2rem, 8vw, 5.5rem);
         }
         .title::after {
             content: attr(data-text);
@@ -168,9 +172,11 @@ html_content = '''<!DOCTYPE html>
         
         /* Медиа-запросы для мобильных устройств */
         @media (max-width: 768px) {
-            .title {
-                font-size: clamp(2rem, 14vw, 5rem);
-                letter-spacing: 0.02em;
+            .title .word-large {
+                font-size: clamp(2rem, 12vw, 5rem);
+            }
+            .title .word-small {
+                font-size: clamp(1.6rem, 10vw, 4rem);
             }
             .subtitle-container {
                 padding: 1.5vh 2vw;
@@ -186,9 +192,11 @@ html_content = '''<!DOCTYPE html>
         }
         
         @media (max-width: 480px) {
-            .title {
-                font-size: clamp(1.8rem, 16vw, 4rem);
-                letter-spacing: 0em;
+            .title .word-large {
+                font-size: clamp(1.8rem, 14vw, 4rem);
+            }
+            .title .word-small {
+                font-size: clamp(1.4rem, 12vw, 3.2rem);
             }
             .subtitle-frame {
                 padding: 2vh 2.5vw;
@@ -427,9 +435,9 @@ html_content = '''<!DOCTYPE html>
             
             // Ждем окончания анимации исчезновения
             setTimeout(() => {
-                // Меняем текст - разбиваем на две строки
-                mainTitle.setAttribute('data-text', 'ДОБРО<br>ПОЖАЛОВАТЬ');
-                mainTitle.innerHTML = 'ДОБРО<br>ПОЖАЛОВАТЬ';
+                // Меняем текст - разные размеры для слов
+                mainTitle.setAttribute('data-text', 'ДОБРО ПОЖАЛОВАТЬ');
+                mainTitle.innerHTML = '<span class="word-large">ДОБРО </span><span class="word-small">ПОЖАЛОВАТЬ</span>';
                 mainSubtitle.innerHTML = 'Мои тексты, озвученные искусственным разумом.<br>Эксперимент на стыке человеческих эмоций и машинного голоса.';
                 
                 // Анимация появления нового текста
@@ -454,5 +462,5 @@ html_content = '''<!DOCTYPE html>
 with open('/mnt/agents/output/neon_particles_background.html', 'w', encoding='utf-8') as f:
     f.write(html_content)
 
-print("Исправлено! Текст 'ДОБРО ПОЖАЛОВАТЬ' теперь разбит на две строки и помещается полностью.")
+print("Готово! Слово 'ПОЖАЛОВАТЬ' теперь немного меньше 'ДОБРО' и всё помещается в одну строку.")
 
