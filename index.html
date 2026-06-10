@@ -26,7 +26,7 @@ html_content = '''<!DOCTYPE html>
             height: 100%;
         }
         
-        /* Контейнер с контентом - использует flexbox для точного центрирования */
+        /* Контейнер с контентом */
         .content {
             position: fixed;
             top: 0;
@@ -43,11 +43,11 @@ html_content = '''<!DOCTYPE html>
             padding: 20px;
         }
         
-        /* Заголовок - размер зависит от viewport width для одинакового вида */
+        /* Заголовок - уменьшенный размер для мобильных */
         .title {
-            font-size: 8vw;
+            font-size: clamp(2rem, 10vw, 6rem);
             font-weight: 900;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             color: #ffffff;
             text-shadow:
@@ -58,7 +58,11 @@ html_content = '''<!DOCTYPE html>
             position: relative;
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
             line-height: 1.2;
-            margin-bottom: 2vh;
+            margin-bottom: 3vh;
+            white-space: nowrap;
+            max-width: 95vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .title::after {
             content: attr(data-text);
@@ -75,18 +79,60 @@ html_content = '''<!DOCTYPE html>
             color: transparent;
         }
         
-        /* Подзаголовок */
-        .subtitle {
-            font-size: 2vw;
-            color: rgba(150, 220, 255, 0.7);
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
+        /* Контейнер для рамки с текстом */
+        .subtitle-container {
+            position: relative;
+            padding: 3vh 4vw;
+            max-width: 85vw;
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-            line-height: 1.8;
-            max-width: 80vw;
         }
         
-        /* Кнопка - фиксированная позиция с процентными отступами */
+        /* Красивая неоновая рамка */
+        .subtitle-frame {
+            position: relative;
+            padding: 2.5vh 3vw;
+            border: 2px solid rgba(0, 200, 255, 0.4);
+            border-radius: 15px;
+            background: rgba(0, 20, 40, 0.3);
+            box-shadow: 
+                0 0 20px rgba(0, 200, 255, 0.2),
+                inset 0 0 20px rgba(0, 200, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Угловые декоративные элементы */
+        .subtitle-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                rgba(0, 200, 255, 0.8), 
+                rgba(0, 255, 200, 0.4), 
+                rgba(0, 200, 255, 0.8));
+            border-radius: 15px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .subtitle-frame:hover::before {
+            opacity: 0.5;
+        }
+        
+        /* Подзаголовок */
+        .subtitle {
+            font-size: clamp(0.8rem, 2.5vw, 1.5rem);
+            color: rgba(150, 220, 255, 0.9);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            line-height: 1.8;
+            text-shadow: 0 0 10px rgba(0, 200, 255, 0.3);
+        }
+        
+        /* Кнопка */
         .listen-btn {
             position: fixed;
             bottom: 8vh;
@@ -96,7 +142,7 @@ html_content = '''<!DOCTYPE html>
             background: transparent;
             border: 2px solid rgba(0, 200, 255, 0.6);
             color: rgba(0, 200, 255, 0.9);
-            font-size: 1.5vw;
+            font-size: clamp(0.9rem, 2vw, 1.3rem);
             font-weight: 600;
             letter-spacing: 0.2em;
             text-transform: uppercase;
@@ -147,44 +193,35 @@ html_content = '''<!DOCTYPE html>
         /* Медиа-запросы для мобильных устройств */
         @media (max-width: 768px) {
             .title {
-                font-size: 12vw;
+                font-size: clamp(1.8rem, 12vw, 4rem);
+                letter-spacing: 0.05em;
+            }
+            .subtitle-container {
+                padding: 2vh 3vw;
+            }
+            .subtitle-frame {
+                padding: 2vh 2vw;
+                border-width: 1.5px;
             }
             .subtitle {
-                font-size: 3.5vw;
-                letter-spacing: 0.15em;
-            }
-            .listen-btn {
-                font-size: 3vw;
-                padding: 2.5vh 6vw;
-            }
-        }
-        
-        /* Для очень маленьких экранов */
-        @media (max-width: 480px) {
-            .title {
-                font-size: 15vw;
-            }
-            .subtitle {
-                font-size: 4vw;
+                font-size: clamp(0.75rem, 3vw, 1.2rem);
                 letter-spacing: 0.1em;
             }
-            .listen-btn {
-                font-size: 3.5vw;
-                padding: 2vh 5vw;
-            }
         }
         
-        /* Для очень больших экранов */
-        @media (min-width: 1920px) {
+        @media (max-width: 480px) {
             .title {
-                font-size: 6vw;
+                font-size: clamp(1.5rem, 14vw, 3rem);
+                letter-spacing: 0.02em;
+            }
+            .subtitle-frame {
+                padding: 1.5vh 1.5vw;
+                border-radius: 10px;
             }
             .subtitle {
-                font-size: 1.5vw;
-            }
-            .listen-btn {
-                font-size: 1.2vw;
-                padding: 1.5vh 3vw;
+                font-size: clamp(0.7rem, 3.5vw, 1rem);
+                letter-spacing: 0.05em;
+                line-height: 1.6;
             }
         }
     </style>
@@ -193,7 +230,11 @@ html_content = '''<!DOCTYPE html>
     <canvas id="bg"></canvas>
     <div class="content">
         <div class="title visible" data-text="EVGENII" id="mainTitle">EVGENII</div>
-        <div class="subtitle visible" id="mainSubtitle">Где заканчиваюсь я — и начинается ИИ.<br>Эксперимент на стыке эмоций и кода.</div>
+        <div class="subtitle-container visible" id="subtitleContainer">
+            <div class="subtitle-frame">
+                <div class="subtitle" id="mainSubtitle">Где заканчиваюсь я — и начинается ИИ.<br>Эксперимент на стыке эмоций и кода.</div>
+            </div>
+        </div>
     </div>
     
     <button class="listen-btn" id="listenBtn">Слушать синтез</button>
@@ -203,6 +244,7 @@ html_content = '''<!DOCTYPE html>
         const ctx = canvas.getContext('2d');
         const mainTitle = document.getElementById('mainTitle');
         const mainSubtitle = document.getElementById('mainSubtitle');
+        const subtitleContainer = document.getElementById('subtitleContainer');
         const listenBtn = document.getElementById('listenBtn');
 
         let width, height;
@@ -404,8 +446,8 @@ html_content = '''<!DOCTYPE html>
             // Анимация исчезновения старого текста
             mainTitle.classList.remove('visible');
             mainTitle.classList.add('fade-out');
-            mainSubtitle.classList.remove('visible');
-            mainSubtitle.classList.add('fade-out');
+            subtitleContainer.classList.remove('visible');
+            subtitleContainer.classList.add('fade-out');
             
             // Ждем окончания анимации исчезновения
             setTimeout(() => {
@@ -417,15 +459,15 @@ html_content = '''<!DOCTYPE html>
                 // Анимация появления нового текста
                 mainTitle.classList.remove('fade-out');
                 mainTitle.classList.add('fade-in');
-                mainSubtitle.classList.remove('fade-out');
-                mainSubtitle.classList.add('fade-in');
+                subtitleContainer.classList.remove('fade-out');
+                subtitleContainer.classList.add('fade-in');
                 
                 // Небольшая задержка перед появлением
                 setTimeout(() => {
                     mainTitle.classList.remove('fade-in');
                     mainTitle.classList.add('visible');
-                    mainSubtitle.classList.remove('fade-in');
-                    mainSubtitle.classList.add('visible');
+                    subtitleContainer.classList.remove('fade-in');
+                    subtitleContainer.classList.add('visible');
                 }, 100);
             }, 800);
         });
@@ -436,5 +478,5 @@ html_content = '''<!DOCTYPE html>
 with open('/mnt/agents/output/neon_particles_background.html', 'w', encoding='utf-8') as f:
     f.write(html_content)
 
-print("Файл обновлен с адаптивной сеткой!")
+print("Файл обновлен! Текст теперь помещается на экран, добавлена красивая рамка.")
 
