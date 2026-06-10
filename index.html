@@ -43,11 +43,11 @@ html_content = '''<!DOCTYPE html>
             padding: 20px;
         }
         
-        /* Заголовок - уменьшенный размер для мобильных */
+        /* Заголовок - разбит на две строки */
         .title {
-            font-size: clamp(2rem, 10vw, 6rem);
+            font-size: clamp(2.5rem, 12vw, 7rem);
             font-weight: 900;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
             color: #ffffff;
             text-shadow:
@@ -57,12 +57,10 @@ html_content = '''<!DOCTYPE html>
                 0 0 100px rgba(0, 200, 255, 0.2);
             position: relative;
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-            line-height: 1.2;
+            line-height: 1.1;
             margin-bottom: 3vh;
-            white-space: nowrap;
-            max-width: 95vw;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            word-break: break-word;
+            max-width: 100%;
         }
         .title::after {
             content: attr(data-text);
@@ -82,51 +80,29 @@ html_content = '''<!DOCTYPE html>
         /* Контейнер для рамки с текстом */
         .subtitle-container {
             position: relative;
-            padding: 3vh 4vw;
-            max-width: 85vw;
+            padding: 2vh 3vw;
+            max-width: 90vw;
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
         }
         
         /* Красивая неоновая рамка */
         .subtitle-frame {
             position: relative;
-            padding: 2.5vh 3vw;
+            padding: 3vh 4vw;
             border: 2px solid rgba(0, 200, 255, 0.4);
             border-radius: 15px;
             background: rgba(0, 20, 40, 0.3);
             box-shadow: 
-                0 0 20px rgba(0, 200, 255, 0.2),
+                0 0 30px rgba(0, 200, 255, 0.3),
                 inset 0 0 20px rgba(0, 200, 255, 0.1);
             backdrop-filter: blur(10px);
         }
         
-        /* Угловые декоративные элементы */
-        .subtitle-frame::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, 
-                rgba(0, 200, 255, 0.8), 
-                rgba(0, 255, 200, 0.4), 
-                rgba(0, 200, 255, 0.8));
-            border-radius: 15px;
-            opacity: 0;
-            z-index: -1;
-            transition: opacity 0.3s ease;
-        }
-        
-        .subtitle-frame:hover::before {
-            opacity: 0.5;
-        }
-        
         /* Подзаголовок */
         .subtitle {
-            font-size: clamp(0.8rem, 2.5vw, 1.5rem);
+            font-size: clamp(0.9rem, 3vw, 1.6rem);
             color: rgba(150, 220, 255, 0.9);
-            letter-spacing: 0.15em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             line-height: 1.8;
             text-shadow: 0 0 10px rgba(0, 200, 255, 0.3);
@@ -193,35 +169,35 @@ html_content = '''<!DOCTYPE html>
         /* Медиа-запросы для мобильных устройств */
         @media (max-width: 768px) {
             .title {
-                font-size: clamp(1.8rem, 12vw, 4rem);
-                letter-spacing: 0.05em;
+                font-size: clamp(2rem, 14vw, 5rem);
+                letter-spacing: 0.02em;
             }
             .subtitle-container {
-                padding: 2vh 3vw;
+                padding: 1.5vh 2vw;
             }
             .subtitle-frame {
-                padding: 2vh 2vw;
+                padding: 2.5vh 3vw;
                 border-width: 1.5px;
             }
             .subtitle {
-                font-size: clamp(0.75rem, 3vw, 1.2rem);
-                letter-spacing: 0.1em;
+                font-size: clamp(0.85rem, 3.5vw, 1.3rem);
+                letter-spacing: 0.08em;
             }
         }
         
         @media (max-width: 480px) {
             .title {
-                font-size: clamp(1.5rem, 14vw, 3rem);
-                letter-spacing: 0.02em;
+                font-size: clamp(1.8rem, 16vw, 4rem);
+                letter-spacing: 0em;
             }
             .subtitle-frame {
-                padding: 1.5vh 1.5vw;
+                padding: 2vh 2.5vw;
                 border-radius: 10px;
             }
             .subtitle {
-                font-size: clamp(0.7rem, 3.5vw, 1rem);
+                font-size: clamp(0.8rem, 4vw, 1.1rem);
                 letter-spacing: 0.05em;
-                line-height: 1.6;
+                line-height: 1.7;
             }
         }
     </style>
@@ -451,9 +427,9 @@ html_content = '''<!DOCTYPE html>
             
             // Ждем окончания анимации исчезновения
             setTimeout(() => {
-                // Меняем текст
-                mainTitle.setAttribute('data-text', 'ДОБРО ПОЖАЛОВАТЬ');
-                mainTitle.textContent = 'ДОБРО ПОЖАЛОВАТЬ';
+                // Меняем текст - разбиваем на две строки
+                mainTitle.setAttribute('data-text', 'ДОБРО<br>ПОЖАЛОВАТЬ');
+                mainTitle.innerHTML = 'ДОБРО<br>ПОЖАЛОВАТЬ';
                 mainSubtitle.innerHTML = 'Мои тексты, озвученные искусственным разумом.<br>Эксперимент на стыке человеческих эмоций и машинного голоса.';
                 
                 // Анимация появления нового текста
@@ -478,5 +454,5 @@ html_content = '''<!DOCTYPE html>
 with open('/mnt/agents/output/neon_particles_background.html', 'w', encoding='utf-8') as f:
     f.write(html_content)
 
-print("Файл обновлен! Текст теперь помещается на экран, добавлена красивая рамка.")
+print("Исправлено! Текст 'ДОБРО ПОЖАЛОВАТЬ' теперь разбит на две строки и помещается полностью.")
 
