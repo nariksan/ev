@@ -22,6 +22,34 @@ html_content = '''<!DOCTYPE html>
             position: absolute;
             top: 50%;
             left: 50%;
+            transform: translate(-Отлично! Давайте заменим текст. Я обновлю только нужные части:
+
+
+```python
+html_content = '''<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Particles Background</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000510;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
             pointer-events: none;
@@ -55,11 +83,12 @@ html_content = '''<!DOCTYPE html>
             color: transparent;
         }
         .subtitle {
-            margin-top: 1rem;
-            font-size: clamp(0.9rem, 2vw, 1.3rem);
-            color: rgba(150, 220, 255, 0.7);
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
+            margin-top: 1.5rem;
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
+            color: rgba(150, 220, 255, 0.8);
+            letter-spacing: 0.05em;
+            line-height: 1.6;
+            max-width: 600px;
         }
         
         /* Кнопка входа */
@@ -278,7 +307,7 @@ html_content = '''<!DOCTYPE html>
     <canvas id="bg"></canvas>
     <div class="content">
         <div class="title" data-text="EVGENII">EVGENII</div>
-        <div class="subtitle">Digital Experience</div>
+        <div class="subtitle">Где заканчиваюсь я — и начинается ИИ.<br>Эксперимент на стыке эмоций и кода.</div>
     </div>
     
     <!-- Кнопка входа -->
