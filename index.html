@@ -10,13 +10,23 @@ html_content = '''<!DOCTYPE html>
             padding: 0;
             box-sizing: border-box;
         }
-        body {
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Гарантирует отсутствие полос прокрутки */
             background: #000510;
-            overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         canvas {
+            position: fixed; /* Жестко фиксирует фон относительно окна браузера */
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             display: block;
+            z-index: 1; /* Фон всегда позади контента */
         }
         .content {
             position: absolute;
@@ -89,7 +99,7 @@ html_content = '''<!DOCTYPE html>
             flex-wrap: wrap;
         }
         
-        /* Кнопка Лента обновлений и О проекте */
+        /* Кнопки */
         .updates-btn, .about-btn, .chat-btn {
             padding: 15px 35px;
             background: transparent;
@@ -495,6 +505,7 @@ html_content = '''<!DOCTYPE html>
         let isTransitioned = false;
 
         function resize() {
+            // Устанавливаем внутренние размеры canvas равными размерам окна просмотра
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
@@ -718,63 +729,33 @@ html_content = '''<!DOCTYPE html>
             }, 800);
         });
         
-        // === ОБРАБОТЧИКИ МОДАЛЬНОГО ОКНА ЛЕНТА ОБНОВЛЕНИЙ ===
-        updatesBtn.addEventListener('click', function() {
-            modalOverlay.classList.add('active');
-        });
+        // === ОБРАБОТЧИКИ МОДАЛЬНЫХ ОКОН ===
+        function openModal(modal) {
+            modal.classList.add('active');
+        }
         
-        modalClose.addEventListener('click', function() {
-            modalOverlay.classList.remove('active');
-        });
+        function closeModal(modal) {
+            modal.classList.remove('active');
+        }
+
+        updatesBtn.addEventListener('click', () => openModal(modalOverlay));
+        modalClose.addEventListener('click', () => closeModal(modalOverlay));
+        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(modalOverlay); });
         
-        modalOverlay.addEventListener('click', function(e) {
-            if (e.target === modalOverlay) {
-                modalOverlay.classList.remove('active');
-            }
-        });
+        aboutBtn.addEventListener('click', () => openModal(aboutModalOverlay));
+        aboutModalClose.addEventListener('click', () => closeModal(aboutModalOverlay));
+        aboutModalOverlay.addEventListener('click', (e) => { if (e.target === aboutModalOverlay) closeModal(aboutModalOverlay); });
         
-        // === ОБРАБОТЧИКИ МОДАЛЬНОГО ОКНА О ПРОЕКТЕ ===
-        aboutBtn.addEventListener('click', function() {
-            aboutModalOverlay.classList.add('active');
-        });
-        
-        aboutModalClose.addEventListener('click', function() {
-            aboutModalOverlay.classList.remove('active');
-        });
-        
-        aboutModalOverlay.addEventListener('click', function(e) {
-            if (e.target === aboutModalOverlay) {
-                aboutModalOverlay.classList.remove('active');
-            }
-        });
-        
-        // === ОБРАБОТЧИКИ МОДАЛЬНОГО ОКНА ЧАТ ===
-        chatBtn.addEventListener('click', function() {
-            chatModalOverlay.classList.add('active');
-        });
-        
-        chatModalClose.addEventListener('click', function() {
-            chatModalOverlay.classList.remove('active');
-        });
-        
-        chatModalOverlay.addEventListener('click', function(e) {
-            if (e.target === chatModalOverlay) {
-                chatModalOverlay.classList.remove('active');
-            }
-        });
+        chatBtn.addEventListener('click', () => openModal(chatModalOverlay));
+        chatModalClose.addEventListener('click', () => closeModal(chatModalOverlay));
+        chatModalOverlay.addEventListener('click', (e) => { if (e.target === chatModalOverlay) closeModal(chatModalOverlay); });
         
         // Закрытие всех модальных окон по Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                if (modalOverlay.classList.contains('active')) {
-                    modalOverlay.classList.remove('active');
-                }
-                if (aboutModalOverlay.classList.contains('active')) {
-                    aboutModalOverlay.classList.remove('active');
-                }
-                if (chatModalOverlay.classList.contains('active')) {
-                    chatModalOverlay.classList.remove('active');
-                }
+                closeModal(modalOverlay);
+                closeModal(aboutModalOverlay);
+                closeModal(chatModalOverlay);
             }
         });
     </script>
