@@ -42,6 +42,7 @@ html_content = '''<!DOCTYPE html>
                 0 0 100px rgba(0, 200, 255, 0.2);
             position: relative;
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            line-height: 1.1;
         }
         .title::after {
             content: attr(data-text);
@@ -121,6 +122,15 @@ html_content = '''<!DOCTYPE html>
             opacity: 0;
             pointer-events: none;
             transform: translateX(-50%) scale(0.8);
+        }
+        
+        /* Стили для двухстрочного заголовка */
+        .title-line {
+            display: block;
+        }
+        .title-line-small {
+            font-size: 0.5em;
+            letter-spacing: 0.2em;
         }
     </style>
 </head>
@@ -344,9 +354,9 @@ html_content = '''<!DOCTYPE html>
             
             // Ждем окончания анимации исчезновения
             setTimeout(() => {
-                // Меняем текст
+                // Меняем текст на двухстрочный формат
                 mainTitle.setAttribute('data-text', 'ДОБРО ПОЖАЛОВАТЬ');
-                mainTitle.textContent = 'ДОБРО ПОЖАЛОВАТЬ';
+                mainTitle.innerHTML = '<span class="title-line">ДОБРО</span><span class="title-line title-line-small">ПОЖАЛОВАТЬ</span>';
                 mainSubtitle.innerHTML = 'Мои тексты, озвученные искусственным разумом.<br>Эксперимент на стыке человеческих эмоций и машинного голоса.';
                 
                 // Анимация появления нового текста
@@ -370,6 +380,4 @@ html_content = '''<!DOCTYPE html>
 
 with open('/mnt/agents/output/neon_particles_background.html', 'w', encoding='utf-8') as f:
     f.write(html_content)
-
-print("Файл успешно создан!")
 
